@@ -4,7 +4,11 @@ export interface AdminUser {
   name: string | null
   role: 'USER' | 'ADMIN'
   isActive: boolean
-  subscription: { plan: { name: string }; periodEnd: string } | null
+  subscription: { plan: { name: string; priceMonthly: number }; periodEnd: string; periodStart: string } | null
+  chargedThisMonth: number
+  aiCostThisMonth: number
+  expectedByNow: number
+  category: 'heavy' | 'moderate' | 'light' | 'inactive'
 }
 
 export interface DashboardStats {
@@ -14,6 +18,26 @@ export interface DashboardStats {
   mrr: number
   totalConversations: number
   todayConversations: number
+}
+
+export interface CostChartPoint {
+  date: string
+  aiCostRial: number
+  revenueToman: number
+}
+
+export interface PricingAlert {
+  monthlyRevenueToman: number
+  monthlyAiCostRial: number
+  aiCostRatio: number
+  alertLevel: 'safe' | 'warning' | 'critical'
+  suggestion: string | null
+}
+
+export interface ManualLimit {
+  type: 'daily' | '1h' | '3h' | '6h'
+  reason: string
+  expiresAt: number
 }
 
 export interface AdminPayment {

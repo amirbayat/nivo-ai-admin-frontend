@@ -2,8 +2,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import type {
   AdminUser,
+  CostChartPoint,
   DashboardStats,
+  ManualLimit,
   Plan,
+  PricingAlert,
   FeedbackItem,
   FeedbackSummary,
   TokenStats,
@@ -129,5 +132,46 @@ export function useTokenStats() {
   return useQuery({
     queryKey: keys.tokenStats.data(),
     queryFn: () => api.get<TokenStats>('/admin/token-stats').then((r) => r.data),
+  })
+}
+
+export function useCostChart(days = 30) {
+  return useQuery({
+    queryKey: ['admin', 'cost-chart', days],
+    queryFn: () => api.get<CostChartPoint[]>('/admin/cost-chart', { params: { days } }).then(r => r.data),
+  })
+}
+
+export function usePricingAlert() {
+  return useQuery({
+    queryKey: ['admin', 'pricing-alert'],
+    queryFn: () => api.get<PricingAlert>('/admin/pricing-alert').then(r => r.data),
+    refetchInterval: 5 * 60 * 1000,
+  })
+}
+
+export function useSetUserLimit() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ userId, type, reason }: { userId: string; type: ManualLimit['type']; reason?: string }) =>
+      api.post(`/admin/users/${userId}/limit`, { type, reason }).then(r => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin', 'users'] }),
+  })
+}
+
+export function useRemoveUserLimit() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (userId: string) => api.delete(`/admin/users/${userId}/limit`).then(r => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin', 'users'] }),
+  })
+}
+
+export function useChangeUserPlan() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ userId, planId }: { userId: string; planId: string }) =>
+      api.patch(`/admin/users/${userId}/plan`, { planId }).then(r => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin', 'users'] }),
   })
 }
