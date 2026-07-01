@@ -9,4 +9,8 @@ export const keys = {
     summary: () => ['admin', 'feedback', 'summary'] as const,
   },
   tokenStats: { data: () => ['admin', 'token-stats'] as const },
+  tickets: {
+    list: (status?: string) => ['admin', 'tickets', status ?? 'all'] as const,
+    detail: (id: string) => ['admin', 'tickets', id] as const,
+  },
 } as const

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import type {
   AdminUser,
+  AdminTicket,
   CostChartPoint,
   DashboardStats,
   ManualLimit,
@@ -173,5 +174,57 @@ export function useChangeUserPlan() {
     mutationFn: ({ userId, planId }: { userId: string; planId: string }) =>
       api.patch(`/admin/users/${userId}/plan`, { planId }).then(r => r.data),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin', 'users'] }),
+  })
+}
+
+export function useAdminTickets(status?: string) {
+  return useQuery({
+    queryKey: keys.tickets.list(status),
+    queryFn: () =>
+      api
+        .get<{ tickets: AdminTicket[] }>('/admin/tickets', { params: status ? { status } : {} })
+        .then((r) => r.data.tickets),
+  })
+}
+
+export function useAdminTicketDetail(id: string) {
+  return useQuery({
+    queryKey: keys.tickets.detail(id),
+    queryFn: () =>
+      api.get<{ ticket: AdminTicket }>(`/admin/tickets/${id}`).then((r) => r.data.ticket),
+    enabled: !!id,
+  })
+}
+
+export function useAdminReplyTicket() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, body, adminNote }: { id: string; body: string; adminNote?: string }) =>
+      api.post(`/admin/tickets/${id}/reply`, { body, adminNote }).then((r) => r.data),
+    onSuccess: (_data, variables) => {
+      void qc.invalidateQueries({ queryKey: keys.tickets.detail(variables.id) })
+    },
+  })
+}
+
+export function useUpdateTicketStatus() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({
+      id,
+      status,
+      priority,
+      adminNote,
+    }: {
+      id: string
+      status?: string
+      priority?: string
+      adminNote?: string
+    }) =>
+      api.patch(`/admin/tickets/${id}/status`, { status, priority, adminNote }).then((r) => r.data),
+    onSuccess: (_data, variables) => {
+      void qc.invalidateQueries({ queryKey: keys.tickets.detail(variables.id) })
+      void qc.invalidateQueries({ queryKey: ['admin', 'tickets'] })
+    },
   })
 }

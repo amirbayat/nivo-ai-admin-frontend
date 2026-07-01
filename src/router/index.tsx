@@ -6,6 +6,7 @@ import { UsersPage } from '@/pages/users/UsersPage'
 import { PlansPage } from '@/pages/plans/PlansPage'
 import { PaymentsPage } from '@/pages/payments/PaymentsPage'
 import { FeedbackPage } from '@/pages/feedback/FeedbackPage'
+import { TicketsPage } from '@/pages/tickets/TicketsPage'
 import { ACCESS_KEY } from '@/lib/api'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -32,6 +33,7 @@ export function AppRouter() {
         <Route path="plans" element={<PlansPage />} />
         <Route path="payments" element={<PaymentsPage />} />
         <Route path="feedback" element={<FeedbackPage />} />
+        <Route path="tickets" element={<TicketsPage />} />
       </Route>
       <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />

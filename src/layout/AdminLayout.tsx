@@ -7,6 +7,7 @@ import {
   AppstoreOutlined,
   PayCircleOutlined,
   MessageOutlined,
+  CustomerServiceOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -23,6 +24,7 @@ const menuItems = [
   { key: '/admin/plans', icon: <AppstoreOutlined />, label: fa.nav.plans },
   { key: '/admin/payments', icon: <PayCircleOutlined />, label: fa.nav.payments },
   { key: '/admin/feedback', icon: <MessageOutlined />, label: fa.nav.feedback },
+  { key: '/admin/tickets', icon: <CustomerServiceOutlined />, label: fa.nav.tickets },
 ]
 
 export function AdminLayout() {

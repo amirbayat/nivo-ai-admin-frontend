@@ -12,7 +12,7 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ConfigProvider
         direction="rtl"
-        theme={{ token: { colorPrimary: '#10b981', fontFamily: 'Tahoma, sans-serif' } }}
+        theme={{ token: { colorPrimary: '#10b981', fontFamily: "'IRANYekanMsn', Tahoma, sans-serif" } }}
       >
         <BrowserRouter>
           <AppRouter />

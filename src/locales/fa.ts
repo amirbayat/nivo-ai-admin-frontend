@@ -17,6 +17,7 @@ export const fa = {
     plans: 'پلن‌ها',
     payments: 'پرداخت‌ها',
     feedback: 'فیدبک',
+    tickets: 'تیکت‌ها',
     logout: 'خروج',
   },
   dashboard: {
@@ -107,5 +108,15 @@ export const fa = {
     actions: 'عملیات',
     toman: 'تومان',
     noData: 'داده‌ای یافت نشد',
+  },
+  ticket: {
+    list: 'تیکت‌های پشتیبانی',
+    reply: 'پاسخ',
+    sendReply: 'ارسال پاسخ',
+    status: { OPEN: 'باز', IN_PROGRESS: 'در حال بررسی', RESOLVED: 'حل شد', CLOSED: 'بسته' },
+    priority: { LOW: 'کم', NORMAL: 'معمولی', HIGH: 'زیاد', URGENT: 'فوری' },
+    adminNote: 'یادداشت داخلی',
+    changeStatus: 'تغییر وضعیت',
+    noTickets: 'تیکتی وجود ندارد',
   },
 } as const

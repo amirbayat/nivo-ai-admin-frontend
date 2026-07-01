@@ -50,6 +50,11 @@ export interface AdminPayment {
   plan: { name: string }
 }
 
+export interface ThrottleStep {
+  afterMessages: number
+  maxOutputTokens: number
+}
+
 export interface Plan {
   id: string
   name: string
@@ -60,6 +65,12 @@ export interface Plan {
   features: Record<string, unknown>
   isActive: boolean
   sortOrder: number
+  dailyMessageLimit: number | null
+  throttledMessageCount: number | null
+  throttledInputTokens: number | null
+  throttledOutputTokens: number | null
+  maxInputTokens: number
+  outputThrottleSteps: ThrottleStep[]
 }
 
 export interface FeedbackItem {
@@ -81,4 +92,17 @@ export interface FeedbackSummary {
 export interface TokenStats {
   today: { totalFree: number; totalPaid: number; requests: number }
   thisMonth: { totalFree: number; totalPaid: number }
+}
+
+export interface AdminTicket {
+  id: string
+  subject: string
+  body: string
+  status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED'
+  priority: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT'
+  adminNote: string | null
+  createdAt: string
+  updatedAt: string
+  user: { phone: string; name: string | null }
+  replies: Array<{ id: string; fromAdmin: boolean; body: string; createdAt: string }>
 }
