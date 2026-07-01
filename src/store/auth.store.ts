@@ -1,0 +1,19 @@
+import { create } from 'zustand'
+import type { AdminUser } from '@/types/api'
+import { ACCESS_KEY, REFRESH_KEY } from '@/lib/api'
+
+interface AuthState {
+  user: AdminUser | null
+  setUser: (user: AdminUser | null) => void
+  logout: () => void
+}
+
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+  logout: () => {
+    localStorage.removeItem(ACCESS_KEY)
+    localStorage.removeItem(REFRESH_KEY)
+    set({ user: null })
+  },
+}))

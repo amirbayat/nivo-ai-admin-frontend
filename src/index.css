@@ -1,0 +1,4 @@
+@import './assets/fonts/IRANYekanMsn/IRANYekanMsn.css';
+
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'IRANYekanMsn', 'Tahoma', 'Segoe UI', sans-serif; direction: rtl; }

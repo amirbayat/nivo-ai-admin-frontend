@@ -1,0 +1,47 @@
+@font-face {
+    font-family: 'IRANYekanMsn';
+    font-weight: 900;
+    src: url('./files/IRANYekanBlackMsn.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'IRANYekanMsn';
+    font-weight: 700;
+    src: url('./files/IRANYekanBoldMsn.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'IRANYekanMsn';
+    font-weight: 950;
+    src: url('./files/IRANYekanExtraBlackMsn.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'IRANYekanMsn';
+    font-weight: 800;
+    src: url('./files/IRANYekanExtraBoldMsn.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'IRANYekanMsn';
+    font-weight: 300;
+    src: url('./files/IRANYekanLightMsn.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'IRANYekanMsn';
+    font-weight: 500;
+    src: url('./files/IRANYekanMediumMsn.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'IRANYekanMsn';
+    font-weight: 400;
+    src: url('./files/IRANYekanRegularMsn.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'IRANYekanMsn';
+    font-weight: 100;
+    src: url('./files/IRANYekanThinMsn.ttf') format('truetype');
+}
