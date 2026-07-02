@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   Table, Input, Button, Tag, Space, Typography, Popconfirm,
-  message, Modal, Select, Form, Tooltip, Progress,
+  message, Modal, Select, Form, Tooltip,
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import type { AdminUser } from '@/types/api'

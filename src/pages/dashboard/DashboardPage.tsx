@@ -8,7 +8,7 @@ import { useDashboardStats, useCostChart, usePricingAlert } from '@/queries/admi
 import type { CostChartPoint } from '@/types/api'
 import { fa } from '@/locales/fa'
 
-const { Title, Text } = Typography
+const { Title } = Typography
 
 function StatCard({ title, value, suffix, icon, color }: {
   title: string; value: number; suffix?: string; icon: React.ReactNode; color: string
@@ -26,7 +26,7 @@ function StatCard({ title, value, suffix, icon, color }: {
   )
 }
 
-function CostChart({ data, days }: { data: CostChartPoint[]; days: number }) {
+function CostChart({ data }: { data: CostChartPoint[]; days: number }) {
   if (!data.length) return <div style={{ textAlign: 'center', padding: 40, color: '#888' }}>داده‌ای برای نمایش وجود ندارد</div>
 
   const W = 700, H = 200, PAD = { top: 20, right: 20, bottom: 40, left: 60 }

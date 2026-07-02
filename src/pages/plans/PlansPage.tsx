@@ -102,7 +102,7 @@ export function PlansPage() {
         throttledMessageCount: values.throttledMessageCount ?? null,
         throttledInputTokens: values.throttledInputTokens ?? null,
         throttledOutputTokens: values.throttledOutputTokens ?? null,
-        maxInputTokens: values.maxInputTokens ?? undefined,
+        maxInputTokens: values.maxInputTokens ?? 300,
         outputThrottleSteps: (values.outputThrottleSteps ?? []).filter(s => s?.afterMessages && s?.maxOutputTokens),
       }
       const onSuccess = () => {
