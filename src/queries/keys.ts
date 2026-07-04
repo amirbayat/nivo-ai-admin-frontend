@@ -14,4 +14,9 @@ export const keys = {
     detail: (id: string) => ['admin', 'tickets', id] as const,
   },
   models: { list: () => ['admin', 'models'] as const },
+  modelFeedback: {
+    list: (page: number, model?: string, vote?: string) =>
+      ['admin', 'model-feedback', page, model ?? 'all', vote ?? 'all'] as const,
+    summary: () => ['admin', 'model-feedback', 'summary'] as const,
+  },
 } as const

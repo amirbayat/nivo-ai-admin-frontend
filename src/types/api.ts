@@ -117,5 +117,35 @@ export interface AiModel {
   supportsVision: boolean
   isActive: boolean
   sortOrder: number
+  tier: 'SIMPLE' | 'MEDIUM' | 'COMPLEX'
+  createdAt: string
+}
+
+export interface ModelFeedbackItem {
+  id: string
+  messageId: string
+  userId: string
+  vote: 'UP' | 'DOWN'
+  comment: string | null
+  modelUsed: string
+  isChecked: boolean
+  createdAt: string
+  message: { content: string }
+}
+
+export interface ModelFeedbackTopIssue {
+  model: string
+  topic: string
+  downCount: number
+  upCount: number
+  sampleComments: string[]
+}
+
+export interface ModelFeedbackSummary {
+  id: string
+  summary: string
+  topIssues: ModelFeedbackTopIssue[]
+  totalProcessed: number
+  checkedUpTo: string
   createdAt: string
 }

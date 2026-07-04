@@ -11,6 +11,8 @@ import type {
   PricingAlert,
   FeedbackItem,
   FeedbackSummary,
+  ModelFeedbackItem,
+  ModelFeedbackSummary,
   TokenStats,
 } from '@/types/api'
 import { keys } from './keys'
@@ -262,5 +264,39 @@ export function useDeleteModel() {
   return useMutation({
     mutationFn: (id: string) => api.delete(`/admin/models/${id}`).then((r) => r.data),
     onSuccess: () => void qc.invalidateQueries({ queryKey: keys.models.list() }),
+  })
+}
+
+// ── Model Feedback (لایک/دیس‌لایک روی پاسخ‌ها) ────────────────────────────────
+
+interface PaginatedModelFeedback {
+  items: ModelFeedbackItem[]
+  total: number
+  page: number
+  limit: number
+}
+
+export function useModelFeedback(page: number, model?: string, vote?: string) {
+  return useQuery({
+    queryKey: keys.modelFeedback.list(page, model, vote),
+    queryFn: () =>
+      api
+        .get<PaginatedModelFeedback>('/admin/model-feedback', { params: { page, model, vote } })
+        .then((r) => r.data),
+  })
+}
+
+export function useModelFeedbackSummary() {
+  return useQuery({
+    queryKey: keys.modelFeedback.summary(),
+    queryFn: () => api.get<ModelFeedbackSummary | null>('/admin/model-feedback/summary').then((r) => r.data),
+  })
+}
+
+export function useTriggerModelFeedbackSummary() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: () => api.post('/admin/model-feedback/trigger').then((r) => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: keys.modelFeedback.summary() }),
   })
 }

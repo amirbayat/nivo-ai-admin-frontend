@@ -6,6 +6,7 @@ import {
   Form,
   Input,
   InputNumber,
+  Select,
   Switch,
   Space,
   Tag,
@@ -30,6 +31,13 @@ interface ModelFormValues {
   supportsVision: boolean
   isActive: boolean
   sortOrder: number
+  tier: AiModel['tier']
+}
+
+const TIER_COLORS: Record<AiModel['tier'], string> = {
+  SIMPLE: 'green',
+  MEDIUM: 'blue',
+  COMPLEX: 'purple',
 }
 
 const PROVIDER_COLORS: Record<string, string> = {
@@ -58,6 +66,7 @@ export function ModelsPage() {
       supportsVision: false,
       sortOrder: (models?.length ?? 0),
       provider: 'openai',
+      tier: 'MEDIUM',
     })
     setOpen(true)
   }
@@ -73,6 +82,7 @@ export function ModelsPage() {
       supportsVision: model.supportsVision,
       isActive: model.isActive,
       sortOrder: model.sortOrder,
+      tier: model.tier,
     })
     setOpen(true)
   }
@@ -141,6 +151,13 @@ export function ModelsPage() {
       key: 'supportsVision',
       width: 100,
       render: (v: boolean) => v ? <Tag color="blue">✓ Vision</Tag> : <Tag>—</Tag>,
+    },
+    {
+      title: fa.models.tier,
+      dataIndex: 'tier',
+      key: 'tier',
+      width: 100,
+      render: (v: AiModel['tier']) => <Tag color={TIER_COLORS[v]}>{fa.models.tiers[v]}</Tag>,
     },
     {
       title: fa.models.sortOrder,
@@ -227,6 +244,20 @@ export function ModelsPage() {
           </Form.Item>
           <Form.Item name="outputPricePerM" label={fa.models.outputPrice} rules={[{ required: true }]}>
             <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="10.00" />
+          </Form.Item>
+          <Form.Item
+            name="tier"
+            label={fa.models.tier}
+            rules={[{ required: true }]}
+            extra="مسیریاب هوشمند برای پیام‌های ساده/متوسط/پیچیده از این سطح استفاده می‌کند"
+          >
+            <Select
+              options={[
+                { value: 'SIMPLE', label: fa.models.tiers.SIMPLE },
+                { value: 'MEDIUM', label: fa.models.tiers.MEDIUM },
+                { value: 'COMPLEX', label: fa.models.tiers.COMPLEX },
+              ]}
+            />
           </Form.Item>
           <Form.Item name="sortOrder" label={fa.models.sortOrder}>
             <InputNumber style={{ width: '100%' }} min={0} />
