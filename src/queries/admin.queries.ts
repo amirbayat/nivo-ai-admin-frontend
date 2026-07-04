@@ -3,6 +3,7 @@ import { api } from '@/lib/api'
 import type {
   AdminUser,
   AdminTicket,
+  AiModel,
   CostChartPoint,
   DashboardStats,
   ManualLimit,
@@ -226,5 +227,40 @@ export function useUpdateTicketStatus() {
       void qc.invalidateQueries({ queryKey: keys.tickets.detail(variables.id) })
       void qc.invalidateQueries({ queryKey: ['admin', 'tickets'] })
     },
+  })
+}
+
+// ── AI Models ────────────────────────────────────────────────────────────────
+
+export function useModels() {
+  return useQuery({
+    queryKey: keys.models.list(),
+    queryFn: () => api.get<AiModel[]>('/admin/models').then((r) => r.data),
+  })
+}
+
+export function useCreateModel() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Omit<AiModel, 'id' | 'createdAt'>) =>
+      api.post<AiModel>('/admin/models', data).then((r) => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: keys.models.list() }),
+  })
+}
+
+export function useUpdateModel() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Omit<AiModel, 'id' | 'createdAt'>> }) =>
+      api.patch<AiModel>(`/admin/models/${id}`, data).then((r) => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: keys.models.list() }),
+  })
+}
+
+export function useDeleteModel() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/admin/models/${id}`).then((r) => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: keys.models.list() }),
   })
 }

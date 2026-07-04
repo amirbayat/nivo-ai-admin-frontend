@@ -106,3 +106,16 @@ export interface AdminTicket {
   user: { phone: string; name: string | null }
   replies: Array<{ id: string; fromAdmin: boolean; body: string; createdAt: string }>
 }
+
+export interface AiModel {
+  id: string
+  name: string
+  displayName: string
+  provider: string
+  inputPricePerM: number
+  outputPricePerM: number
+  supportsVision: boolean
+  isActive: boolean
+  sortOrder: number
+  createdAt: string
+}

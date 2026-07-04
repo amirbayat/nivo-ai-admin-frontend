@@ -14,11 +14,12 @@ import {
   message,
   Tooltip,
   Divider,
+  Select,
 } from 'antd'
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { Plan } from '@/types/api'
-import { usePlans, useCreatePlan, useUpdatePlan, useDeletePlan } from '@/queries/admin.queries'
+import { usePlans, useCreatePlan, useUpdatePlan, useDeletePlan, useModels } from '@/queries/admin.queries'
 import { fa } from '@/locales/fa'
 
 const { Title } = Typography
@@ -33,7 +34,7 @@ interface PlanFormValues {
   priceMonthly: number
   dailyFreeTokens: number
   monthlyTotalTokens: number
-  allowedModels: string
+  allowedModels: string[]
   sortOrder: number
   isActive: boolean
   dailyMessageLimit: number | null
@@ -51,6 +52,7 @@ export function PlansPage() {
   const [messageApi, contextHolder] = message.useMessage()
 
   const { data: plans, isLoading } = usePlans()
+  const { data: availableModels, isLoading: modelsLoading } = useModels()
   const createPlan = useCreatePlan()
   const updatePlan = useUpdatePlan()
   const deletePlan = useDeletePlan()
@@ -58,7 +60,7 @@ export function PlansPage() {
   function openAdd() {
     setEditing(null)
     form.resetFields()
-    form.setFieldsValue({ isActive: true, sortOrder: 0, maxInputTokens: 300, outputThrottleSteps: [] })
+    form.setFieldsValue({ isActive: true, sortOrder: 0, maxInputTokens: 300, outputThrottleSteps: [], allowedModels: [] })
     setOpen(true)
   }
 
@@ -69,7 +71,7 @@ export function PlansPage() {
       priceMonthly: plan.priceMonthly,
       dailyFreeTokens: plan.dailyFreeTokens,
       monthlyTotalTokens: plan.monthlyTotalTokens,
-      allowedModels: plan.allowedModels.join(', '),
+      allowedModels: plan.allowedModels,
       sortOrder: plan.sortOrder,
       isActive: plan.isActive,
       dailyMessageLimit: plan.dailyMessageLimit ?? null,
@@ -84,17 +86,12 @@ export function PlansPage() {
 
   function handleSave() {
     form.validateFields().then((values) => {
-      const models = values.allowedModels
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean)
-
       const payload = {
         name: values.name,
         priceMonthly: values.priceMonthly,
         dailyFreeTokens: values.dailyFreeTokens,
         monthlyTotalTokens: values.monthlyTotalTokens,
-        allowedModels: models,
+        allowedModels: values.allowedModels,
         features: {},
         sortOrder: values.sortOrder,
         isActive: values.isActive,
@@ -272,8 +269,16 @@ export function PlansPage() {
           <Form.Item name="monthlyTotalTokens" label={fa.plans.monthlyTotal} rules={[{ required: true }]}>
             <InputNumber style={{ width: '100%' }} min={0} />
           </Form.Item>
-          <Form.Item name="allowedModels" label={fa.plans.models} rules={[{ required: true }]}>
-            <Input placeholder="openai/gpt-4o-mini, openai/gpt-4o" />
+          <Form.Item name="allowedModels" label={fa.plans.models} rules={[{ required: true, type: 'array', min: 1 }]}>
+            <Select
+              mode="multiple"
+              loading={modelsLoading}
+              placeholder="انتخاب مدل‌های مجاز"
+              options={(availableModels ?? []).filter(m => m.isActive).map(m => ({
+                value: m.name,
+                label: `${m.displayName} (${m.name})`,
+              }))}
+            />
           </Form.Item>
           <Form.Item name="sortOrder" label={fa.plans.sortOrder}>
             <InputNumber style={{ width: '100%' }} min={0} />
