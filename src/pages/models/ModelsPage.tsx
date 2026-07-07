@@ -12,12 +12,19 @@ import {
   Tag,
   Popconfirm,
   Typography,
+  Upload,
   message,
 } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { AiModel } from '@/types/api'
-import { useModels, useCreateModel, useUpdateModel, useDeleteModel } from '@/queries/admin.queries'
+import {
+  useModels,
+  useCreateModel,
+  useUpdateModel,
+  useDeleteModel,
+  useImportModels,
+} from '@/queries/admin.queries'
 import { fa } from '@/locales/fa'
 
 const { Title } = Typography
@@ -57,6 +64,7 @@ export function ModelsPage() {
   const createModel = useCreateModel()
   const updateModel = useUpdateModel()
   const deleteModel = useDeleteModel()
+  const importModels = useImportModels()
 
   function openAdd() {
     setEditing(null)
@@ -108,6 +116,31 @@ export function ModelsPage() {
       onSuccess: () => void messageApi.success(fa.models.deleted),
       onError: () => void messageApi.error(fa.common.error),
     })
+  }
+
+  function handleImport(file: File) {
+    importModels.mutate(file, {
+      onSuccess: (result) => {
+        if (result.created > 0 || result.updated > 0) {
+          void messageApi.success(fa.models.importSuccess(result.created, result.updated))
+        }
+        if (result.errors.length > 0) {
+          Modal.warning({
+            title: fa.models.importErrors,
+            width: 600,
+            content: (
+              <ul style={{ maxHeight: 300, overflow: 'auto', paddingRight: 16 }}>
+                {result.errors.map((e) => (
+                  <li key={e.row}>{fa.models.importRow} {e.row}: {e.message}</li>
+                ))}
+              </ul>
+            ),
+          })
+        }
+      },
+      onError: () => void messageApi.error(fa.models.importFailed),
+    })
+    return false
   }
 
   const columns: ColumnsType<AiModel> = [
@@ -197,9 +230,19 @@ export function ModelsPage() {
       {contextHolder}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <Title level={4} style={{ margin: 0 }}>{fa.models.title}</Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>
-          {fa.models.addModel}
-        </Button>
+        <Space>
+          <Button icon={<DownloadOutlined />} href="/modelSample.xlsx" target="_blank">
+            {fa.models.downloadSample}
+          </Button>
+          <Upload accept=".xlsx,.xls" showUploadList={false} beforeUpload={handleImport}>
+            <Button icon={<UploadOutlined />} loading={importModels.isPending}>
+              {fa.models.importExcel}
+            </Button>
+          </Upload>
+          <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>
+            {fa.models.addModel}
+          </Button>
+        </Space>
       </div>
 
       <div style={{ overflow: 'auto' }}>

@@ -193,6 +193,13 @@ export const fa = {
       MEDIUM: 'متوسط',
       COMPLEX: 'پیچیده',
     },
+    importExcel: 'آپلود اکسل',
+    downloadSample: 'دانلود نمونه اکسل',
+    importSuccess: (created: number, updated: number) =>
+      `${created} مدل اضافه شد، ${updated} مدل به‌روزرسانی شد`,
+    importErrors: 'در برخی ردیف‌ها خطا وجود داشت',
+    importFailed: 'آپلود فایل با خطا مواجه شد',
+    importRow: 'ردیف',
   },
   modelFeedback: {
     title: 'فیدبک پاسخ‌های مدل',

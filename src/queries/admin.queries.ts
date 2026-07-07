@@ -267,6 +267,29 @@ export function useDeleteModel() {
   })
 }
 
+export interface ModelImportResult {
+  total: number
+  created: number
+  updated: number
+  errors: Array<{ row: number; message: string }>
+}
+
+export function useImportModels() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (file: File) => {
+      const formData = new FormData()
+      formData.append('file', file)
+      return api
+        .post<ModelImportResult>('/admin/models/import', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then((r) => r.data)
+    },
+    onSuccess: () => void qc.invalidateQueries({ queryKey: keys.models.list() }),
+  })
+}
+
 // ── Model Feedback (لایک/دیس‌لایک روی پاسخ‌ها) ────────────────────────────────
 
 interface PaginatedModelFeedback {
