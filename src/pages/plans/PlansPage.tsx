@@ -43,6 +43,8 @@ interface PlanFormValues {
   throttledOutputTokens: number | null
   maxInputTokens: number | null
   outputThrottleSteps: ThrottleStepValue[]
+  rollingWindowLimit: number | null
+  rollingWindowHours: number
 }
 
 export function PlansPage() {
@@ -60,7 +62,7 @@ export function PlansPage() {
   function openAdd() {
     setEditing(null)
     form.resetFields()
-    form.setFieldsValue({ isActive: true, sortOrder: 0, maxInputTokens: 300, outputThrottleSteps: [], allowedModels: [] })
+    form.setFieldsValue({ isActive: true, sortOrder: 0, maxInputTokens: 300, outputThrottleSteps: [], allowedModels: [], rollingWindowHours: 3 })
     setOpen(true)
   }
 
@@ -80,6 +82,8 @@ export function PlansPage() {
       throttledOutputTokens: plan.throttledOutputTokens ?? null,
       maxInputTokens: plan.maxInputTokens ?? null,
       outputThrottleSteps: (plan.outputThrottleSteps as ThrottleStepValue[] | null) ?? [],
+      rollingWindowLimit: plan.rollingWindowLimit ?? null,
+      rollingWindowHours: plan.rollingWindowHours ?? 3,
     })
     setOpen(true)
   }
@@ -101,6 +105,8 @@ export function PlansPage() {
         throttledOutputTokens: values.throttledOutputTokens ?? null,
         maxInputTokens: values.maxInputTokens ?? 300,
         outputThrottleSteps: (values.outputThrottleSteps ?? []).filter(s => s?.afterMessages && s?.maxOutputTokens),
+        rollingWindowLimit: values.rollingWindowLimit ?? null,
+        rollingWindowHours: values.rollingWindowHours ?? 3,
       }
       const onSuccess = () => {
         void messageApi.success(fa.plans.saved)
@@ -192,6 +198,17 @@ export function PlansPage() {
           </Tooltip>
         ) : (
           <Tag>—</Tag>
+        ),
+    },
+    {
+      title: 'پنجره‌ی لغزان',
+      key: 'rollingWindow',
+      width: 150,
+      render: (_, r) =>
+        r.rollingWindowLimit != null ? (
+          <Tag color="red">{r.rollingWindowLimit} پیام / {r.rollingWindowHours} ساعت</Tag>
+        ) : (
+          <Tag>غیرفعال</Tag>
         ),
     },
     { title: fa.plans.sortOrder, dataIndex: 'sortOrder', key: 'sortOrder', width: 80 },
@@ -313,6 +330,23 @@ export function PlansPage() {
             extra="خالی = بدون محدودیت خروجی در ناحیه محدود"
           >
             <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۲۰۰" />
+          </Form.Item>
+
+          <Divider orientation="right" style={{ fontSize: 13 }}>پنجره‌ی لغزان (محدودیت ضدسوءاستفاده)</Divider>
+
+          <Form.Item
+            name="rollingWindowLimit"
+            label="سقف پیام در پنجره"
+            extra="خالی = غیرفعال برای این پلن. مکمل سقف روزانه‌ی بالاست، نه جایگزین آن"
+          >
+            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۵" />
+          </Form.Item>
+          <Form.Item
+            name="rollingWindowHours"
+            label="طول پنجره (ساعت)"
+            extra="پیش‌فرض ۳ ساعت"
+          >
+            <InputNumber style={{ width: '100%' }} min={1} placeholder="۳" />
           </Form.Item>
 
           <Divider orientation="right" style={{ fontSize: 13 }}>سایر محدودیت‌ها</Divider>

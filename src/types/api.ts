@@ -71,6 +71,8 @@ export interface Plan {
   throttledOutputTokens: number | null
   maxInputTokens: number
   outputThrottleSteps: ThrottleStep[]
+  rollingWindowLimit: number | null
+  rollingWindowHours: number
 }
 
 export interface FeedbackItem {
