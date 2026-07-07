@@ -149,3 +149,112 @@ export interface ModelFeedbackSummary {
   checkedUpTo: string
   createdAt: string
 }
+
+// ── Usage Analytics ─────────────────────────────────────────────────────────
+
+export interface AnalyticsOverviewData {
+  totalTokens: number
+  totalMessages: number
+  costRial: number
+  costUsd: number
+  revenueRial: number
+  marginRial: number
+  marginPct: number | null
+  avgTokensPerMessage: number
+  topModel: string | null
+}
+
+export interface AnalyticsOverview {
+  current: AnalyticsOverviewData
+  previous: AnalyticsOverviewData | null
+  growth: {
+    totalTokens: number | null
+    totalMessages: number | null
+    costRial: number | null
+    revenueRial: number | null
+  } | null
+}
+
+export interface AnalyticsTimeseriesPoint {
+  date?: string
+  period?: string
+  tokens: number
+  messages: number
+  costRial: number
+  costUsd: number
+}
+
+export interface AnalyticsModelBreakdown {
+  model: string
+  messages: number
+  tokensInput: number
+  tokensOutput: number
+  costRial: number
+  costUsd: number
+}
+
+export interface AnalyticsTopicBreakdown {
+  topicId: string | null
+  name: string
+  color: string | null
+  messages: number
+  pct: number
+}
+
+export interface AnalyticsLimitHits {
+  byType: { type: string; count: number }[]
+  uniqueUsers: number
+}
+
+export interface AnalyticsUserRow {
+  userId: string
+  phone: string | null
+  name: string | null
+  messages: number
+  avgMessagesPerDay: number
+  tokensInput: number
+  tokensOutput: number
+  avgTokensPerDay: number
+  costRial: number
+  costUsd: number
+  revenueRial: number
+  marginRial: number
+  mostUsedModel: string | null
+  segment: string | null
+}
+
+export interface AnalyticsSegmentBreakdown {
+  label: string
+  userCount: number
+  avgMessagesPerDay: number
+  medianMessagesPerDay: number
+  p90MessagesPerDay: number
+  avgTokensPerDay: number
+  medianTokensPerDay: number
+  p90TokensPerDay: number
+  costRial: number
+  revenueRial: number
+  marginRial: number
+  marginPct: number | null
+}
+
+export interface UserSegment {
+  id: string
+  label: string
+  minMessagesPerDay: number | null
+  maxMessagesPerDay: number | null
+  minTokensPerDay: number | null
+  maxTokensPerDay: number | null
+  color: string | null
+  sortOrder: number
+  isActive: boolean
+}
+
+export interface Topic {
+  id: string
+  name: string
+  keywords: string[]
+  color: string | null
+  sortOrder: number
+  isActive: boolean
+}

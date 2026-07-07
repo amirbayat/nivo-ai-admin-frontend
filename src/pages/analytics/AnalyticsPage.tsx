@@ -1,0 +1,322 @@
+import { useMemo, useState } from 'react'
+import dayjs, { type Dayjs } from 'dayjs'
+import {
+  Card, Col, Row, Statistic, Spin, Typography, Space, Switch,
+  DatePicker, Segmented, Table, Tag, Select, Button,
+} from 'antd'
+import {
+  DollarOutlined, MessageOutlined, RiseOutlined, FallOutlined,
+  WarningOutlined, SettingOutlined,
+} from '@ant-design/icons'
+import type { ColumnsType } from 'antd/es/table'
+import {
+  useAnalyticsOverview, useAnalyticsTimeseries, useAnalyticsModels, useAnalyticsTopics,
+  useAnalyticsLimitHits, useAnalyticsUsers, useAnalyticsSegmentBreakdown, downloadAnalyticsUsersCsv,
+} from '@/queries/analytics.queries'
+import type {
+  AnalyticsModelBreakdown, AnalyticsSegmentBreakdown, AnalyticsTimeseriesPoint, AnalyticsUserRow,
+} from '@/types/api'
+import { fa } from '@/locales/fa'
+import { SegmentsManager } from './SegmentsManager'
+import { TopicsManager } from './TopicsManager'
+
+const { RangePicker } = DatePicker
+const { Title, Text } = Typography
+
+function toman(rial: number): string {
+  return Math.round(rial / 10).toLocaleString('fa-IR')
+}
+
+function pct(v: number | null): string {
+  if (v === null) return '—'
+  return `${(v * 100).toFixed(1)}٪`
+}
+
+function GrowthTag({ value }: { value: number | null }) {
+  if (value === null) return null
+  const positive = value >= 0
+  return (
+    <Tag color={positive ? 'green' : 'red'} icon={positive ? <RiseOutlined /> : <FallOutlined />}>
+      {pct(Math.abs(value))}
+    </Tag>
+  )
+}
+
+function TrendChart({ data }: { data: AnalyticsTimeseriesPoint[] }) {
+  if (!data.length) return <div style={{ textAlign: 'center', padding: 40, color: '#888' }}>{fa.common.noData}</div>
+
+  const W = 760, H = 220, PAD = { top: 20, right: 20, bottom: 30, left: 60 }
+  const plotW = W - PAD.left - PAD.right
+  const plotH = H - PAD.top - PAD.bottom
+  const maxTokens = Math.max(...data.map((d) => d.tokens), 1)
+  const maxCost = Math.max(...data.map((d) => d.costRial), 1)
+
+  const x = (i: number) => PAD.left + (i / Math.max(data.length - 1, 1)) * plotW
+  const yTokens = (v: number) => PAD.top + plotH - (v / maxTokens) * plotH
+  const yCost = (v: number) => PAD.top + plotH - (v / maxCost) * plotH
+
+  const tokensPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${yTokens(d.tokens).toFixed(1)}`).join(' ')
+  const costPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${yCost(d.costRial).toFixed(1)}`).join(' ')
+  const step = Math.ceil(data.length / 8)
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', direction: 'ltr' }}>
+      {[0, 0.25, 0.5, 0.75, 1].map((t) => (
+        <line key={t} x1={PAD.left} y1={PAD.top + plotH * (1 - t)} x2={W - PAD.right} y2={PAD.top + plotH * (1 - t)} stroke="#333" strokeDasharray="3,3" />
+      ))}
+      <path d={tokensPath} fill="none" stroke="#0EA5E9" strokeWidth={2} />
+      <path d={costPath} fill="none" stroke="#F59E0B" strokeWidth={2} strokeDasharray="5,3" />
+      {data.map((d, i) => (i % step === 0 ? (
+        <text key={i} x={x(i)} y={H - 8} fontSize={9} fill="#888" textAnchor="middle">
+          {(d.date ?? d.period ?? '').slice(5)}
+        </text>
+      ) : null))}
+      <line x1={W - 160} y1={15} x2={W - 140} y2={15} stroke="#0EA5E9" strokeWidth={2} />
+      <text x={W - 135} y={19} fontSize={10} fill="#0EA5E9">توکن</text>
+      <line x1={W - 160} y1={30} x2={W - 140} y2={30} stroke="#F59E0B" strokeWidth={2} strokeDasharray="5,3" />
+      <text x={W - 135} y={34} fontSize={10} fill="#F59E0B">هزینه (تومان)</text>
+    </svg>
+  )
+}
+
+export function AnalyticsPage() {
+  const [range, setRange] = useState<[Dayjs, Dayjs]>([dayjs().subtract(29, 'day'), dayjs()])
+  const [compare, setCompare] = useState(false)
+  const [granularity, setGranularity] = useState<'day' | 'week' | 'month'>('day')
+  const [segmentFilter, setSegmentFilter] = useState<string | undefined>(undefined)
+  const [segmentsOpen, setSegmentsOpen] = useState(false)
+  const [topicsOpen, setTopicsOpen] = useState(false)
+
+  const from = range[0].format('YYYY-MM-DD')
+  const to = range[1].format('YYYY-MM-DD')
+
+  const { data: overview, isLoading: overviewLoading } = useAnalyticsOverview(from, to, compare)
+  const { data: timeseries } = useAnalyticsTimeseries(from, to, granularity)
+  const { data: models } = useAnalyticsModels(from, to)
+  const { data: topics } = useAnalyticsTopics(from, to)
+  const { data: limitHits } = useAnalyticsLimitHits(from, to)
+  const { data: users, isLoading: usersLoading } = useAnalyticsUsers(from, to, segmentFilter)
+  const { data: segmentBreakdown } = useAnalyticsSegmentBreakdown(from, to)
+
+  const segmentOptions = useMemo(
+    () => (segmentBreakdown ?? []).map((s) => ({ label: `${s.label} (${s.userCount})`, value: s.label })),
+    [segmentBreakdown],
+  )
+
+  const modelColumns: ColumnsType<AnalyticsModelBreakdown> = [
+    { title: 'مدل', dataIndex: 'model', key: 'model', render: (v: string) => <span style={{ fontFamily: 'monospace' }}>{v}</span> },
+    { title: 'پیام', dataIndex: 'messages', key: 'messages' },
+    { title: 'توکن ورودی', dataIndex: 'tokensInput', key: 'tokensInput' },
+    { title: 'توکن خروجی', dataIndex: 'tokensOutput', key: 'tokensOutput' },
+    { title: 'هزینه (تومان)', dataIndex: 'costRial', key: 'costRial', render: (v: number) => toman(v).toString() },
+  ]
+
+  const segmentColumns: ColumnsType<AnalyticsSegmentBreakdown> = [
+    { title: 'دسته', dataIndex: 'label', key: 'label' },
+    { title: 'تعداد کاربر', dataIndex: 'userCount', key: 'userCount' },
+    {
+      title: 'میانگین/میانه پیام روزانه',
+      key: 'msg',
+      render: (_, r) => `${r.avgMessagesPerDay.toFixed(1)} / ${r.medianMessagesPerDay.toFixed(1)}`,
+    },
+    {
+      title: 'میانگین/میانه توکن روزانه',
+      key: 'tok',
+      render: (_, r) => `${Math.round(r.avgTokensPerDay)} / ${Math.round(r.medianTokensPerDay)}`,
+    },
+    { title: 'هزینه (تومان)', dataIndex: 'costRial', key: 'costRial', render: (v: number) => toman(v) },
+    { title: 'درآمد (تومان)', dataIndex: 'revenueRial', key: 'revenueRial', render: (v: number) => toman(v) },
+    {
+      title: 'حاشیه سود',
+      key: 'margin',
+      render: (_, r) => (
+        <Tag color={r.marginPct !== null && r.marginPct < 0 ? 'red' : 'green'}>
+          {toman(r.marginRial)} ({pct(r.marginPct)})
+        </Tag>
+      ),
+    },
+  ]
+
+  const userColumns: ColumnsType<AnalyticsUserRow> = [
+    { title: 'موبایل', dataIndex: 'phone', key: 'phone' },
+    { title: 'نام', dataIndex: 'name', key: 'name' },
+    { title: 'پیام', dataIndex: 'messages', key: 'messages' },
+    {
+      title: 'توکن (ورودی/خروجی)',
+      key: 'tokens',
+      render: (_, r) => `${r.tokensInput} / ${r.tokensOutput}`,
+    },
+    { title: 'هزینه (تومان)', dataIndex: 'costRial', key: 'costRial', render: (v: number) => toman(v) },
+    { title: 'درآمد (تومان)', dataIndex: 'revenueRial', key: 'revenueRial', render: (v: number) => toman(v) },
+    {
+      title: 'حاشیه سود',
+      dataIndex: 'marginRial',
+      key: 'marginRial',
+      render: (v: number) => <Tag color={v < 0 ? 'red' : 'green'}>{toman(v)}</Tag>,
+    },
+    { title: 'پرمصرف‌ترین مدل', dataIndex: 'mostUsedModel', key: 'mostUsedModel', render: (v: string | null) => v ?? '—' },
+    {
+      title: 'دسته',
+      dataIndex: 'segment',
+      key: 'segment',
+      render: (v: string | null) => (v ? <Tag>{v}</Tag> : <Tag>{fa.analytics.noSegment}</Tag>),
+    },
+  ]
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
+        <Title level={4} style={{ margin: 0 }}>{fa.analytics.title}</Title>
+        <Space wrap>
+          <RangePicker
+            value={range}
+            onChange={(v) => v && v[0] && v[1] && setRange([v[0], v[1]])}
+            allowClear={false}
+          />
+          <Space size={4}>
+            <Text style={{ fontSize: 13 }}>{fa.analytics.compare}</Text>
+            <Switch checked={compare} onChange={setCompare} size="small" />
+          </Space>
+          <Button icon={<SettingOutlined />} onClick={() => setSegmentsOpen(true)}>{fa.analytics.manageSegments}</Button>
+          <Button icon={<SettingOutlined />} onClick={() => setTopicsOpen(true)}>{fa.analytics.manageTopics}</Button>
+        </Space>
+      </div>
+
+      {overviewLoading || !overview ? (
+        <Spin />
+      ) : (
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} lg={6}>
+            <Card>
+              <Statistic title={fa.analytics.totalTokens} value={overview.current.totalTokens} />
+              <GrowthTag value={overview.growth?.totalTokens ?? null} />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <Card>
+              <Statistic title={fa.analytics.totalMessages} value={overview.current.totalMessages} prefix={<MessageOutlined style={{ marginLeft: 6 }} />} />
+              <GrowthTag value={overview.growth?.totalMessages ?? null} />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <Card>
+              <Statistic title={fa.analytics.costRial} value={toman(overview.current.costRial)} prefix={<DollarOutlined style={{ marginLeft: 6 }} />} />
+              <Text type="secondary" style={{ fontSize: 12 }}>${overview.current.costUsd.toFixed(2)}</Text>
+              <GrowthTag value={overview.growth?.costRial ?? null} />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <Card>
+              <Statistic title={fa.analytics.revenue} value={toman(overview.current.revenueRial)} />
+              <GrowthTag value={overview.growth?.revenueRial ?? null} />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} lg={8}>
+            <Card>
+              <Statistic
+                title={fa.analytics.margin}
+                value={toman(overview.current.marginRial)}
+                valueStyle={{ color: overview.current.marginRial < 0 ? '#ef4444' : '#10b981' }}
+                suffix={overview.current.marginPct !== null ? `(${pct(overview.current.marginPct)})` : undefined}
+              />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} lg={8}>
+            <Card><Statistic title={fa.analytics.avgTokensPerMessage} value={overview.current.avgTokensPerMessage} /></Card>
+          </Col>
+          <Col xs={24} sm={12} lg={8}>
+            <Card><Statistic title={fa.analytics.topModel} value={overview.current.topModel ?? '—'} valueStyle={{ fontFamily: 'monospace', fontSize: 16 }} /></Card>
+          </Col>
+        </Row>
+      )}
+
+      <Card
+        style={{ marginTop: 16 }}
+        title={fa.analytics.trendTitle}
+        extra={
+          <Segmented
+            value={granularity}
+            onChange={(v) => setGranularity(v as typeof granularity)}
+            options={[
+              { label: fa.analytics.granularity.day, value: 'day' },
+              { label: fa.analytics.granularity.week, value: 'week' },
+              { label: fa.analytics.granularity.month, value: 'month' },
+            ]}
+          />
+        }
+      >
+        {timeseries ? <TrendChart data={timeseries} /> : <Spin />}
+      </Card>
+
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+        <Col xs={24} lg={12}>
+          <Card title={fa.analytics.modelsTitle}>
+            <Table rowKey="model" dataSource={models ?? []} columns={modelColumns} pagination={false} size="small" />
+          </Card>
+        </Col>
+        <Col xs={24} lg={12}>
+          <Card title={fa.analytics.topicsTitle}>
+            <Space direction="vertical" style={{ width: '100%' }}>
+              {(topics ?? []).map((t) => (
+                <div key={t.topicId ?? 'none'} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Tag color={t.color ?? 'default'}>{t.name}</Tag>
+                  <Text>{t.messages} پیام ({pct(t.pct)})</Text>
+                </div>
+              ))}
+            </Space>
+          </Card>
+        </Col>
+      </Row>
+
+      {limitHits && limitHits.uniqueUsers > 0 && (
+        <Card style={{ marginTop: 16 }} title={fa.analytics.limitHitsTitle}>
+          <Space wrap>
+            <Tag icon={<WarningOutlined />} color="orange">
+              {fa.analytics.uniqueUsersHitLimit}: {limitHits.uniqueUsers}
+            </Tag>
+            {limitHits.byType.map((b) => (
+              <Tag key={b.type}>{b.type}: {b.count}</Tag>
+            ))}
+          </Space>
+        </Card>
+      )}
+
+      <Card style={{ marginTop: 16 }} title={fa.analytics.segmentsTitle}>
+        <Table rowKey="label" dataSource={segmentBreakdown ?? []} columns={segmentColumns} pagination={false} size="small" scroll={{ x: 'max-content' }} />
+      </Card>
+
+      <Card
+        style={{ marginTop: 16 }}
+        title={fa.analytics.usersTitle}
+        extra={
+          <Space>
+            <Select
+              allowClear
+              placeholder="فیلتر بر اساس دسته"
+              style={{ width: 200 }}
+              options={segmentOptions}
+              value={segmentFilter}
+              onChange={setSegmentFilter}
+            />
+            <Button onClick={() => void downloadAnalyticsUsersCsv(from, to, segmentFilter)}>
+              {fa.analytics.exportCsv}
+            </Button>
+          </Space>
+        }
+      >
+        <Table<AnalyticsUserRow>
+          rowKey="userId"
+          dataSource={users ?? []}
+          columns={userColumns}
+          loading={usersLoading}
+          size="small"
+          scroll={{ x: 'max-content' }}
+          locale={{ emptyText: fa.common.noData }}
+        />
+      </Card>
+
+      <SegmentsManager open={segmentsOpen} onClose={() => setSegmentsOpen(false)} />
+      <TopicsManager open={topicsOpen} onClose={() => setTopicsOpen(false)} />
+    </div>
+  )
+}

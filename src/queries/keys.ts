@@ -19,4 +19,19 @@ export const keys = {
       ['admin', 'model-feedback', page, model ?? 'all', vote ?? 'all'] as const,
     summary: () => ['admin', 'model-feedback', 'summary'] as const,
   },
+  analytics: {
+    overview: (from: string, to: string, compare: boolean) =>
+      ['admin', 'analytics', 'overview', from, to, compare] as const,
+    timeseries: (from: string, to: string, granularity: string) =>
+      ['admin', 'analytics', 'timeseries', from, to, granularity] as const,
+    models: (from: string, to: string) => ['admin', 'analytics', 'models', from, to] as const,
+    topics: (from: string, to: string) => ['admin', 'analytics', 'topics', from, to] as const,
+    limitHits: (from: string, to: string) => ['admin', 'analytics', 'limit-hits', from, to] as const,
+    users: (from: string, to: string, segment?: string) =>
+      ['admin', 'analytics', 'users', from, to, segment ?? 'all'] as const,
+    segments: () => ['admin', 'analytics', 'segments'] as const,
+    segmentBreakdown: (from: string, to: string) =>
+      ['admin', 'analytics', 'segments', 'breakdown', from, to] as const,
+    topicsList: () => ['admin', 'topics'] as const,
+  },
 } as const

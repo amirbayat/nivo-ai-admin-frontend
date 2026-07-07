@@ -13,6 +13,7 @@ import {
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
 import { fa } from '@/locales/fa'
@@ -26,6 +27,7 @@ const menuItems = [
   { key: '/admin/plans', icon: <AppstoreOutlined />, label: fa.nav.plans },
   { key: '/admin/models', icon: <RobotOutlined />, label: fa.nav.models },
   { key: '/admin/model-feedback', icon: <LikeOutlined />, label: fa.nav.modelFeedback },
+  { key: '/admin/analytics', icon: <BarChartOutlined />, label: fa.nav.analytics },
   { key: '/admin/payments', icon: <PayCircleOutlined />, label: fa.nav.payments },
   { key: '/admin/feedback', icon: <MessageOutlined />, label: fa.nav.feedback },
   { key: '/admin/tickets', icon: <CustomerServiceOutlined />, label: fa.nav.tickets },
