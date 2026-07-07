@@ -34,4 +34,9 @@ export const keys = {
       ['admin', 'analytics', 'segments', 'breakdown', from, to] as const,
     topicsList: () => ['admin', 'topics'] as const,
   },
+  campaigns: {
+    list: () => ['admin', 'campaigns'] as const,
+    waitlist: (campaignId: string, status?: string) =>
+      ['admin', 'campaigns', campaignId, 'waitlist', status ?? 'all'] as const,
+  },
 } as const

@@ -258,3 +258,46 @@ export interface Topic {
   sortOrder: number
   isActive: boolean
 }
+
+// ── Soft-Launch Waitlist Campaign ───────────────────────────────────────────
+
+export interface ReminderStep {
+  dayOffset: number
+  template: string
+}
+
+export interface LaunchCampaign {
+  id: string
+  name: string
+  startAt: string
+  endAt: string | null
+  capacity: number
+  grantedCount: number
+  maxWaitlistSize: number | null
+  status: 'ACTIVE' | 'CLOSED'
+  waitlistMessage: string
+  waitlistFullMessage: string | null
+  waitlistDailyMessageLimit: number
+  displayCounterEnabled: boolean
+  displayInitialPct: number
+  displayFloor: number
+  displayTickSeconds: number
+  displayDecrementMin: number
+  displayDecrementMax: number
+  grantedSmsTemplate: string | null
+  reminderSteps: ReminderStep[]
+  createdAt: string
+}
+
+export interface WaitlistEntry {
+  id: string
+  campaignId: string
+  userId: string
+  phone: string
+  status: 'WAITING' | 'GRANTED' | 'ACTIVATED'
+  createdAt: string
+  grantedAt: string | null
+  activatedAt: string | null
+  lastReminderStepSent: number | null
+  lastReminderSentAt: string | null
+}
