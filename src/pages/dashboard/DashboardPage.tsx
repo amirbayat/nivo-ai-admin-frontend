@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import { Card, Col, Row, Statistic, Spin, Alert, Typography, Segmented, Tag } from 'antd'
+import { Card, Col, Row, Statistic, Spin, Alert, Typography, Segmented, Tag, Space } from 'antd'
 import {
   UserOutlined, TeamOutlined, DollarOutlined, RiseOutlined,
-  MessageOutlined, CalendarOutlined, WarningOutlined,
+  MessageOutlined, CalendarOutlined, WarningOutlined, ClockCircleOutlined,
 } from '@ant-design/icons'
 import { useDashboardStats, useCostChart, usePricingAlert } from '@/queries/admin.queries'
 import type { CostChartPoint } from '@/types/api'
 import { fa } from '@/locales/fa'
 
-const { Title } = Typography
+const { Title, Text } = Typography
 
 function StatCard({ title, value, suffix, icon, color }: {
   title: string; value: number; suffix?: string; icon: React.ReactNode; color: string
@@ -89,6 +89,27 @@ export function DashboardPage() {
     <div>
       <Title level={4} style={{ marginBottom: 24 }}>{fa.dashboard.title}</Title>
 
+      <Card style={{ marginBottom: 16 }} size="small">
+        <Space wrap size={16}>
+          <Space size={6}>
+            <DollarOutlined style={{ color: '#f59e0b' }} />
+            <Text strong>{fa.dashboard.exchangeRateTitle}:</Text>
+            <Text>{Math.round(data.exchangeRate.rial / 10).toLocaleString('fa-IR')} {fa.dashboard.toman}</Text>
+          </Space>
+          <Tag color={data.exchangeRate.source === 'live' ? 'green' : 'red'}>
+            {data.exchangeRate.source === 'live' ? fa.dashboard.exchangeRateLive : fa.dashboard.exchangeRateFallback}
+          </Tag>
+          {data.exchangeRate.updatedAt && (
+            <Space size={6}>
+              <ClockCircleOutlined style={{ color: '#888' }} />
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                {fa.dashboard.exchangeRateUpdatedAt}: {new Date(data.exchangeRate.updatedAt).toLocaleString('fa-IR')}
+              </Text>
+            </Space>
+          )}
+        </Space>
+      </Card>
+
       {alert && alert.alertLevel !== 'safe' && (
         <Alert
           type={alert.alertLevel === 'critical' ? 'error' : 'warning'}
@@ -127,7 +148,7 @@ export function DashboardPage() {
               هزینه AI: {alert.aiCostRatio}٪ درآمد
             </Tag>
             <Tag>درآمد این ماه: {Math.round(alert.monthlyRevenueToman / 10).toLocaleString('fa-IR')} تومان</Tag>
-            <Tag>هزینه AI: {Math.round(alert.monthlyAiCostRial / 10).toLocaleString('fa-IR')} تومان</Tag>
+            <Tag>هزینه AI: {Math.round(alert.monthlyAiCostRial / 10).toLocaleString('fa-IR')} تومان (${alert.monthlyAiCostUsd.toFixed(2)})</Tag>
           </div>
         )}
       </Card>

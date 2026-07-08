@@ -12,6 +12,12 @@ export interface AdminUser {
   category: 'heavy' | 'moderate' | 'light' | 'inactive'
 }
 
+export interface ExchangeRateInfo {
+  rial: number
+  updatedAt: string | null
+  source: 'live' | 'fallback'
+}
+
 export interface DashboardStats {
   totalUsers: number
   activeUsers: number
@@ -19,17 +25,20 @@ export interface DashboardStats {
   mrr: number
   totalConversations: number
   todayConversations: number
+  exchangeRate: ExchangeRateInfo
 }
 
 export interface CostChartPoint {
   date: string
   aiCostRial: number
+  aiCostUsd: number
   revenueToman: number
 }
 
 export interface PricingAlert {
   monthlyRevenueToman: number
   monthlyAiCostRial: number
+  monthlyAiCostUsd: number
   aiCostRatio: number
   alertLevel: 'safe' | 'warning' | 'critical'
   suggestion: string | null
@@ -164,6 +173,10 @@ export interface AnalyticsOverviewData {
   marginRial: number
   marginPct: number | null
   avgTokensPerMessage: number
+  avgInputTokensPerMessage: number
+  avgOutputTokensPerMessage: number
+  avgInputPricePerMillionUsd: number
+  avgOutputPricePerMillionUsd: number
   topModel: string | null
 }
 
@@ -194,6 +207,10 @@ export interface AnalyticsModelBreakdown {
   tokensOutput: number
   costRial: number
   costUsd: number
+  costInputUsd: number
+  costOutputUsd: number
+  avgInputPricePerMillionUsd: number
+  avgOutputPricePerMillionUsd: number
 }
 
 export interface AnalyticsTopicBreakdown {
@@ -236,6 +253,7 @@ export interface AnalyticsSegmentBreakdown {
   medianTokensPerDay: number
   p90TokensPerDay: number
   costRial: number
+  costUsd: number
   revenueRial: number
   marginRial: number
   marginPct: number | null

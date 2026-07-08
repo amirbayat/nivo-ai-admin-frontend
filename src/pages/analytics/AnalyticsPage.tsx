@@ -32,6 +32,10 @@ function pct(v: number | null): string {
   return `${(v * 100).toFixed(1)}٪`
 }
 
+function usd(v: number): string {
+  return `$${v.toFixed(v < 1 ? 4 : 2)}`
+}
+
 function GrowthTag({ value }: { value: number | null }) {
   if (value === null) return null
   const positive = value >= 0
@@ -109,6 +113,13 @@ export function AnalyticsPage() {
     { title: 'توکن ورودی', dataIndex: 'tokensInput', key: 'tokensInput' },
     { title: 'توکن خروجی', dataIndex: 'tokensOutput', key: 'tokensOutput' },
     { title: 'هزینه (تومان)', dataIndex: 'costRial', key: 'costRial', render: (v: number) => toman(v).toString() },
+    { title: 'هزینه ورودی ($)', dataIndex: 'costInputUsd', key: 'costInputUsd', render: (v: number) => usd(v) },
+    { title: 'هزینه خروجی ($)', dataIndex: 'costOutputUsd', key: 'costOutputUsd', render: (v: number) => usd(v) },
+    {
+      title: 'قیمت ورودی/خروجی (هر ۱M توکن)',
+      key: 'avgPrice',
+      render: (_, r) => `${usd(r.avgInputPricePerMillionUsd)} / ${usd(r.avgOutputPricePerMillionUsd)}`,
+    },
   ]
 
   const segmentColumns: ColumnsType<AnalyticsSegmentBreakdown> = [
@@ -125,6 +136,7 @@ export function AnalyticsPage() {
       render: (_, r) => `${Math.round(r.avgTokensPerDay)} / ${Math.round(r.medianTokensPerDay)}`,
     },
     { title: 'هزینه (تومان)', dataIndex: 'costRial', key: 'costRial', render: (v: number) => toman(v) },
+    { title: 'هزینه (دلار)', dataIndex: 'costUsd', key: 'costUsd', render: (v: number) => usd(v) },
     { title: 'درآمد (تومان)', dataIndex: 'revenueRial', key: 'revenueRial', render: (v: number) => toman(v) },
     {
       title: 'حاشیه سود',
@@ -226,6 +238,28 @@ export function AnalyticsPage() {
           </Col>
           <Col xs={24} sm={12} lg={8}>
             <Card><Statistic title={fa.analytics.topModel} value={overview.current.topModel ?? '—'} valueStyle={{ fontFamily: 'monospace', fontSize: 16 }} /></Card>
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <Card>
+              <Statistic title={fa.analytics.avgInputTokensPerMessage} value={overview.current.avgInputTokensPerMessage} />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <Card>
+              <Statistic title={fa.analytics.avgOutputTokensPerMessage} value={overview.current.avgOutputTokensPerMessage} />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <Card>
+              <Statistic title={fa.analytics.avgInputPrice} value={usd(overview.current.avgInputPricePerMillionUsd)} />
+              <Text type="secondary" style={{ fontSize: 11 }}>{fa.analytics.weightedAvgHint}</Text>
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <Card>
+              <Statistic title={fa.analytics.avgOutputPrice} value={usd(overview.current.avgOutputPricePerMillionUsd)} />
+              <Text type="secondary" style={{ fontSize: 11 }}>{fa.analytics.weightedAvgHint}</Text>
+            </Card>
           </Col>
         </Row>
       )}
