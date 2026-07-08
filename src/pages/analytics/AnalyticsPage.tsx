@@ -128,7 +128,14 @@ export function AnalyticsPage() {
       render: (_, r) => `${toman(r.costOutputRial)} ت / ${usd(r.costOutputUsd)}`,
     },
     {
-      title: 'قیمت ورودی/خروجی (هر ۱M توکن)',
+      title: (
+        <Space size={4}>
+          قیمت ورودی/خروجی (هر ۱M توکن)
+          <Tooltip title={fa.analytics.perModelPriceHint}>
+            <QuestionCircleOutlined style={{ color: '#888' }} />
+          </Tooltip>
+        </Space>
+      ),
       key: 'avgPrice',
       render: (_, r) => `${usd(r.avgInputPricePerMillionUsd)} / ${usd(r.avgOutputPricePerMillionUsd)}`,
     },
