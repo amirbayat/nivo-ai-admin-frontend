@@ -7,6 +7,7 @@ export interface AdminUser {
   subscription: { plan: { name: string; priceMonthly: number }; periodEnd: string; periodStart: string } | null
   chargedThisMonth: number
   aiCostThisMonth: number
+  aiCostUsdThisMonth: number
   expectedByNow: number
   category: 'heavy' | 'moderate' | 'light' | 'inactive'
 }

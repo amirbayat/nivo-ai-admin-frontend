@@ -155,6 +155,16 @@ export function UsersPage() {
       ),
     },
     {
+      title: 'مصرف AI ($)',
+      key: 'aiCostUsd',
+      width: 90,
+      render: (_, r) => (
+        <span style={{ fontSize: 12, color: '#94a3b8', fontFamily: 'monospace' }}>
+          ${r.aiCostUsdThisMonth.toFixed(3)}
+        </span>
+      ),
+    },
+    {
       title: 'انتظار تا الان',
       key: 'expected',
       width: 110,
