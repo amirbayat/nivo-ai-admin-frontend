@@ -66,6 +66,17 @@ export function useAnalyticsUsers(from: string, to: string, segment?: string) {
   })
 }
 
+export function useAnalyticsUserModels(userId: string | undefined, from: string, to: string) {
+  return useQuery({
+    queryKey: keys.analytics.userModels(userId ?? '', from, to),
+    queryFn: () =>
+      api
+        .get<AnalyticsModelBreakdown[]>(`/admin/analytics/users/${userId}/models`, { params: { from, to } })
+        .then((r) => r.data),
+    enabled: Boolean(userId),
+  })
+}
+
 export async function downloadAnalyticsUsersCsv(from: string, to: string, segment?: string) {
   const res = await api.get('/admin/analytics/users/export', {
     params: { from, to, segment },

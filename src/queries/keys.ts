@@ -29,6 +29,8 @@ export const keys = {
     limitHits: (from: string, to: string) => ['admin', 'analytics', 'limit-hits', from, to] as const,
     users: (from: string, to: string, segment?: string) =>
       ['admin', 'analytics', 'users', from, to, segment ?? 'all'] as const,
+    userModels: (userId: string, from: string, to: string) =>
+      ['admin', 'analytics', 'users', userId, 'models', from, to] as const,
     segments: () => ['admin', 'analytics', 'segments'] as const,
     segmentBreakdown: (from: string, to: string) =>
       ['admin', 'analytics', 'segments', 'breakdown', from, to] as const,

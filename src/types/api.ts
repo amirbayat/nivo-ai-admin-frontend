@@ -177,6 +177,8 @@ export interface AnalyticsOverviewData {
   avgOutputTokensPerMessage: number
   avgInputPricePerMillionUsd: number
   avgOutputPricePerMillionUsd: number
+  avgInputPricePerMillionRial: number
+  avgOutputPricePerMillionRial: number
   topModel: string | null
 }
 
@@ -209,6 +211,8 @@ export interface AnalyticsModelBreakdown {
   costUsd: number
   costInputUsd: number
   costOutputUsd: number
+  costInputRial: number
+  costOutputRial: number
   avgInputPricePerMillionUsd: number
   avgOutputPricePerMillionUsd: number
 }

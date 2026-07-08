@@ -2,16 +2,17 @@ import { useMemo, useState } from 'react'
 import dayjs, { type Dayjs } from 'dayjs'
 import {
   Card, Col, Row, Statistic, Spin, Typography, Space, Switch,
-  DatePicker, Segmented, Table, Tag, Select, Button,
+  DatePicker, Segmented, Table, Tag, Select, Button, Tooltip, Modal,
 } from 'antd'
 import {
   DollarOutlined, MessageOutlined, RiseOutlined, FallOutlined,
-  WarningOutlined, SettingOutlined,
+  WarningOutlined, SettingOutlined, QuestionCircleOutlined,
 } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import {
   useAnalyticsOverview, useAnalyticsTimeseries, useAnalyticsModels, useAnalyticsTopics,
-  useAnalyticsLimitHits, useAnalyticsUsers, useAnalyticsSegmentBreakdown, downloadAnalyticsUsersCsv,
+  useAnalyticsLimitHits, useAnalyticsUsers, useAnalyticsUserModels, useAnalyticsSegmentBreakdown,
+  downloadAnalyticsUsersCsv,
 } from '@/queries/analytics.queries'
 import type {
   AnalyticsModelBreakdown, AnalyticsSegmentBreakdown, AnalyticsTimeseriesPoint, AnalyticsUserRow,
@@ -90,6 +91,7 @@ export function AnalyticsPage() {
   const [segmentFilter, setSegmentFilter] = useState<string | undefined>(undefined)
   const [segmentsOpen, setSegmentsOpen] = useState(false)
   const [topicsOpen, setTopicsOpen] = useState(false)
+  const [modalUserId, setModalUserId] = useState<string | null>(null)
 
   const from = range[0].format('YYYY-MM-DD')
   const to = range[1].format('YYYY-MM-DD')
@@ -101,6 +103,8 @@ export function AnalyticsPage() {
   const { data: limitHits } = useAnalyticsLimitHits(from, to)
   const { data: users, isLoading: usersLoading } = useAnalyticsUsers(from, to, segmentFilter)
   const { data: segmentBreakdown } = useAnalyticsSegmentBreakdown(from, to)
+  const { data: userModels, isLoading: userModelsLoading } = useAnalyticsUserModels(modalUserId ?? undefined, from, to)
+  const modalUser = users?.find((u) => u.userId === modalUserId) ?? null
 
   const segmentOptions = useMemo(
     () => (segmentBreakdown ?? []).map((s) => ({ label: `${s.label} (${s.userCount})`, value: s.label })),
@@ -113,8 +117,16 @@ export function AnalyticsPage() {
     { title: 'توکن ورودی', dataIndex: 'tokensInput', key: 'tokensInput' },
     { title: 'توکن خروجی', dataIndex: 'tokensOutput', key: 'tokensOutput' },
     { title: 'هزینه (تومان)', dataIndex: 'costRial', key: 'costRial', render: (v: number) => toman(v).toString() },
-    { title: 'هزینه ورودی ($)', dataIndex: 'costInputUsd', key: 'costInputUsd', render: (v: number) => usd(v) },
-    { title: 'هزینه خروجی ($)', dataIndex: 'costOutputUsd', key: 'costOutputUsd', render: (v: number) => usd(v) },
+    {
+      title: 'هزینه ورودی',
+      key: 'costInput',
+      render: (_, r) => `${toman(r.costInputRial)} ت / ${usd(r.costInputUsd)}`,
+    },
+    {
+      title: 'هزینه خروجی',
+      key: 'costOutput',
+      render: (_, r) => `${toman(r.costOutputRial)} ت / ${usd(r.costOutputUsd)}`,
+    },
     {
       title: 'قیمت ورودی/خروجی (هر ۱M توکن)',
       key: 'avgPrice',
@@ -251,13 +263,37 @@ export function AnalyticsPage() {
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <Card>
-              <Statistic title={fa.analytics.avgInputPrice} value={usd(overview.current.avgInputPricePerMillionUsd)} />
+              <Statistic
+                title={
+                  <Space size={4}>
+                    {fa.analytics.avgInputPrice}
+                    <Tooltip title={fa.analytics.perMillionTokensHint}>
+                      <QuestionCircleOutlined style={{ color: '#888' }} />
+                    </Tooltip>
+                  </Space>
+                }
+                value={`${toman(overview.current.avgInputPricePerMillionRial)} ت`}
+              />
+              <Text type="secondary" style={{ fontSize: 12 }}>{usd(overview.current.avgInputPricePerMillionUsd)}</Text>
+              <br />
               <Text type="secondary" style={{ fontSize: 11 }}>{fa.analytics.weightedAvgHint}</Text>
             </Card>
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <Card>
-              <Statistic title={fa.analytics.avgOutputPrice} value={usd(overview.current.avgOutputPricePerMillionUsd)} />
+              <Statistic
+                title={
+                  <Space size={4}>
+                    {fa.analytics.avgOutputPrice}
+                    <Tooltip title={fa.analytics.perMillionTokensHint}>
+                      <QuestionCircleOutlined style={{ color: '#888' }} />
+                    </Tooltip>
+                  </Space>
+                }
+                value={`${toman(overview.current.avgOutputPricePerMillionRial)} ت`}
+              />
+              <Text type="secondary" style={{ fontSize: 12 }}>{usd(overview.current.avgOutputPricePerMillionUsd)}</Text>
+              <br />
               <Text type="secondary" style={{ fontSize: 11 }}>{fa.analytics.weightedAvgHint}</Text>
             </Card>
           </Col>
@@ -282,25 +318,20 @@ export function AnalyticsPage() {
         {timeseries ? <TrendChart data={timeseries} /> : <Spin />}
       </Card>
 
-      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-        <Col xs={24} lg={12}>
-          <Card title={fa.analytics.modelsTitle}>
-            <Table rowKey="model" dataSource={models ?? []} columns={modelColumns} pagination={false} size="small" />
-          </Card>
-        </Col>
-        <Col xs={24} lg={12}>
-          <Card title={fa.analytics.topicsTitle}>
-            <Space direction="vertical" style={{ width: '100%' }}>
-              {(topics ?? []).map((t) => (
-                <div key={t.topicId ?? 'none'} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Tag color={t.color ?? 'default'}>{t.name}</Tag>
-                  <Text>{t.messages} پیام ({pct(t.pct)})</Text>
-                </div>
-              ))}
-            </Space>
-          </Card>
-        </Col>
-      </Row>
+      <Card style={{ marginTop: 16 }} title={fa.analytics.modelsTitle}>
+        <Table rowKey="model" dataSource={models ?? []} columns={modelColumns} pagination={false} size="small" scroll={{ x: 'max-content' }} />
+      </Card>
+
+      <Card style={{ marginTop: 16 }} title={fa.analytics.topicsTitle}>
+        <Space direction="vertical" style={{ width: '100%' }}>
+          {(topics ?? []).map((t) => (
+            <div key={t.topicId ?? 'none'} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Tag color={t.color ?? 'default'}>{t.name}</Tag>
+              <Text>{t.messages} پیام ({pct(t.pct)})</Text>
+            </div>
+          ))}
+        </Space>
+      </Card>
 
       {limitHits && limitHits.uniqueUsers > 0 && (
         <Card style={{ marginTop: 16 }} title={fa.analytics.limitHitsTitle}>
@@ -346,8 +377,31 @@ export function AnalyticsPage() {
           size="small"
           scroll={{ x: 'max-content' }}
           locale={{ emptyText: fa.common.noData }}
+          onRow={(record) => ({
+            onClick: () => setModalUserId(record.userId),
+            style: { cursor: 'pointer' },
+          })}
         />
       </Card>
+
+      <Modal
+        open={Boolean(modalUserId)}
+        onCancel={() => setModalUserId(null)}
+        title={modalUser ? `${fa.analytics.userModelsTitle} — ${modalUser.name ?? modalUser.phone}` : fa.analytics.userModelsTitle}
+        footer={null}
+        width={720}
+      >
+        <Table<AnalyticsModelBreakdown>
+          rowKey="model"
+          dataSource={userModels ?? []}
+          columns={modelColumns}
+          loading={userModelsLoading}
+          pagination={false}
+          size="small"
+          scroll={{ x: 'max-content' }}
+          locale={{ emptyText: fa.common.noData }}
+        />
+      </Modal>
 
       <SegmentsManager open={segmentsOpen} onClose={() => setSegmentsOpen(false)} />
       <TopicsManager open={topicsOpen} onClose={() => setTopicsOpen(false)} />
