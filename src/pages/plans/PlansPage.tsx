@@ -137,6 +137,7 @@ export function PlansPage() {
         outputThrottleSteps: (values.outputThrottleSteps ?? []).filter(s => s?.afterMessages && s?.maxOutputTokens),
         rollingWindowLimit: values.rollingWindowLimit ?? null,
         rollingWindowHours: values.rollingWindowHours ?? 3,
+        simpleModel: null, // فقط از صفحه‌ی «مسیریابی مدل‌ها» تنظیم می‌شود
       }
       const onSuccess = () => {
         void messageApi.success(fa.plans.saved)

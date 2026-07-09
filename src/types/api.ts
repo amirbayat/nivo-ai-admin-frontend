@@ -86,6 +86,18 @@ export interface Plan {
   outputThrottleSteps: ThrottleStep[]
   rollingWindowLimit: number | null
   rollingWindowHours: number
+  simpleModel: string | null
+}
+
+export interface RoutingStep {
+  order: number
+  thresholdPct: number
+  models: string[]
+}
+
+export interface PlanRouting {
+  simpleModel: string | null
+  steps: RoutingStep[]
 }
 
 export interface FeedbackItem {

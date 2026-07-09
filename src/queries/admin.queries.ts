@@ -8,6 +8,7 @@ import type {
   DashboardStats,
   ManualLimit,
   Plan,
+  PlanRouting,
   PricingAlert,
   FeedbackItem,
   FeedbackSummary,
@@ -84,6 +85,25 @@ export function useUpdatePlan() {
       api.patch<Plan>(`/plans/${id}`, data).then((r) => r.data),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: keys.plans.list() })
+    },
+  })
+}
+
+export function usePlanRouting(planId: string | undefined) {
+  return useQuery({
+    queryKey: keys.planRouting.detail(planId ?? ''),
+    queryFn: () => api.get<PlanRouting>(`/admin/plans/${planId}/routing`).then((r) => r.data),
+    enabled: !!planId,
+  })
+}
+
+export function useUpdatePlanRouting() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ planId, data }: { planId: string; data: PlanRouting }) =>
+      api.put<{ message: string }>(`/admin/plans/${planId}/routing`, data).then((r) => r.data),
+    onSuccess: (_, { planId }) => {
+      void qc.invalidateQueries({ queryKey: keys.planRouting.detail(planId) })
     },
   })
 }

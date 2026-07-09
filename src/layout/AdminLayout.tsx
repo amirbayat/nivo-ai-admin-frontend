@@ -15,6 +15,7 @@ import {
   MenuUnfoldOutlined,
   BarChartOutlined,
   RocketOutlined,
+  ApartmentOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
 import { fa } from '@/locales/fa'
@@ -27,6 +28,7 @@ const menuItems = [
   { key: '/admin/users', icon: <UserOutlined />, label: fa.nav.users },
   { key: '/admin/plans', icon: <AppstoreOutlined />, label: fa.nav.plans },
   { key: '/admin/models', icon: <RobotOutlined />, label: fa.nav.models },
+  { key: '/admin/model-routing', icon: <ApartmentOutlined />, label: fa.nav.modelRouting },
   { key: '/admin/model-feedback', icon: <LikeOutlined />, label: fa.nav.modelFeedback },
   { key: '/admin/analytics', icon: <BarChartOutlined />, label: fa.nav.analytics },
   { key: '/admin/campaigns', icon: <RocketOutlined />, label: fa.nav.campaigns },

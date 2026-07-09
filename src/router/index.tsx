@@ -8,6 +8,7 @@ import { PaymentsPage } from '@/pages/payments/PaymentsPage'
 import { FeedbackPage } from '@/pages/feedback/FeedbackPage'
 import { TicketsPage } from '@/pages/tickets/TicketsPage'
 import { ModelsPage } from '@/pages/models/ModelsPage'
+import { ModelRoutingPage } from '@/pages/model-routing/ModelRoutingPage'
 import { ModelFeedbackPage } from '@/pages/model-feedback/ModelFeedbackPage'
 import { AnalyticsPage } from '@/pages/analytics/AnalyticsPage'
 import { CampaignsPage } from '@/pages/campaigns/CampaignsPage'
@@ -39,6 +40,7 @@ export function AppRouter() {
         <Route path="feedback" element={<FeedbackPage />} />
         <Route path="tickets" element={<TicketsPage />} />
         <Route path="models" element={<ModelsPage />} />
+        <Route path="model-routing" element={<ModelRoutingPage />} />
         <Route path="model-feedback" element={<ModelFeedbackPage />} />
         <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="campaigns" element={<CampaignsPage />} />

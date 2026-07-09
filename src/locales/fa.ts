@@ -16,6 +16,7 @@ export const fa = {
     users: 'کاربران',
     plans: 'پلن‌ها',
     models: 'مدل‌های AI',
+    modelRouting: 'مسیریابی مدل‌ها',
     payments: 'پرداخت‌ها',
     feedback: 'فیدبک',
     modelFeedback: 'فیدبک مدل‌ها',

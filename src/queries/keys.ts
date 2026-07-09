@@ -3,6 +3,7 @@ export const keys = {
   dashboard: { stats: () => ['admin', 'dashboard'] as const },
   users: { list: (page: number, search: string) => ['admin', 'users', page, search] as const },
   plans: { list: () => ['admin', 'plans'] as const },
+  planRouting: { detail: (planId: string) => ['admin', 'plans', planId, 'routing'] as const },
   payments: { list: (page: number) => ['admin', 'payments', page] as const },
   feedback: {
     list: (page: number) => ['admin', 'feedback', page] as const,
