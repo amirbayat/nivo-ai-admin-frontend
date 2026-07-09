@@ -137,7 +137,9 @@ export function PlansPage() {
         outputThrottleSteps: (values.outputThrottleSteps ?? []).filter(s => s?.afterMessages && s?.maxOutputTokens),
         rollingWindowLimit: values.rollingWindowLimit ?? null,
         rollingWindowHours: values.rollingWindowHours ?? 3,
-        simpleModel: null, // فقط از صفحه‌ی «مسیریابی مدل‌ها» تنظیم می‌شود
+        // simpleModel عمداً اینجا فرستاده نمی‌شود — هم بک‌اند این فیلد را روی این endpoint
+        // نمی‌پذیرد، هم مقدارش فقط باید از صفحه‌ی «مسیریابی مدل‌ها» تغییر کند (وگرنه هر ذخیره‌ی
+        // معمولی پلن، مقدار تنظیم‌شده‌ی آنجا را بی‌صدا null می‌کرد)
       }
       const onSuccess = () => {
         void messageApi.success(fa.plans.saved)

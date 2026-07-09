@@ -67,10 +67,14 @@ export function usePlans() {
   })
 }
 
+// simpleModel روی این دو endpoint پذیرفته نمی‌شود — فقط از /admin/plans/:id/routing قابل تغییر است
+// (usePlanRouting/useUpdatePlanRouting)
+type PlanFormPayload = Omit<Plan, 'id' | 'simpleModel'>
+
 export function useCreatePlan() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: Omit<Plan, 'id'>) =>
+    mutationFn: (data: PlanFormPayload) =>
       api.post<Plan>('/plans', data).then((r) => r.data),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: keys.plans.list() })
@@ -81,7 +85,7 @@ export function useCreatePlan() {
 export function useUpdatePlan() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Omit<Plan, 'id'>> }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<PlanFormPayload> }) =>
       api.patch<Plan>(`/plans/${id}`, data).then((r) => r.data),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: keys.plans.list() })
