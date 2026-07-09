@@ -75,6 +75,9 @@ export interface Plan {
   features: Record<string, unknown>
   isActive: boolean
   sortOrder: number
+  isPopular: boolean
+  featuredModels: string[]
+  featuredModelsCount: number
   dailyMessageLimit: number | null
   throttledMessageCount: number | null
   throttledInputTokens: number | null

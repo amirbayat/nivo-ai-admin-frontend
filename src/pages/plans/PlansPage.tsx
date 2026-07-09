@@ -37,6 +37,9 @@ interface PlanFormValues {
   allowedModels: string[]
   sortOrder: number
   isActive: boolean
+  isPopular: boolean
+  featuredModels: string[]
+  featuredModelsCount: number
   dailyMessageLimit: number | null
   throttledMessageCount: number | null
   throttledInputTokens: number | null
@@ -59,10 +62,31 @@ export function PlansPage() {
   const updatePlan = useUpdatePlan()
   const deletePlan = useDeletePlan()
 
+  // مدل‌های ویژه فقط می‌توانند زیرمجموعه‌ی مدل‌های مجاز باشند — با تغییر allowedModels فیلتر می‌شود
+  const watchedAllowedModels: string[] = Form.useWatch('allowedModels', form) ?? []
+
+  function handleValuesChange(changed: Partial<PlanFormValues>) {
+    if (changed.allowedModels) {
+      const stillValid = (form.getFieldValue('featuredModels') as string[] | undefined ?? [])
+        .filter(m => changed.allowedModels!.includes(m))
+      form.setFieldValue('featuredModels', stillValid)
+    }
+  }
+
   function openAdd() {
     setEditing(null)
     form.resetFields()
-    form.setFieldsValue({ isActive: true, sortOrder: 0, maxInputTokens: 300, outputThrottleSteps: [], allowedModels: [], rollingWindowHours: 3 })
+    form.setFieldsValue({
+      isActive: true,
+      sortOrder: 0,
+      maxInputTokens: 300,
+      outputThrottleSteps: [],
+      allowedModels: [],
+      rollingWindowHours: 3,
+      isPopular: false,
+      featuredModels: [],
+      featuredModelsCount: 5,
+    })
     setOpen(true)
   }
 
@@ -76,6 +100,9 @@ export function PlansPage() {
       allowedModels: plan.allowedModels,
       sortOrder: plan.sortOrder,
       isActive: plan.isActive,
+      isPopular: plan.isPopular,
+      featuredModels: plan.featuredModels,
+      featuredModelsCount: plan.featuredModelsCount,
       dailyMessageLimit: plan.dailyMessageLimit ?? null,
       throttledMessageCount: plan.throttledMessageCount ?? null,
       throttledInputTokens: plan.throttledInputTokens ?? null,
@@ -99,6 +126,9 @@ export function PlansPage() {
         features: {},
         sortOrder: values.sortOrder,
         isActive: values.isActive,
+        isPopular: values.isPopular ?? false,
+        featuredModels: values.featuredModels ?? [],
+        featuredModelsCount: values.featuredModelsCount ?? 5,
         dailyMessageLimit: values.dailyMessageLimit ?? null,
         throttledMessageCount: values.throttledMessageCount ?? null,
         throttledInputTokens: values.throttledInputTokens ?? null,
@@ -211,6 +241,20 @@ export function PlansPage() {
           <Tag>غیرفعال</Tag>
         ),
     },
+    {
+      title: 'محبوب‌ترین',
+      dataIndex: 'isPopular',
+      key: 'isPopular',
+      width: 100,
+      render: (v: boolean) => (v ? <Tag color="gold">محبوب‌ترین</Tag> : <Tag>—</Tag>),
+    },
+    {
+      title: 'مدل‌های ویژه',
+      dataIndex: 'featuredModels',
+      key: 'featuredModels',
+      width: 130,
+      render: (v: string[]) => <Tag color="blue">{v?.length ?? 0} مدل</Tag>,
+    },
     { title: fa.plans.sortOrder, dataIndex: 'sortOrder', key: 'sortOrder', width: 80 },
     {
       title: fa.plans.active,
@@ -268,7 +312,7 @@ export function PlansPage() {
         confirmLoading={isSaving}
         width={600}
       >
-        <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
+        <Form form={form} layout="vertical" style={{ marginTop: 16 }} onValuesChange={handleValuesChange}>
           <Form.Item name="name" label={fa.plans.name} rules={[{ required: true }]}>
             <Input />
           </Form.Item>
@@ -296,6 +340,30 @@ export function PlansPage() {
                 label: `${m.displayName} (${m.name})`,
               }))}
             />
+          </Form.Item>
+          <Form.Item
+            name="featuredModels"
+            label="مدل‌های ویژه‌ی این پلن"
+            extra="زیرمجموعه‌ای از مدل‌های مجاز بالا — این‌ها همان مدل‌هایی هستند که توی دراپ‌داون چت و روی کارت پلن به کاربر نشان داده می‌شوند. ترتیب انتخاب = ترتیب نمایش."
+          >
+            <Select
+              mode="multiple"
+              loading={modelsLoading}
+              placeholder="انتخاب مدل‌های ویژه (اختیاری — خالی = همه‌ی مدل‌های مجاز)"
+              options={(availableModels ?? [])
+                .filter(m => watchedAllowedModels.includes(m.name))
+                .map(m => ({ value: m.name, label: `${m.displayName} (${m.name})` }))}
+            />
+          </Form.Item>
+          <Form.Item
+            name="featuredModelsCount"
+            label="تعداد مدل ویژه روی کارت پلن"
+            extra="چند مورد از مدل‌های ویژه، قبل از دکمه‌ی «N مدل دیگر»، روی کارت پلن نشان داده شود"
+          >
+            <InputNumber style={{ width: '100%' }} min={1} placeholder="۵" />
+          </Form.Item>
+          <Form.Item name="isPopular" label="نشان «محبوب‌ترین»" valuePropName="checked">
+            <Switch />
           </Form.Item>
           <Form.Item name="sortOrder" label={fa.plans.sortOrder}>
             <InputNumber style={{ width: '100%' }} min={0} />
