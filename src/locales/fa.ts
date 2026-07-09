@@ -76,7 +76,7 @@ export const fa = {
     compare: 'مقایسه با دوره‌ی قبل',
     totalTokens: 'کل توکن مصرفی',
     totalMessages: 'کل پیام',
-    costRial: 'هزینه (تومان)',
+    costToman: 'هزینه (تومان)',
     costUsd: 'هزینه (دلار)',
     revenue: 'درآمد واقعی (تومان)',
     margin: 'حاشیه‌ی سود',

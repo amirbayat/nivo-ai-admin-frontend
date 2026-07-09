@@ -13,7 +13,7 @@ export interface AdminUser {
 }
 
 export interface ExchangeRateInfo {
-  rial: number
+  toman: number
   updatedAt: string | null
   source: 'live' | 'fallback'
 }
@@ -30,14 +30,14 @@ export interface DashboardStats {
 
 export interface CostChartPoint {
   date: string
-  aiCostRial: number
+  aiCostToman: number
   aiCostUsd: number
   revenueToman: number
 }
 
 export interface PricingAlert {
   monthlyRevenueToman: number
-  monthlyAiCostRial: number
+  monthlyAiCostToman: number
   monthlyAiCostUsd: number
   aiCostRatio: number
   alertLevel: 'safe' | 'warning' | 'critical'
@@ -167,18 +167,18 @@ export interface ModelFeedbackSummary {
 export interface AnalyticsOverviewData {
   totalTokens: number
   totalMessages: number
-  costRial: number
+  costToman: number
   costUsd: number
-  revenueRial: number
-  marginRial: number
+  revenueToman: number
+  marginToman: number
   marginPct: number | null
   avgTokensPerMessage: number
   avgInputTokensPerMessage: number
   avgOutputTokensPerMessage: number
   avgInputPricePerMillionUsd: number
   avgOutputPricePerMillionUsd: number
-  avgInputPricePerMillionRial: number
-  avgOutputPricePerMillionRial: number
+  avgInputPricePerMillionToman: number
+  avgOutputPricePerMillionToman: number
   topModel: string | null
 }
 
@@ -188,8 +188,8 @@ export interface AnalyticsOverview {
   growth: {
     totalTokens: number | null
     totalMessages: number | null
-    costRial: number | null
-    revenueRial: number | null
+    costToman: number | null
+    revenueToman: number | null
   } | null
 }
 
@@ -198,7 +198,7 @@ export interface AnalyticsTimeseriesPoint {
   period?: string
   tokens: number
   messages: number
-  costRial: number
+  costToman: number
   costUsd: number
 }
 
@@ -207,12 +207,12 @@ export interface AnalyticsModelBreakdown {
   messages: number
   tokensInput: number
   tokensOutput: number
-  costRial: number
+  costToman: number
   costUsd: number
   costInputUsd: number
   costOutputUsd: number
-  costInputRial: number
-  costOutputRial: number
+  costInputToman: number
+  costOutputToman: number
   avgInputPricePerMillionUsd: number
   avgOutputPricePerMillionUsd: number
 }
@@ -239,10 +239,10 @@ export interface AnalyticsUserRow {
   tokensInput: number
   tokensOutput: number
   avgTokensPerDay: number
-  costRial: number
+  costToman: number
   costUsd: number
-  revenueRial: number
-  marginRial: number
+  revenueToman: number
+  marginToman: number
   mostUsedModel: string | null
   segment: string | null
 }
@@ -256,10 +256,10 @@ export interface AnalyticsSegmentBreakdown {
   avgTokensPerDay: number
   medianTokensPerDay: number
   p90TokensPerDay: number
-  costRial: number
+  costToman: number
   costUsd: number
-  revenueRial: number
-  marginRial: number
+  revenueToman: number
+  marginToman: number
   marginPct: number | null
 }
 

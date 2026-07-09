@@ -30,7 +30,7 @@ export function PaymentsPage() {
           <Card>
             <Statistic
               title={fa.dashboard.totalRevenue}
-              value={Math.round(data.totalRevenue / 10)}
+              value={data.totalRevenue}
               suffix={fa.common.toman}
               prefix={<DollarOutlined style={{ color: '#f59e0b', marginLeft: 8 }} />}
               valueStyle={{ color: '#f59e0b' }}
@@ -41,7 +41,7 @@ export function PaymentsPage() {
           <Card>
             <Statistic
               title={fa.dashboard.mrr}
-              value={Math.round(data.mrr / 10)}
+              value={data.mrr}
               suffix={fa.common.toman}
               prefix={<RiseOutlined style={{ color: '#8b5cf6', marginLeft: 8 }} />}
               valueStyle={{ color: '#8b5cf6' }}

@@ -24,8 +24,8 @@ import { TopicsManager } from './TopicsManager'
 const { RangePicker } = DatePicker
 const { Title, Text } = Typography
 
-function toman(rial: number): string {
-  return Math.round(rial / 10).toLocaleString('fa-IR')
+function toman(amountToman: number): string {
+  return Math.round(amountToman).toLocaleString('fa-IR')
 }
 
 function pct(v: number | null): string {
@@ -54,14 +54,14 @@ function TrendChart({ data }: { data: AnalyticsTimeseriesPoint[] }) {
   const plotW = W - PAD.left - PAD.right
   const plotH = H - PAD.top - PAD.bottom
   const maxTokens = Math.max(...data.map((d) => d.tokens), 1)
-  const maxCost = Math.max(...data.map((d) => d.costRial), 1)
+  const maxCost = Math.max(...data.map((d) => d.costToman), 1)
 
   const x = (i: number) => PAD.left + (i / Math.max(data.length - 1, 1)) * plotW
   const yTokens = (v: number) => PAD.top + plotH - (v / maxTokens) * plotH
   const yCost = (v: number) => PAD.top + plotH - (v / maxCost) * plotH
 
   const tokensPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${yTokens(d.tokens).toFixed(1)}`).join(' ')
-  const costPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${yCost(d.costRial).toFixed(1)}`).join(' ')
+  const costPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${yCost(d.costToman).toFixed(1)}`).join(' ')
   const step = Math.ceil(data.length / 8)
 
   return (
@@ -116,16 +116,16 @@ export function AnalyticsPage() {
     { title: 'پیام', dataIndex: 'messages', key: 'messages' },
     { title: 'توکن ورودی', dataIndex: 'tokensInput', key: 'tokensInput' },
     { title: 'توکن خروجی', dataIndex: 'tokensOutput', key: 'tokensOutput' },
-    { title: 'هزینه (تومان)', dataIndex: 'costRial', key: 'costRial', render: (v: number) => toman(v).toString() },
+    { title: 'هزینه (تومان)', dataIndex: 'costToman', key: 'costToman', render: (v: number) => toman(v).toString() },
     {
       title: 'هزینه ورودی',
       key: 'costInput',
-      render: (_, r) => `${toman(r.costInputRial)} ت / ${usd(r.costInputUsd)}`,
+      render: (_, r) => `${toman(r.costInputToman)} ت / ${usd(r.costInputUsd)}`,
     },
     {
       title: 'هزینه خروجی',
       key: 'costOutput',
-      render: (_, r) => `${toman(r.costOutputRial)} ت / ${usd(r.costOutputUsd)}`,
+      render: (_, r) => `${toman(r.costOutputToman)} ت / ${usd(r.costOutputUsd)}`,
     },
     {
       title: (
@@ -154,15 +154,15 @@ export function AnalyticsPage() {
       key: 'tok',
       render: (_, r) => `${Math.round(r.avgTokensPerDay)} / ${Math.round(r.medianTokensPerDay)}`,
     },
-    { title: 'هزینه (تومان)', dataIndex: 'costRial', key: 'costRial', render: (v: number) => toman(v) },
+    { title: 'هزینه (تومان)', dataIndex: 'costToman', key: 'costToman', render: (v: number) => toman(v) },
     { title: 'هزینه (دلار)', dataIndex: 'costUsd', key: 'costUsd', render: (v: number) => usd(v) },
-    { title: 'درآمد (تومان)', dataIndex: 'revenueRial', key: 'revenueRial', render: (v: number) => toman(v) },
+    { title: 'درآمد (تومان)', dataIndex: 'revenueToman', key: 'revenueToman', render: (v: number) => toman(v) },
     {
       title: 'حاشیه سود',
       key: 'margin',
       render: (_, r) => (
         <Tag color={r.marginPct !== null && r.marginPct < 0 ? 'red' : 'green'}>
-          {toman(r.marginRial)} ({pct(r.marginPct)})
+          {toman(r.marginToman)} ({pct(r.marginPct)})
         </Tag>
       ),
     },
@@ -177,12 +177,12 @@ export function AnalyticsPage() {
       key: 'tokens',
       render: (_, r) => `${r.tokensInput} / ${r.tokensOutput}`,
     },
-    { title: 'هزینه (تومان)', dataIndex: 'costRial', key: 'costRial', render: (v: number) => toman(v) },
-    { title: 'درآمد (تومان)', dataIndex: 'revenueRial', key: 'revenueRial', render: (v: number) => toman(v) },
+    { title: 'هزینه (تومان)', dataIndex: 'costToman', key: 'costToman', render: (v: number) => toman(v) },
+    { title: 'درآمد (تومان)', dataIndex: 'revenueToman', key: 'revenueToman', render: (v: number) => toman(v) },
     {
       title: 'حاشیه سود',
-      dataIndex: 'marginRial',
-      key: 'marginRial',
+      dataIndex: 'marginToman',
+      key: 'marginToman',
       render: (v: number) => <Tag color={v < 0 ? 'red' : 'green'}>{toman(v)}</Tag>,
     },
     { title: 'پرمصرف‌ترین مدل', dataIndex: 'mostUsedModel', key: 'mostUsedModel', render: (v: string | null) => v ?? '—' },
@@ -231,23 +231,23 @@ export function AnalyticsPage() {
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <Card>
-              <Statistic title={fa.analytics.costRial} value={toman(overview.current.costRial)} prefix={<DollarOutlined style={{ marginLeft: 6 }} />} />
+              <Statistic title={fa.analytics.costToman} value={toman(overview.current.costToman)} prefix={<DollarOutlined style={{ marginLeft: 6 }} />} />
               <Text type="secondary" style={{ fontSize: 12 }}>${overview.current.costUsd.toFixed(2)}</Text>
-              <GrowthTag value={overview.growth?.costRial ?? null} />
+              <GrowthTag value={overview.growth?.costToman ?? null} />
             </Card>
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <Card>
-              <Statistic title={fa.analytics.revenue} value={toman(overview.current.revenueRial)} />
-              <GrowthTag value={overview.growth?.revenueRial ?? null} />
+              <Statistic title={fa.analytics.revenue} value={toman(overview.current.revenueToman)} />
+              <GrowthTag value={overview.growth?.revenueToman ?? null} />
             </Card>
           </Col>
           <Col xs={24} sm={12} lg={8}>
             <Card>
               <Statistic
                 title={fa.analytics.margin}
-                value={toman(overview.current.marginRial)}
-                valueStyle={{ color: overview.current.marginRial < 0 ? '#ef4444' : '#10b981' }}
+                value={toman(overview.current.marginToman)}
+                valueStyle={{ color: overview.current.marginToman < 0 ? '#ef4444' : '#10b981' }}
                 suffix={overview.current.marginPct !== null ? `(${pct(overview.current.marginPct)})` : undefined}
               />
             </Card>
@@ -279,7 +279,7 @@ export function AnalyticsPage() {
                     </Tooltip>
                   </Space>
                 }
-                value={`${toman(overview.current.avgInputPricePerMillionRial)} ت`}
+                value={`${toman(overview.current.avgInputPricePerMillionToman)} ت`}
               />
               <Text type="secondary" style={{ fontSize: 12 }}>{usd(overview.current.avgInputPricePerMillionUsd)}</Text>
               <br />
@@ -297,7 +297,7 @@ export function AnalyticsPage() {
                     </Tooltip>
                   </Space>
                 }
-                value={`${toman(overview.current.avgOutputPricePerMillionRial)} ت`}
+                value={`${toman(overview.current.avgOutputPricePerMillionToman)} ت`}
               />
               <Text type="secondary" style={{ fontSize: 12 }}>{usd(overview.current.avgOutputPricePerMillionUsd)}</Text>
               <br />

@@ -36,7 +36,7 @@ function SparkBar({ actual, expected, charged }: { actual: number; expected: num
   const actPct = Math.round((actual / max) * 100)
 
   return (
-    <Tooltip title={`مصرف: ${Math.round(actual / 10).toLocaleString('fa-IR')} ت / انتظار: ${Math.round(expected / 10).toLocaleString('fa-IR')} ت`}>
+    <Tooltip title={`مصرف: ${Math.round(actual).toLocaleString('fa-IR')} ت / انتظار: ${Math.round(expected).toLocaleString('fa-IR')} ت`}>
       <svg viewBox={`0 0 ${W} ${H}`} style={{ width: W, height: H }}>
         {/* expected bar (gray) */}
         <rect x={0} y={4} width={expPct * W / 100} height={10} rx={3} fill="#334155" />
@@ -142,7 +142,7 @@ export function UsersPage() {
       title: 'شارژ ماه (ت)',
       key: 'charged',
       width: 100,
-      render: (_, r) => <span style={{ fontSize: 12 }}>{Math.round(r.chargedThisMonth / 10).toLocaleString('fa-IR')}</span>,
+      render: (_, r) => <span style={{ fontSize: 12 }}>{Math.round(r.chargedThisMonth).toLocaleString('fa-IR')}</span>,
     },
     {
       title: 'مصرف AI (ت)',
@@ -150,7 +150,7 @@ export function UsersPage() {
       width: 100,
       render: (_, r) => (
         <span style={{ fontSize: 12, color: r.aiCostThisMonth > r.expectedByNow * 1.4 ? '#ef4444' : '#e2e8f0' }}>
-          {Math.round(r.aiCostThisMonth / 10).toLocaleString('fa-IR')}
+          {Math.round(r.aiCostThisMonth).toLocaleString('fa-IR')}
         </span>
       ),
     },
@@ -168,7 +168,7 @@ export function UsersPage() {
       title: 'انتظار تا الان',
       key: 'expected',
       width: 110,
-      render: (_, r) => <span style={{ fontSize: 12, color: '#94a3b8' }}>{Math.round(r.expectedByNow / 10).toLocaleString('fa-IR')}</span>,
+      render: (_, r) => <span style={{ fontSize: 12, color: '#94a3b8' }}>{Math.round(r.expectedByNow).toLocaleString('fa-IR')}</span>,
     },
     {
       title: 'نمودار مصرف',
@@ -266,7 +266,7 @@ export function UsersPage() {
         <Form form={planForm} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item name="planId" label="پلن جدید" rules={[{ required: true, message: 'انتخاب کنید' }]}>
             <Select
-              options={plans?.map(p => ({ label: `${p.name} — ${Math.round(p.priceMonthly / 10).toLocaleString('fa-IR')} تومان`, value: p.id }))}
+              options={plans?.map(p => ({ label: `${p.name} — ${Math.round(p.priceMonthly).toLocaleString('fa-IR')} تومان`, value: p.id }))}
               placeholder="انتخاب پلن"
             />
           </Form.Item>

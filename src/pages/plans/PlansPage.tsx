@@ -70,7 +70,7 @@ export function PlansPage() {
     setEditing(plan)
     form.setFieldsValue({
       name: plan.name,
-      priceMonthly: plan.priceMonthly,
+      priceMonthly: plan.priceMonthly, // تومان — بدون تبدیل
       dailyFreeTokens: plan.dailyFreeTokens,
       monthlyTotalTokens: plan.monthlyTotalTokens,
       allowedModels: plan.allowedModels,
@@ -92,7 +92,7 @@ export function PlansPage() {
     form.validateFields().then((values) => {
       const payload = {
         name: values.name,
-        priceMonthly: values.priceMonthly,
+        priceMonthly: values.priceMonthly, // تومان — بدون تبدیل
         dailyFreeTokens: values.dailyFreeTokens,
         monthlyTotalTokens: values.monthlyTotalTokens,
         allowedModels: values.allowedModels,

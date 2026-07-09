@@ -33,13 +33,13 @@ function CostChart({ data }: { data: CostChartPoint[]; days: number }) {
   const plotW = W - PAD.left - PAD.right
   const plotH = H - PAD.top - PAD.bottom
 
-  const maxVal = Math.max(...data.flatMap(d => [d.aiCostRial / 10, d.revenueToman]), 1)
+  const maxVal = Math.max(...data.flatMap(d => [d.aiCostToman, d.revenueToman]), 1)
 
   function x(i: number) { return PAD.left + (i / Math.max(data.length - 1, 1)) * plotW }
   function y(v: number) { return PAD.top + plotH - (v / maxVal) * plotH }
 
   const revenuePath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(d.revenueToman).toFixed(1)}`).join(' ')
-  const costPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(d.aiCostRial / 10).toFixed(1)}`).join(' ')
+  const costPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(d.aiCostToman).toFixed(1)}`).join(' ')
 
   const step = Math.ceil(data.length / 6)
 
@@ -94,7 +94,7 @@ export function DashboardPage() {
           <Space size={6}>
             <DollarOutlined style={{ color: '#f59e0b' }} />
             <Text strong>{fa.dashboard.exchangeRateTitle}:</Text>
-            <Text>{Math.round(data.exchangeRate.rial / 10).toLocaleString('fa-IR')} {fa.dashboard.toman}</Text>
+            <Text>{Math.round(data.exchangeRate.toman).toLocaleString('fa-IR')} {fa.dashboard.toman}</Text>
           </Space>
           <Tag color={data.exchangeRate.source === 'live' ? 'green' : 'red'}>
             {data.exchangeRate.source === 'live' ? fa.dashboard.exchangeRateLive : fa.dashboard.exchangeRateFallback}
@@ -124,8 +124,8 @@ export function DashboardPage() {
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} lg={8}><StatCard title={fa.dashboard.totalUsers} value={data.totalUsers} icon={<UserOutlined />} color="#1677ff" /></Col>
         <Col xs={24} sm={12} lg={8}><StatCard title={fa.dashboard.activeUsers} value={data.activeUsers} icon={<TeamOutlined />} color="#10b981" /></Col>
-        <Col xs={24} sm={12} lg={8}><StatCard title={fa.dashboard.totalRevenue} value={Math.round(data.totalRevenue / 10)} suffix={fa.dashboard.toman} icon={<DollarOutlined />} color="#f59e0b" /></Col>
-        <Col xs={24} sm={12} lg={8}><StatCard title={fa.dashboard.mrr} value={Math.round(data.mrr / 10)} suffix={fa.dashboard.toman} icon={<RiseOutlined />} color="#8b5cf6" /></Col>
+        <Col xs={24} sm={12} lg={8}><StatCard title={fa.dashboard.totalRevenue} value={data.totalRevenue} suffix={fa.dashboard.toman} icon={<DollarOutlined />} color="#f59e0b" /></Col>
+        <Col xs={24} sm={12} lg={8}><StatCard title={fa.dashboard.mrr} value={data.mrr} suffix={fa.dashboard.toman} icon={<RiseOutlined />} color="#8b5cf6" /></Col>
         <Col xs={24} sm={12} lg={8}><StatCard title={fa.dashboard.totalConversations} value={data.totalConversations} icon={<MessageOutlined />} color="#06b6d4" /></Col>
         <Col xs={24} sm={12} lg={8}><StatCard title={fa.dashboard.todayConversations} value={data.todayConversations} icon={<CalendarOutlined />} color="#ef4444" /></Col>
       </Row>
@@ -147,8 +147,8 @@ export function DashboardPage() {
             <Tag color={alert.alertLevel === 'critical' ? 'red' : alert.alertLevel === 'warning' ? 'orange' : 'green'}>
               هزینه AI: {alert.aiCostRatio}٪ درآمد
             </Tag>
-            <Tag>درآمد این ماه: {Math.round(alert.monthlyRevenueToman / 10).toLocaleString('fa-IR')} تومان</Tag>
-            <Tag>هزینه AI: {Math.round(alert.monthlyAiCostRial / 10).toLocaleString('fa-IR')} تومان (${alert.monthlyAiCostUsd.toFixed(2)})</Tag>
+            <Tag>درآمد این ماه: {alert.monthlyRevenueToman.toLocaleString('fa-IR')} تومان</Tag>
+            <Tag>هزینه AI: {alert.monthlyAiCostToman.toLocaleString('fa-IR')} تومان (${alert.monthlyAiCostUsd.toFixed(2)})</Tag>
           </div>
         )}
       </Card>
