@@ -341,3 +341,64 @@ export interface WaitlistEntry {
   lastReminderStepSent: number | null
   lastReminderSentAt: string | null
 }
+
+// ─── Sales Bot (docs/PRD-sales-bot-dashboard.md) ───────────────────────────────
+
+export interface SalesBotConfig {
+  id: string
+  contextMd: string
+  model: string
+  maxMessages: number
+  discountEnabled: boolean
+  discountMinMessages: number
+  discountPromptText: string
+  updatedAt: string
+}
+
+export interface SalesBotAnalyticsOverview {
+  totalMessages: number
+  totalTokensInput: number
+  totalTokensOutput: number
+  totalTokens: number
+  costToman: number
+  costUsd: number
+  sessionsStarted: number
+  discountOffersShown: number
+  phonesCaptured: number
+  discountConversionRate: number | null
+}
+
+export interface SalesBotAnalyticsPoint {
+  date: string
+  messages: number
+  tokens: number
+  costToman: number
+}
+
+export type LeadFollowUpStatus = 'NEW' | 'CONTACTED' | 'CONVERTED' | 'DECLINED'
+
+export interface LeadProfile {
+  id: string
+  sessionId: string | null
+  phone: string | null
+  name: string | null
+  age: number | null
+  city: string | null
+  jobTitle: string | null
+  interests: string[] | null
+  chatHistory: { role: 'user' | 'assistant'; content: string }[] | null
+  recommendedPlan: string | null
+  source: string
+  discountOffered: boolean
+  followUpStatus: LeadFollowUpStatus
+  guideContentMd: string | null
+  guideSentAt: string | null
+  createdAt: string
+}
+
+export interface LeadProfileList {
+  items: LeadProfile[]
+  total: number
+  page: number
+  limit: number
+}

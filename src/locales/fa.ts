@@ -22,6 +22,7 @@ export const fa = {
     modelFeedback: 'فیدبک مدل‌ها',
     tickets: 'تیکت‌ها',
     analytics: 'آنالیز مصرف',
+    salesBot: 'ربات فروش',
     campaigns: 'کمپین سافت‌لانچ',
     logout: 'خروج',
   },

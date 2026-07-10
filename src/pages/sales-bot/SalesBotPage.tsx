@@ -1,0 +1,24 @@
+import { Tabs, Typography } from 'antd'
+import { ContextTab } from './ContextTab'
+import { ModelSettingsTab } from './ModelSettingsTab'
+import { AnalyticsTab } from './AnalyticsTab'
+import { LeadsTab } from './LeadsTab'
+
+const { Title } = Typography
+
+export function SalesBotPage() {
+  return (
+    <div>
+      <Title level={4} style={{ marginBottom: 16 }}>ربات فروش</Title>
+      <Tabs
+        defaultActiveKey="context"
+        items={[
+          { key: 'context', label: 'کانتکست', children: <ContextTab /> },
+          { key: 'model', label: 'مدل و تنظیمات', children: <ModelSettingsTab /> },
+          { key: 'analytics', label: 'آنالیتیکس', children: <AnalyticsTab /> },
+          { key: 'leads', label: 'لیدها', children: <LeadsTab /> },
+        ]}
+      />
+    </div>
+  )
+}

@@ -42,4 +42,10 @@ export const keys = {
     waitlist: (campaignId: string, status?: string) =>
       ['admin', 'campaigns', campaignId, 'waitlist', status ?? 'all'] as const,
   },
+  salesBot: {
+    config: () => ['admin', 'sales-bot', 'config'] as const,
+    overview: (from: string, to: string) => ['admin', 'sales-bot', 'analytics', 'overview', from, to] as const,
+    timeseries: (from: string, to: string) => ['admin', 'sales-bot', 'analytics', 'timeseries', from, to] as const,
+    leads: (page: number, status?: string) => ['admin', 'sales-bot', 'leads', page, status ?? 'all'] as const,
+  },
 } as const
