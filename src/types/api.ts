@@ -402,3 +402,43 @@ export interface LeadProfileList {
   page: number
   limit: number
 }
+
+// ─── Sales Knowledge Base / RAG (docs/PRD-sales-kb-rag-and-plan-context.md بخش الف) ─────
+
+export type SalesKbKind = 'EXAMPLE' | 'OBJECTION' | 'FAQ' | 'PERSONA_GUIDANCE'
+
+export interface SalesKbEntry {
+  id: string
+  kind: SalesKbKind
+  label: string
+  tags: string[]
+  userMessage: string
+  assistantReply: string
+  note: string | null
+  isActive: boolean
+  embeddingModel: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface SalesKbEntryInput {
+  kind: SalesKbKind
+  label: string
+  tags?: string[]
+  userMessage: string
+  assistantReply: string
+  note?: string
+  isActive?: boolean
+}
+
+export interface BulkImportSalesKbResult {
+  created: number
+  failed: number
+  errors: string[]
+}
+
+export interface SalesKbRetrievalDebugResult {
+  id: string
+  userMessage: string
+  score: number
+}

@@ -47,5 +47,6 @@ export const keys = {
     overview: (from: string, to: string) => ['admin', 'sales-bot', 'analytics', 'overview', from, to] as const,
     timeseries: (from: string, to: string) => ['admin', 'sales-bot', 'analytics', 'timeseries', from, to] as const,
     leads: (page: number, status?: string) => ['admin', 'sales-bot', 'leads', page, status ?? 'all'] as const,
+    kb: (kind?: string) => ['admin', 'sales-bot', 'kb', kind ?? 'all'] as const,
   },
 } as const
