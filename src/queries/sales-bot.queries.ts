@@ -4,9 +4,12 @@ import type {
   BulkImportSalesKbResult,
   LeadFollowUpStatus,
   LeadProfileList,
+  RecomputeEmbeddingsResult,
   SalesBotAnalyticsOverview,
   SalesBotAnalyticsPoint,
   SalesBotConfig,
+  SalesChatSessionList,
+  SalesKbDraftEntry,
   SalesKbEntry,
   SalesKbEntryInput,
   SalesKbRetrievalDebugResult,
@@ -129,4 +132,32 @@ export function useTestSalesKbRetrieval() {
         .post<SalesKbRetrievalDebugResult[]>('/admin/sales-bot/kb/test-retrieval', { sampleMessage })
         .then((r) => r.data),
   })
+}
+
+export function useRecomputeSalesKbEmbeddings() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: () =>
+      api.post<RecomputeEmbeddingsResult>('/admin/sales-bot/kb/recompute-embeddings').then((r) => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin', 'sales-bot', 'kb'] }),
+  })
+}
+
+// ─── تاریخچه‌ی مکالمات — docs/PRD-sales-kb-rag-and-plan-context.md بخش الف.۱۱ ─────────
+
+export function useSalesBotSessions(page: number) {
+  return useQuery({
+    queryKey: keys.salesBot.sessions(page),
+    queryFn: () =>
+      api
+        .get<SalesChatSessionList>('/admin/sales-bot/sessions', { params: { page, limit: 20 } })
+        .then((r) => r.data),
+  })
+}
+
+export async function fetchSalesKbDraftExport(sessionId?: string): Promise<{ entries: SalesKbDraftEntry[] }> {
+  const { data } = await api.get<{ entries: SalesKbDraftEntry[] }>('/admin/sales-bot/sessions/export', {
+    params: sessionId ? { sessionId } : {},
+  })
+  return data
 }

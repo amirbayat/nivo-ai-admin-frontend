@@ -2,12 +2,14 @@ import { useState } from 'react'
 import {
   Alert, Button, Form, Input, Modal, Popconfirm, Select, Space, Switch, Table, Tag, Typography, Upload, message,
 } from 'antd'
-import { DeleteOutlined, EditOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons'
+import { DeleteOutlined, DownloadOutlined, EditOutlined, PlusOutlined, ReloadOutlined, UploadOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import {
-  useBulkImportSalesKb, useCreateSalesKbEntry, useDeleteSalesKbEntry, useSalesKbEntries,
-  useTestSalesKbRetrieval, useUpdateSalesKbEntry,
+  useBulkImportSalesKb, useCreateSalesKbEntry, useDeleteSalesKbEntry, useRecomputeSalesKbEmbeddings,
+  useSalesKbEntries, useTestSalesKbRetrieval, useUpdateSalesKbEntry,
 } from '@/queries/sales-bot.queries'
+import { downloadJson } from '@/lib/download-json'
+import { api } from '@/lib/api'
 import type { SalesKbEntry, SalesKbEntryInput, SalesKbKind } from '@/types/api'
 
 const { Text } = Typography
@@ -48,6 +50,7 @@ export function KnowledgeBaseTab() {
   const deleteEntry = useDeleteSalesKbEntry()
   const bulkImport = useBulkImportSalesKb()
   const testRetrieval = useTestSalesKbRetrieval()
+  const recomputeEmbeddings = useRecomputeSalesKbEmbeddings()
 
   function openAdd() {
     setEditing(null)
@@ -133,6 +136,37 @@ export function KnowledgeBaseTab() {
     testRetrieval.mutate(testMessage.trim())
   }
 
+  const [downloadingAll, setDownloadingAll] = useState(false)
+
+  async function handleDownloadAll() {
+    // همیشه همه‌ی نمونه‌ها (بدون توجه به فیلتر فعلی روی صفحه) — طبق درخواست «دانلود JSON همه سوال جواب‌ها»
+    setDownloadingAll(true)
+    try {
+      const { data: all } = await api.get<SalesKbEntry[]>('/admin/sales-bot/kb')
+      const exportable = all.map((e) => ({
+        kind: e.kind,
+        label: e.label,
+        tags: e.tags,
+        userMessage: e.userMessage,
+        assistantReply: e.assistantReply,
+        note: e.note ?? undefined,
+        isActive: e.isActive,
+      }))
+      downloadJson(`sales-kb-export-${new Date().toISOString().slice(0, 10)}.json`, { entries: exportable })
+    } catch {
+      void message.error('دانلود ناموفق بود')
+    } finally {
+      setDownloadingAll(false)
+    }
+  }
+
+  function handleRecompute() {
+    recomputeEmbeddings.mutate(undefined, {
+      onSuccess: (result) => void message.success(`${result.updated} نمونه بازمحاسبه شد${result.failed ? `، ${result.failed} مورد ناموفق` : ''}`),
+      onError: () => void message.error('بازمحاسبه ناموفق بود'),
+    })
+  }
+
   const columns: ColumnsType<SalesKbEntry> = [
     {
       title: 'نوع', dataIndex: 'kind', key: 'kind', width: 140,
@@ -187,8 +221,18 @@ export function KnowledgeBaseTab() {
           onChange={setKindFilter}
           options={KIND_OPTIONS.map((k) => ({ value: k.value, label: k.label }))}
         />
-        <Space>
+        <Space wrap>
           <Button onClick={() => setTestOpen(true)}>تست بازیابی</Button>
+          <Popconfirm
+            title="بازمحاسبه‌ی embedding همه‌ی نمونه‌ها؟"
+            description="اگر مدل embedding را در تب «مدل و تنظیمات» عوض کرده‌اید، این کار لازم است."
+            onConfirm={handleRecompute}
+          >
+            <Button icon={<ReloadOutlined />} loading={recomputeEmbeddings.isPending}>بازمحاسبه‌ی همه</Button>
+          </Popconfirm>
+          <Button icon={<DownloadOutlined />} loading={downloadingAll} onClick={handleDownloadAll}>
+            دانلود JSON همه
+          </Button>
           <Upload accept=".json" showUploadList={false} beforeUpload={handleUpload}>
             <Button icon={<UploadOutlined />} loading={bulkImport.isPending}>آپلود دسته‌ای (JSON)</Button>
           </Upload>

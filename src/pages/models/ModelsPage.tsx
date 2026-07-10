@@ -33,6 +33,7 @@ interface ModelFormValues {
   name: string
   displayName: string
   provider: string
+  modelType: AiModel['modelType']
   inputPricePerM: number
   outputPricePerM: number
   supportsVision: boolean
@@ -47,6 +48,11 @@ const TIER_COLORS: Record<AiModel['tier'], string> = {
   COMPLEX: 'purple',
 }
 
+const MODEL_TYPE_LABELS: Record<AiModel['modelType'], string> = {
+  CHAT: 'چت',
+  EMBEDDING: 'Embedding',
+}
+
 const PROVIDER_COLORS: Record<string, string> = {
   openai: 'green',
   anthropic: 'purple',
@@ -57,6 +63,7 @@ const PROVIDER_COLORS: Record<string, string> = {
 export function ModelsPage() {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<AiModel | null>(null)
+  const [typeFilter, setTypeFilter] = useState<AiModel['modelType'] | undefined>(undefined)
   const [form] = Form.useForm<ModelFormValues>()
   const [messageApi, contextHolder] = message.useMessage()
 
@@ -65,6 +72,8 @@ export function ModelsPage() {
   const updateModel = useUpdateModel()
   const deleteModel = useDeleteModel()
   const importModels = useImportModels()
+
+  const filteredModels = (models ?? []).filter((m) => !typeFilter || m.modelType === typeFilter)
 
   function openAdd() {
     setEditing(null)
@@ -75,6 +84,7 @@ export function ModelsPage() {
       sortOrder: (models?.length ?? 0),
       provider: 'openai',
       tier: 'MEDIUM',
+      modelType: 'CHAT',
     })
     setOpen(true)
   }
@@ -85,6 +95,7 @@ export function ModelsPage() {
       name: model.name,
       displayName: model.displayName,
       provider: model.provider,
+      modelType: model.modelType,
       inputPricePerM: model.inputPricePerM,
       outputPricePerM: model.outputPricePerM,
       supportsVision: model.supportsVision,
@@ -165,6 +176,15 @@ export function ModelsPage() {
       render: (v: string) => <Tag color={PROVIDER_COLORS[v] ?? 'default'}>{v}</Tag>,
     },
     {
+      title: 'نوع',
+      dataIndex: 'modelType',
+      key: 'modelType',
+      width: 100,
+      render: (v: AiModel['modelType']) => (
+        <Tag color={v === 'EMBEDDING' ? 'cyan' : 'default'}>{MODEL_TYPE_LABELS[v]}</Tag>
+      ),
+    },
+    {
       title: fa.models.inputPrice,
       dataIndex: 'inputPricePerM',
       key: 'inputPricePerM',
@@ -228,9 +248,17 @@ export function ModelsPage() {
   return (
     <div>
       {contextHolder}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
         <Title level={4} style={{ margin: 0 }}>{fa.models.title}</Title>
         <Space>
+          <Select
+            allowClear
+            placeholder="نوع مدل"
+            style={{ width: 160 }}
+            value={typeFilter}
+            onChange={setTypeFilter}
+            options={[{ value: 'CHAT', label: 'چت' }, { value: 'EMBEDDING', label: 'Embedding' }]}
+          />
           <Button icon={<DownloadOutlined />} href="/modelSample.xlsx" target="_blank">
             {fa.models.downloadSample}
           </Button>
@@ -248,7 +276,7 @@ export function ModelsPage() {
       <div style={{ overflow: 'auto' }}>
         <Table<AiModel>
           rowKey="id"
-          dataSource={models ?? []}
+          dataSource={filteredModels}
           columns={columns}
           loading={isLoading}
           locale={{ emptyText: fa.common.noData }}
@@ -281,6 +309,19 @@ export function ModelsPage() {
           </Form.Item>
           <Form.Item name="provider" label={fa.models.provider} rules={[{ required: true }]}>
             <Input placeholder="openai" />
+          </Form.Item>
+          <Form.Item
+            name="modelType"
+            label="نوع مدل"
+            rules={[{ required: true }]}
+            extra="مدل‌های Embedding فقط برای پایگاه دانش ربات فروش استفاده می‌شوند و در دراپ‌داون‌های چت نمایش داده نمی‌شوند"
+          >
+            <Select
+              options={[
+                { value: 'CHAT', label: 'چت (تولید متن)' },
+                { value: 'EMBEDDING', label: 'Embedding' },
+              ]}
+            />
           </Form.Item>
           <Form.Item name="inputPricePerM" label={fa.models.inputPrice} rules={[{ required: true }]}>
             <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="2.50" />

@@ -4,6 +4,7 @@ import { ModelSettingsTab } from './ModelSettingsTab'
 import { AnalyticsTab } from './AnalyticsTab'
 import { LeadsTab } from './LeadsTab'
 import { KnowledgeBaseTab } from './KnowledgeBaseTab'
+import { HistoryTab } from './HistoryTab'
 
 const { Title } = Typography
 
@@ -19,6 +20,7 @@ export function SalesBotPage() {
           { key: 'model', label: 'مدل و تنظیمات', children: <ModelSettingsTab /> },
           { key: 'analytics', label: 'آنالیتیکس', children: <AnalyticsTab /> },
           { key: 'leads', label: 'لیدها', children: <LeadsTab /> },
+          { key: 'history', label: 'تاریخچه', children: <HistoryTab /> },
         ]}
       />
     </div>

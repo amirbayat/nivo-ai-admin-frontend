@@ -134,11 +134,14 @@ export interface AdminTicket {
   replies: Array<{ id: string; fromAdmin: boolean; body: string; createdAt: string }>
 }
 
+export type AiModelType = 'CHAT' | 'EMBEDDING'
+
 export interface AiModel {
   id: string
   name: string
   displayName: string
   provider: string
+  modelType: AiModelType
   inputPricePerM: number
   outputPricePerM: number
   supportsVision: boolean
@@ -348,6 +351,7 @@ export interface SalesBotConfig {
   id: string
   contextMd: string
   model: string
+  embeddingModel: string
   maxMessages: number
   discountEnabled: boolean
   discountMinMessages: number
@@ -366,6 +370,10 @@ export interface SalesBotAnalyticsOverview {
   discountOffersShown: number
   phonesCaptured: number
   discountConversionRate: number | null
+  embeddingCalls: number
+  embeddingTokens: number
+  embeddingCostToman: number
+  embeddingCostUsd: number
 }
 
 export interface SalesBotAnalyticsPoint {
@@ -441,4 +449,33 @@ export interface SalesKbRetrievalDebugResult {
   id: string
   userMessage: string
   score: number
+}
+
+export interface RecomputeEmbeddingsResult {
+  updated: number
+  failed: number
+}
+
+export interface SalesChatSession {
+  id: string
+  sessionId: string
+  messages: { role: 'user' | 'assistant'; content: string }[]
+  messageCount: number
+  createdAt: string
+  lastMessageAt: string
+}
+
+export interface SalesChatSessionList {
+  items: SalesChatSession[]
+  total: number
+  page: number
+  limit: number
+}
+
+export interface SalesKbDraftEntry {
+  kind: 'EXAMPLE'
+  label: string
+  tags: string[]
+  userMessage: string
+  assistantReply: string
 }

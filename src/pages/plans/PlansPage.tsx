@@ -57,7 +57,9 @@ export function PlansPage() {
   const [messageApi, contextHolder] = message.useMessage()
 
   const { data: plans, isLoading } = usePlans()
-  const { data: availableModels, isLoading: modelsLoading } = useModels()
+  const { data: allModels, isLoading: modelsLoading } = useModels()
+  // مدل‌های embedding فقط برای پایگاه دانش ربات فروش هستند، هرگز گزینه‌ی چت پلن نمی‌شوند
+  const availableModels = allModels?.filter((m) => m.modelType === 'CHAT')
   const createPlan = useCreatePlan()
   const updatePlan = useUpdatePlan()
   const deletePlan = useDeletePlan()

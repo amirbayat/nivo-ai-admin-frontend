@@ -5,6 +5,7 @@ import { useSalesBotConfig, useUpdateSalesBotConfig } from '@/queries/sales-bot.
 
 interface FormValues {
   model: string
+  embeddingModel: string
   maxMessages: number
   discountEnabled: boolean
   discountMinMessages: number
@@ -30,7 +31,12 @@ export function ModelSettingsTab() {
     })
   }
 
-  const modelOptions = (models ?? []).map((m) => ({ value: m.name, label: `${m.displayName} (${m.name})` }))
+  const modelOptions = (models ?? [])
+    .filter((m) => m.modelType === 'CHAT')
+    .map((m) => ({ value: m.name, label: `${m.displayName} (${m.name})` }))
+  const embeddingModelOptions = (models ?? [])
+    .filter((m) => m.modelType === 'EMBEDDING')
+    .map((m) => ({ value: m.name, label: `${m.displayName} (${m.name})` }))
 
   return (
     <Card style={{ maxWidth: 560 }}>
@@ -42,6 +48,15 @@ export function ModelSettingsTab() {
           rules={[{ required: true, message: 'مدل را وارد کن' }]}
         >
           <AutoComplete options={modelOptions} placeholder="مثلاً openai/gpt-5.4-mini" />
+        </Form.Item>
+
+        <Form.Item
+          name="embeddingModel"
+          label="مدل Embedding (برای پایگاه دانش)"
+          extra="بعد از تغییر این مدل، حتماً از تب «پایگاه دانش» دکمه‌ی «بازمحاسبه‌ی همه‌ی embedding‌ها» را بزنید — وگرنه نمونه‌های قدیمی با مدل جدید قابل مقایسه نیستند."
+          rules={[{ required: true, message: 'مدل embedding را انتخاب کن' }]}
+        >
+          <AutoComplete options={embeddingModelOptions} placeholder="مثلاً openai/text-embedding-3-small" />
         </Form.Item>
 
         <Form.Item name="maxMessages" label="حداکثر پیام هر مکالمه" rules={[{ required: true }]}>
