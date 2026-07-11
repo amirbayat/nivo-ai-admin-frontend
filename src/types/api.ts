@@ -352,6 +352,7 @@ export interface SalesBotConfig {
   contextMd: string
   model: string
   embeddingModel: string
+  maxOutputTokens: number
   maxMessages: number
   discountEnabled: boolean
   discountMinMessages: number

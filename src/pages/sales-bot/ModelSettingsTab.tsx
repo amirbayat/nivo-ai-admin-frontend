@@ -6,6 +6,7 @@ import { useSalesBotConfig, useUpdateSalesBotConfig } from '@/queries/sales-bot.
 interface FormValues {
   model: string
   embeddingModel: string
+  maxOutputTokens: number
   maxMessages: number
   discountEnabled: boolean
   discountMinMessages: number
@@ -57,6 +58,15 @@ export function ModelSettingsTab() {
           rules={[{ required: true, message: 'مدل embedding را انتخاب کن' }]}
         >
           <AutoComplete options={embeddingModelOptions} placeholder="مثلاً openai/text-embedding-3-small" />
+        </Form.Item>
+
+        <Form.Item
+          name="maxOutputTokens"
+          label="حداکثر توکن خروجی هر پاسخ"
+          extra="قبلاً در کد ثابت روی ۴۰۰ بود؛ الان از همین‌جا قابل تنظیم است. عدد بالاتر یعنی پاسخ‌های بالقوه طولانی‌تر (و هزینه‌ی بیشتر)."
+          rules={[{ required: true }]}
+        >
+          <InputNumber min={50} max={4096} step={50} style={{ width: '100%' }} />
         </Form.Item>
 
         <Form.Item name="maxMessages" label="حداکثر پیام هر مکالمه" rules={[{ required: true }]}>
