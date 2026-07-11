@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import dayjs, { type Dayjs } from 'dayjs'
 import { Card, Col, DatePicker, Row, Spin, Statistic } from 'antd'
-import { ApiOutlined, DollarOutlined, MessageOutlined, PhoneOutlined, TagOutlined } from '@ant-design/icons'
+import { ApiOutlined, DollarOutlined, LinkOutlined, MessageOutlined, PhoneOutlined, TagOutlined } from '@ant-design/icons'
 import { useSalesBotAnalyticsOverview, useSalesBotAnalyticsTimeseries } from '@/queries/sales-bot.queries'
 import type { SalesBotAnalyticsPoint } from '@/types/api'
 
@@ -101,6 +101,12 @@ export function AnalyticsTab() {
           </Col>
           <Col xs={24} sm={12} lg={8}>
             <Card><Statistic title="تعداد فراخوانی embedding" value={overview.embeddingCalls} /></Card>
+          </Col>
+          <Col xs={24} sm={12} lg={8}>
+            <Card><Statistic title="کلیک «شروع رایگان»" value={overview.ctaFreeStartClicks} prefix={<LinkOutlined style={{ marginLeft: 6 }} />} /></Card>
+          </Col>
+          <Col xs={24} sm={12} lg={8}>
+            <Card><Statistic title="کلیک «مشاهده پلن‌ها»" value={overview.ctaPricingClicks} prefix={<LinkOutlined style={{ marginLeft: 6 }} />} /></Card>
           </Col>
         </Row>
       )}

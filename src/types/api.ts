@@ -375,6 +375,8 @@ export interface SalesBotAnalyticsOverview {
   embeddingTokens: number
   embeddingCostToman: number
   embeddingCostUsd: number
+  ctaFreeStartClicks: number
+  ctaPricingClicks: number
 }
 
 export interface SalesBotAnalyticsPoint {
