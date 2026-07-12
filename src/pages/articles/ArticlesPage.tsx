@@ -13,8 +13,9 @@ import type { Article, ArticleInput, ArticleStatus } from '@/types/api'
 const { Title } = Typography
 const { TextArea } = Input
 
-// آدرس پایه‌ی بک‌اند (بدون /api/v1) — همون‌جایی که صفحه‌ی واقعی /blog/:slug سرو می‌شود
-const BLOG_ORIGIN = env.VITE_API_URL.replace(/\/api\/v1\/?$/, '')
+// دامنه‌ی اصلی سایت (نه API) — /blog از این دامنه (پشت nginx/Vite proxy) reachable است،
+// نه از زیردامنه‌ی api.* که فقط برای درخواست‌های JSON استفاده می‌شود
+const BLOG_ORIGIN = env.VITE_PUBLIC_SITE_URL
 
 const STATUS_OPTIONS: { value: ArticleStatus; label: string; color: string }[] = [
   { value: 'DRAFT', label: 'پیش‌نویس', color: 'default' },
