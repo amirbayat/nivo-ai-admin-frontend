@@ -482,3 +482,50 @@ export interface SalesKbDraftEntry {
   userMessage: string
   assistantReply: string
 }
+
+// ─── مقالات (SEO) — docs/PRD-articles-seo-blog.md ──────────────────────────────
+
+export interface ArticleCategory {
+  id: string
+  name: string
+  slug: string
+  sortOrder: number
+  isActive: boolean
+  createdAt: string
+}
+
+export type ArticleStatus = 'DRAFT' | 'PUBLISHED'
+
+export interface Article {
+  id: string
+  slug: string
+  title: string
+  metaDescription: string | null
+  coverImageUrl: string | null
+  contentMd: string
+  categoryId: string | null
+  category: ArticleCategory | null
+  status: ArticleStatus
+  isPinnedInBanner: boolean
+  publishedAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ArticleCategoryInput {
+  name: string
+  slug?: string
+  sortOrder?: number
+  isActive?: boolean
+}
+
+export interface ArticleInput {
+  title: string
+  slug?: string
+  metaDescription?: string
+  coverImageUrl?: string
+  contentMd: string
+  categoryId?: string
+  status?: ArticleStatus
+  isPinnedInBanner?: boolean
+}

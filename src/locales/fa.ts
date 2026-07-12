@@ -24,6 +24,8 @@ export const fa = {
     analytics: 'آنالیز مصرف',
     salesBot: 'ربات فروش',
     campaigns: 'کمپین سافت‌لانچ',
+    articles: 'مقالات',
+    articleCategories: 'دسته‌بندی مقالات',
     logout: 'خروج',
   },
   campaigns: {

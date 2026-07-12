@@ -13,6 +13,8 @@ import { ModelFeedbackPage } from '@/pages/model-feedback/ModelFeedbackPage'
 import { AnalyticsPage } from '@/pages/analytics/AnalyticsPage'
 import { CampaignsPage } from '@/pages/campaigns/CampaignsPage'
 import { SalesBotPage } from '@/pages/sales-bot/SalesBotPage'
+import { ArticlesPage } from '@/pages/articles/ArticlesPage'
+import { ArticleCategoriesPage } from '@/pages/articles/ArticleCategoriesPage'
 import { ACCESS_KEY } from '@/lib/api'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -46,6 +48,8 @@ export function AppRouter() {
         <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="sales-bot" element={<SalesBotPage />} />
         <Route path="campaigns" element={<CampaignsPage />} />
+        <Route path="articles" element={<ArticlesPage />} />
+        <Route path="article-categories" element={<ArticleCategoriesPage />} />
       </Route>
       <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />

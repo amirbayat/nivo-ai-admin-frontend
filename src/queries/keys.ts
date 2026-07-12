@@ -50,4 +50,8 @@ export const keys = {
     kb: (kind?: string) => ['admin', 'sales-bot', 'kb', kind ?? 'all'] as const,
     sessions: (page: number) => ['admin', 'sales-bot', 'sessions', page] as const,
   },
+  articles: {
+    list: () => ['admin', 'articles'] as const,
+    categories: () => ['admin', 'article-categories'] as const,
+  },
 } as const
