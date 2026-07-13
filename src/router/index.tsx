@@ -17,6 +17,7 @@ import { CampaignsPage } from '@/pages/campaigns/CampaignsPage'
 import { SalesBotPage } from '@/pages/sales-bot/SalesBotPage'
 import { ArticlesPage } from '@/pages/articles/ArticlesPage'
 import { ArticleCategoriesPage } from '@/pages/articles/ArticleCategoriesPage'
+import { OtpListPage } from '@/pages/otp/OtpListPage'
 import { ACCESS_KEY } from '@/lib/api'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -54,6 +55,7 @@ export function AppRouter() {
         <Route path="campaigns" element={<CampaignsPage />} />
         <Route path="articles" element={<ArticlesPage />} />
         <Route path="article-categories" element={<ArticleCategoriesPage />} />
+        <Route path="otp" element={<OtpListPage />} />
       </Route>
       <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />

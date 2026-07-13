@@ -28,6 +28,7 @@ export const fa = {
     campaigns: 'کمپین سافت‌لانچ',
     articles: 'مقالات',
     articleCategories: 'دسته‌بندی مقالات',
+    otp: 'کدهای OTP',
     logout: 'خروج',
   },
   campaigns: {

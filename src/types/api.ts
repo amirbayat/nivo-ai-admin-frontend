@@ -578,3 +578,10 @@ export interface ArticleInput {
   status?: ArticleStatus
   isPinnedInBanner?: boolean
 }
+
+export interface ActiveOtp {
+  phone: string
+  code: string
+  name: string | null
+  expiresInSeconds: number
+}

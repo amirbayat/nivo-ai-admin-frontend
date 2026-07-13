@@ -62,4 +62,7 @@ export const keys = {
     onboardingGift: () => ['admin', 'growth', 'onboarding-gift'] as const,
     discountCodes: (source?: string) => ['admin', 'growth', 'discount-codes', source ?? 'all'] as const,
   },
+  otp: {
+    list: () => ['admin', 'otp'] as const,
+  },
 } as const

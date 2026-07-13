@@ -21,6 +21,7 @@ import {
   TagsOutlined,
   CommentOutlined,
   GiftOutlined,
+  KeyOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
 import { fa } from '@/locales/fa'
@@ -45,6 +46,7 @@ const menuItems = [
   { key: '/admin/payments', icon: <PayCircleOutlined />, label: fa.nav.payments },
   { key: '/admin/feedback', icon: <MessageOutlined />, label: fa.nav.feedback },
   { key: '/admin/tickets', icon: <CustomerServiceOutlined />, label: fa.nav.tickets },
+  { key: '/admin/otp', icon: <KeyOutlined />, label: fa.nav.otp },
 ]
 
 export function AdminLayout() {
