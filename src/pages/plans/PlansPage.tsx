@@ -49,6 +49,11 @@ interface PlanFormValues {
   rollingWindowLimit: number | null
   rollingWindowHours: number
   contextMd: string | null
+  trialMessageThreshold: number | null
+  trialDailyMessageLimit: number | null
+  trialThrottledMessageCount: number | null
+  trialRollingWindowLimit: number | null
+  trialRollingWindowHours: number | null
 }
 
 export function PlansPage() {
@@ -115,6 +120,11 @@ export function PlansPage() {
       rollingWindowLimit: plan.rollingWindowLimit ?? null,
       rollingWindowHours: plan.rollingWindowHours ?? 3,
       contextMd: plan.contextMd ?? null,
+      trialMessageThreshold: plan.trialMessageThreshold ?? null,
+      trialDailyMessageLimit: plan.trialDailyMessageLimit ?? null,
+      trialThrottledMessageCount: plan.trialThrottledMessageCount ?? null,
+      trialRollingWindowLimit: plan.trialRollingWindowLimit ?? null,
+      trialRollingWindowHours: plan.trialRollingWindowHours ?? null,
     })
     setOpen(true)
   }
@@ -142,6 +152,11 @@ export function PlansPage() {
         rollingWindowLimit: values.rollingWindowLimit ?? null,
         rollingWindowHours: values.rollingWindowHours ?? 3,
         contextMd: values.contextMd ?? null,
+        trialMessageThreshold: values.trialMessageThreshold ?? null,
+        trialDailyMessageLimit: values.trialDailyMessageLimit ?? null,
+        trialThrottledMessageCount: values.trialThrottledMessageCount ?? null,
+        trialRollingWindowLimit: values.trialRollingWindowLimit ?? null,
+        trialRollingWindowHours: values.trialRollingWindowHours ?? null,
         // simpleModel عمداً اینجا فرستاده نمی‌شود — هم بک‌اند این فیلد را روی این endpoint
         // نمی‌پذیرد، هم مقدارش فقط باید از صفحه‌ی «مسیریابی مدل‌ها» تغییر کند (وگرنه هر ذخیره‌ی
         // معمولی پلن، مقدار تنظیم‌شده‌ی آنجا را بی‌صدا null می‌کرد)
@@ -477,6 +492,32 @@ export function PlansPage() {
             extra="بعد از کانتکست عمومی (صفحه‌ی «تنظیمات چت») به system prompt همه‌ی مکالمات کاربرانی که این پلن را دارند اضافه می‌شود. اختیاری — خالی یعنی چیزی اضافه نمی‌شود."
           >
             <Input.TextArea rows={4} placeholder="مثلاً محدودیت‌ها یا لحن مخصوص این پلن..." />
+          </Form.Item>
+
+          <Divider orientation="right" style={{ fontSize: 13 }}>دوره‌ی آزمایشی کاربر تازه</Divider>
+
+          <Form.Item
+            name="trialMessageThreshold"
+            label="آستانه‌ی پیام (کل عمر کاربر)"
+            extra="خالی = بدون دوره‌ی آزمایشی. مثلاً ۶۰ — تا این تعداد پیام (نه روزانه، کل عمر کاربر)، محدودیت‌های زیر به‌جای محدودیت همیشگی بالا اعمال می‌شود"
+          >
+            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۶۰" />
+          </Form.Item>
+          <Form.Item
+            name="trialDailyMessageLimit"
+            label="N آزمایشی — سقف پیام معمولی روزانه"
+            extra="خالی = از سقف همیشگی بالا استفاده می‌شود"
+          >
+            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۲۰" />
+          </Form.Item>
+          <Form.Item name="trialThrottledMessageCount" label="M آزمایشی — تعداد پیام در ناحیه محدود">
+            <InputNumber style={{ width: '100%' }} min={0} placeholder="مثلاً ۱۰" />
+          </Form.Item>
+          <Form.Item name="trialRollingWindowLimit" label="سقف پیام در پنجره‌ی لغزان (آزمایشی)">
+            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۱۵" />
+          </Form.Item>
+          <Form.Item name="trialRollingWindowHours" label="طول پنجره‌ی لغزان — ساعت (آزمایشی)">
+            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۳" />
           </Form.Item>
 
           <Form.Item name="isActive" label={fa.plans.active} valuePropName="checked">

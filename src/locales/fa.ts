@@ -21,6 +21,7 @@ export const fa = {
     feedback: 'فیدبک',
     modelFeedback: 'فیدبک مدل‌ها',
     chatConfig: 'تنظیمات چت',
+    growth: 'رشد و بازاریابی',
     tickets: 'تیکت‌ها',
     analytics: 'آنالیز مصرف',
     salesBot: 'ربات فروش',

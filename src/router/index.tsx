@@ -11,6 +11,7 @@ import { ModelsPage } from '@/pages/models/ModelsPage'
 import { ModelRoutingPage } from '@/pages/model-routing/ModelRoutingPage'
 import { ModelFeedbackPage } from '@/pages/model-feedback/ModelFeedbackPage'
 import { ChatConfigPage } from '@/pages/chat-config/ChatConfigPage'
+import { GrowthPage } from '@/pages/growth/GrowthPage'
 import { AnalyticsPage } from '@/pages/analytics/AnalyticsPage'
 import { CampaignsPage } from '@/pages/campaigns/CampaignsPage'
 import { SalesBotPage } from '@/pages/sales-bot/SalesBotPage'
@@ -47,6 +48,7 @@ export function AppRouter() {
         <Route path="model-routing" element={<ModelRoutingPage />} />
         <Route path="model-feedback" element={<ModelFeedbackPage />} />
         <Route path="chat-config" element={<ChatConfigPage />} />
+        <Route path="growth" element={<GrowthPage />} />
         <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="sales-bot" element={<SalesBotPage />} />
         <Route path="campaigns" element={<CampaignsPage />} />

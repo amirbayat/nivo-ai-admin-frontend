@@ -57,4 +57,9 @@ export const keys = {
   chatConfig: {
     detail: () => ['admin', 'chat-config'] as const,
   },
+  growth: {
+    config: () => ['admin', 'growth', 'config'] as const,
+    onboardingGift: () => ['admin', 'growth', 'onboarding-gift'] as const,
+    discountCodes: (source?: string) => ['admin', 'growth', 'discount-codes', source ?? 'all'] as const,
+  },
 } as const

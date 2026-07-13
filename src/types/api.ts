@@ -88,6 +88,46 @@ export interface Plan {
   rollingWindowHours: number
   simpleModel: string | null
   contextMd: string | null
+  trialMessageThreshold: number | null
+  trialDailyMessageLimit: number | null
+  trialThrottledMessageCount: number | null
+  trialRollingWindowLimit: number | null
+  trialRollingWindowHours: number | null
+}
+
+export type DiscountSource = 'WELCOME_GIFT' | 'EXPIRY_REMINDER' | 'REFERRAL' | 'MANUAL'
+
+export interface DiscountCode {
+  id: string
+  code: string
+  discountPercent: number
+  source: DiscountSource
+  issuedToUserId: string | null
+  issuedToUser: { phone: string; name: string | null } | null
+  maxUses: number
+  usedCount: number
+  expiresAt: string | null
+  isActive: boolean
+  createdAt: string
+}
+
+export interface GrowthConfig {
+  id: string
+  welcomeDiscountPercent: number
+  welcomeDiscountValidHours: number
+  expiryDiscountPercent: number
+  referralDiscountPercent: number
+  referralDiscountValidDays: number
+  updatedAt: string
+}
+
+export interface OnboardingGift {
+  id: string
+  title: string
+  description: string
+  audioUrl: string | null
+  isActive: boolean
+  updatedAt: string
 }
 
 export interface ChatConfig {
