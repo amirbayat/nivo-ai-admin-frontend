@@ -5,6 +5,7 @@ import { useGrowthConfig, useUpdateGrowthConfig } from '@/queries/growth.queries
 interface FormValues {
   welcomeDiscountPercent: number
   welcomeDiscountValidHours: number
+  postTrialGraceHours: number
   expiryDiscountPercent: number
   referralDiscountPercent: number
   referralDiscountValidDays: number
@@ -37,6 +38,14 @@ export function GrowthConfigTab() {
         </Form.Item>
         <Form.Item name="welcomeDiscountValidHours" label="مدت اعتبار (ساعت)" rules={[{ required: true }]}>
           <InputNumber min={1} max={720} addonAfter="ساعت" style={{ width: '100%' }} />
+        </Form.Item>
+        <Form.Item
+          name="postTrialGraceHours"
+          label="مهلت claim بعد از پایان trial (ساعت)"
+          tooltip="اگر کاربر تا پایان دوره‌ی آزمایشی هدیه را claim نکرده باشد، تا این مدت بعد از پایان trial هم فرصت دارد (تا وقتی هنوز خریدی نکرده)"
+          rules={[{ required: true }]}
+        >
+          <InputNumber min={1} max={168} addonAfter="ساعت" style={{ width: '100%' }} />
         </Form.Item>
 
         <Divider orientation="right" style={{ fontSize: 13 }}>⏰ هشدار انقضای اشتراک</Divider>

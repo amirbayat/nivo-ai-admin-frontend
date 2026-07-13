@@ -115,6 +115,7 @@ export interface GrowthConfig {
   id: string
   welcomeDiscountPercent: number
   welcomeDiscountValidHours: number
+  postTrialGraceHours: number
   expiryDiscountPercent: number
   referralDiscountPercent: number
   referralDiscountValidDays: number
