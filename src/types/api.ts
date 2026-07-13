@@ -87,6 +87,15 @@ export interface Plan {
   rollingWindowLimit: number | null
   rollingWindowHours: number
   simpleModel: string | null
+  contextMd: string | null
+}
+
+export interface ChatConfig {
+  id: string
+  globalContextMd: string
+  summaryTriggerTokens: number
+  summaryMaxTokens: number
+  updatedAt: string
 }
 
 export interface RoutingStep {

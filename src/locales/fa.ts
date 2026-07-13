@@ -20,6 +20,7 @@ export const fa = {
     payments: 'پرداخت‌ها',
     feedback: 'فیدبک',
     modelFeedback: 'فیدبک مدل‌ها',
+    chatConfig: 'تنظیمات چت',
     tickets: 'تیکت‌ها',
     analytics: 'آنالیز مصرف',
     salesBot: 'ربات فروش',

@@ -48,6 +48,7 @@ interface PlanFormValues {
   outputThrottleSteps: ThrottleStepValue[]
   rollingWindowLimit: number | null
   rollingWindowHours: number
+  contextMd: string | null
 }
 
 export function PlansPage() {
@@ -113,6 +114,7 @@ export function PlansPage() {
       outputThrottleSteps: (plan.outputThrottleSteps as ThrottleStepValue[] | null) ?? [],
       rollingWindowLimit: plan.rollingWindowLimit ?? null,
       rollingWindowHours: plan.rollingWindowHours ?? 3,
+      contextMd: plan.contextMd ?? null,
     })
     setOpen(true)
   }
@@ -139,6 +141,7 @@ export function PlansPage() {
         outputThrottleSteps: (values.outputThrottleSteps ?? []).filter(s => s?.afterMessages && s?.maxOutputTokens),
         rollingWindowLimit: values.rollingWindowLimit ?? null,
         rollingWindowHours: values.rollingWindowHours ?? 3,
+        contextMd: values.contextMd ?? null,
         // simpleModel عمداً اینجا فرستاده نمی‌شود — هم بک‌اند این فیلد را روی این endpoint
         // نمی‌پذیرد، هم مقدارش فقط باید از صفحه‌ی «مسیریابی مدل‌ها» تغییر کند (وگرنه هر ذخیره‌ی
         // معمولی پلن، مقدار تنظیم‌شده‌ی آنجا را بی‌صدا null می‌کرد)
@@ -464,6 +467,16 @@ export function PlansPage() {
                 </>
               )}
             </Form.List>
+          </Form.Item>
+
+          <Divider orientation="right" style={{ fontSize: 13 }}>Context</Divider>
+
+          <Form.Item
+            name="contextMd"
+            label="Context اختصاصی این پلن"
+            extra="بعد از کانتکست عمومی (صفحه‌ی «تنظیمات چت») به system prompt همه‌ی مکالمات کاربرانی که این پلن را دارند اضافه می‌شود. اختیاری — خالی یعنی چیزی اضافه نمی‌شود."
+          >
+            <Input.TextArea rows={4} placeholder="مثلاً محدودیت‌ها یا لحن مخصوص این پلن..." />
           </Form.Item>
 
           <Form.Item name="isActive" label={fa.plans.active} valuePropName="checked">

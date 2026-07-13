@@ -54,4 +54,7 @@ export const keys = {
     list: () => ['admin', 'articles'] as const,
     categories: () => ['admin', 'article-categories'] as const,
   },
+  chatConfig: {
+    detail: () => ['admin', 'chat-config'] as const,
+  },
 } as const

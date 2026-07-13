@@ -19,6 +19,7 @@ import {
   ShopOutlined,
   ReadOutlined,
   TagsOutlined,
+  CommentOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
 import { fa } from '@/locales/fa'
@@ -33,6 +34,7 @@ const menuItems = [
   { key: '/admin/models', icon: <RobotOutlined />, label: fa.nav.models },
   { key: '/admin/model-routing', icon: <ApartmentOutlined />, label: fa.nav.modelRouting },
   { key: '/admin/model-feedback', icon: <LikeOutlined />, label: fa.nav.modelFeedback },
+  { key: '/admin/chat-config', icon: <CommentOutlined />, label: fa.nav.chatConfig },
   { key: '/admin/analytics', icon: <BarChartOutlined />, label: fa.nav.analytics },
   { key: '/admin/sales-bot', icon: <ShopOutlined />, label: fa.nav.salesBot },
   { key: '/admin/campaigns', icon: <RocketOutlined />, label: fa.nav.campaigns },
