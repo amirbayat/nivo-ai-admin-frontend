@@ -225,7 +225,7 @@ export function ModelRoutingPage() {
                     </Popconfirm>
                   }
                 >
-                  <Space align="center" style={{ marginBottom: 12 }}>
+                  <Space align="center" style={{ marginBottom: 12 }} wrap>
                     <Text>سقف مصرف روزانه تا:</Text>
                     <InputNumber
                       min={1}
@@ -233,6 +233,20 @@ export function ModelRoutingPage() {
                       value={step.thresholdPct}
                       onChange={(v) => updateStep(i, { thresholdPct: v ?? step.thresholdPct })}
                       addonAfter="٪"
+                    />
+                    <Text style={{ marginInlineStart: 12 }}>میزان reasoning این استپ:</Text>
+                    <Select
+                      allowClear
+                      style={{ width: 160 }}
+                      placeholder="پیش‌فرض پلن"
+                      value={step.reasoningEffort ?? undefined}
+                      onChange={(v) => updateStep(i, { reasoningEffort: v ?? null })}
+                      options={[
+                        { value: 'minimal', label: 'حداقل' },
+                        { value: 'low', label: 'کم' },
+                        { value: 'medium', label: 'متوسط' },
+                        { value: 'high', label: 'بالا' },
+                      ]}
                     />
                   </Space>
                   <StepModelsEditor

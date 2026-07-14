@@ -49,6 +49,7 @@ interface PlanFormValues {
   rollingWindowLimit: number | null
   rollingWindowHours: number
   contextMd: string | null
+  reasoningEffort: string | null
   trialMessageThreshold: number | null
   trialDailyMessageLimit: number | null
   trialThrottledMessageCount: number | null
@@ -120,6 +121,7 @@ export function PlansPage() {
       rollingWindowLimit: plan.rollingWindowLimit ?? null,
       rollingWindowHours: plan.rollingWindowHours ?? 3,
       contextMd: plan.contextMd ?? null,
+      reasoningEffort: plan.reasoningEffort ?? null,
       trialMessageThreshold: plan.trialMessageThreshold ?? null,
       trialDailyMessageLimit: plan.trialDailyMessageLimit ?? null,
       trialThrottledMessageCount: plan.trialThrottledMessageCount ?? null,
@@ -152,6 +154,7 @@ export function PlansPage() {
         rollingWindowLimit: values.rollingWindowLimit ?? null,
         rollingWindowHours: values.rollingWindowHours ?? 3,
         contextMd: values.contextMd ?? null,
+        reasoningEffort: values.reasoningEffort ?? null,
         trialMessageThreshold: values.trialMessageThreshold ?? null,
         trialDailyMessageLimit: values.trialDailyMessageLimit ?? null,
         trialThrottledMessageCount: values.trialThrottledMessageCount ?? null,
@@ -492,6 +495,25 @@ export function PlansPage() {
             extra="بعد از کانتکست عمومی (صفحه‌ی «تنظیمات چت») به system prompt همه‌ی مکالمات کاربرانی که این پلن را دارند اضافه می‌شود. اختیاری — خالی یعنی چیزی اضافه نمی‌شود."
           >
             <Input.TextArea rows={4} placeholder="مثلاً محدودیت‌ها یا لحن مخصوص این پلن..." />
+          </Form.Item>
+
+          <Divider orientation="right" style={{ fontSize: 13 }}>Reasoning</Divider>
+
+          <Form.Item
+            name="reasoningEffort"
+            label="میزان reasoning effort پیش‌فرض این پلن"
+            extra="فقط روی مدل‌های reasoning (مثل خانواده‌ی gpt-5) اثر دارد. خالی = پیش‌فرض پلتفرم (معمولاً medium). می‌توان به‌ازای هر استپ بودجه‌ای هم در صفحه‌ی «مسیریابی مدل‌ها» override کرد."
+          >
+            <Select
+              allowClear
+              placeholder="پیش‌فرض پلتفرم"
+              options={[
+                { value: 'minimal', label: 'حداقل (سریع‌ترین، ارزان‌ترین)' },
+                { value: 'low', label: 'کم' },
+                { value: 'medium', label: 'متوسط' },
+                { value: 'high', label: 'بالا (کندتر، دقیق‌تر)' },
+              ]}
+            />
           </Form.Item>
 
           <Divider orientation="right" style={{ fontSize: 13 }}>دوره‌ی آزمایشی کاربر تازه</Divider>

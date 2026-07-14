@@ -3,8 +3,9 @@ import { Card, Col, Row, Statistic, Segmented, Typography, Spin } from 'antd'
 import {
   ThunderboltOutlined, ApiOutlined, CheckCircleOutlined, ClockCircleOutlined,
 } from '@ant-design/icons'
-import { useLiveStatsSummary, useLiveStatsTimeseries } from '@/queries/live-stats.queries'
+import { useLiveStatsSummary, useLiveStatsTimeseries, useDailyPeaks } from '@/queries/live-stats.queries'
 import { LiveRequestsCanvasChart } from './LiveRequestsCanvasChart'
+import { DailyPeaksCanvasChart } from './DailyPeaksCanvasChart'
 
 const { Title, Text } = Typography
 
@@ -22,10 +23,19 @@ const TYPE_LABELS = {
   routing: 'مسیریابی مدل',
 } as const
 
+const PEAK_RANGE_OPTIONS = [
+  { label: '۷ روز', value: 7 },
+  { label: '۱۴ روز', value: 14 },
+  { label: '۳۰ روز', value: 30 },
+  { label: '۹۰ روز', value: 90 },
+]
+
 export function LiveStatsPage() {
   const [minutes, setMinutes] = useState(60)
+  const [peakDays, setPeakDays] = useState(14)
   const { data: summary } = useLiveStatsSummary()
   const { data: timeseries, isLoading } = useLiveStatsTimeseries(minutes)
+  const { data: dailyPeaks, isLoading: peaksLoading } = useDailyPeaks(peakDays)
 
   const today = summary?.today
   const successRate = today && today.total > 0 ? Math.round((today.success / today.total) * 100) : null
@@ -92,6 +102,20 @@ export function LiveStatsPage() {
         }
       >
         {isLoading ? <Spin /> : <LiveRequestsCanvasChart data={timeseries ?? []} />}
+      </Card>
+
+      <Card
+        style={{ marginTop: 16 }}
+        title="پیک مصرف روزانه (حداکثر کاربران هم‌زمان)"
+        extra={
+          <Segmented
+            options={PEAK_RANGE_OPTIONS}
+            value={peakDays}
+            onChange={(v) => setPeakDays(v as number)}
+          />
+        }
+      >
+        {peaksLoading ? <Spin /> : <DailyPeaksCanvasChart data={dailyPeaks ?? []} />}
       </Card>
 
       <Card style={{ marginTop: 16 }} title="تفکیک بر اساس نوع (امروز)">

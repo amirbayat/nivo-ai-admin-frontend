@@ -72,11 +72,15 @@ export function AdminLayout() {
         collapsible
         collapsed={collapsed}
         trigger={null}
-        style={{ position: 'fixed', height: '100vh', right: 0, top: 0, zIndex: 100 }}
+        style={{
+          position: 'fixed', height: '100vh', right: 0, top: 0, zIndex: 100,
+          display: 'flex', flexDirection: 'column',
+        }}
       >
         <div
           style={{
             height: 64,
+            flexShrink: 0,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -88,14 +92,18 @@ export function AdminLayout() {
         >
           {collapsed ? 'PA' : 'پنل مدیریت'}
         </div>
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={[location.pathname]}
-          items={menuItems}
-          onClick={({ key }) => navigate(key)}
-          style={{ borderLeft: 'none' }}
-        />
+        {/* آیتم‌های منو دارن زیاد می‌شن — بدون این scroll، آیتم‌های آخر روی صفحه‌های کوتاه‌تر
+            از دید خارج می‌شدن و هیچ راهی برای رسیدن بهشون نبود */}
+        <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+          <Menu
+            theme="dark"
+            mode="inline"
+            selectedKeys={[location.pathname]}
+            items={menuItems}
+            onClick={({ key }) => navigate(key)}
+            style={{ borderLeft: 'none' }}
+          />
+        </div>
       </Sider>
       <Layout
         style={{

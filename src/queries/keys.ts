@@ -68,5 +68,6 @@ export const keys = {
   liveStats: {
     summary: () => ['admin', 'live-stats', 'summary'] as const,
     timeseries: (minutes: number) => ['admin', 'live-stats', 'timeseries', minutes] as const,
+    dailyPeaks: (days: number) => ['admin', 'live-stats', 'daily-peaks', days] as const,
   },
 } as const

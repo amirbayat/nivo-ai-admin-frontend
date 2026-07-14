@@ -87,6 +87,7 @@ export interface Plan {
   rollingWindowLimit: number | null
   rollingWindowHours: number
   simpleModel: string | null
+  reasoningEffort: string | null
   contextMd: string | null
   trialMessageThreshold: number | null
   trialDailyMessageLimit: number | null
@@ -139,10 +140,13 @@ export interface ChatConfig {
   updatedAt: string
 }
 
+export type ReasoningEffort = 'minimal' | 'low' | 'medium' | 'high'
+
 export interface RoutingStep {
   order: number
   thresholdPct: number
   models: string[]
+  reasoningEffort?: ReasoningEffort | null
 }
 
 export interface PlanRouting {
@@ -604,4 +608,9 @@ export interface LiveStatsSummary {
 
 export interface LiveStatsTimeseriesPoint extends LiaraStatsBucket {
   bucket: string
+}
+
+export interface DailyPeakPoint {
+  day: string
+  peak: number
 }
