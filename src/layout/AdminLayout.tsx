@@ -22,6 +22,7 @@ import {
   CommentOutlined,
   GiftOutlined,
   KeyOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
 import { fa } from '@/locales/fa'
@@ -31,6 +32,7 @@ const { Text } = Typography
 
 const menuItems = [
   { key: '/admin/dashboard', icon: <DashboardOutlined />, label: fa.nav.dashboard },
+  { key: '/admin/live-stats', icon: <ThunderboltOutlined />, label: fa.nav.liveStats },
   { key: '/admin/users', icon: <UserOutlined />, label: fa.nav.users },
   { key: '/admin/plans', icon: <AppstoreOutlined />, label: fa.nav.plans },
   { key: '/admin/models', icon: <RobotOutlined />, label: fa.nav.models },

@@ -13,6 +13,7 @@ export const fa = {
   },
   nav: {
     dashboard: 'داشبورد',
+    liveStats: 'وضعیت زنده',
     users: 'کاربران',
     plans: 'پلن‌ها',
     models: 'مدل‌های AI',

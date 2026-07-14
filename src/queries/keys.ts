@@ -65,4 +65,8 @@ export const keys = {
   otp: {
     list: () => ['admin', 'otp'] as const,
   },
+  liveStats: {
+    summary: () => ['admin', 'live-stats', 'summary'] as const,
+    timeseries: (minutes: number) => ['admin', 'live-stats', 'timeseries', minutes] as const,
+  },
 } as const

@@ -586,3 +586,22 @@ export interface ActiveOtp {
   name: string | null
   expiresInSeconds: number
 }
+
+export type LiaraCallType = 'chat' | 'title' | 'summary' | 'routing'
+
+export interface LiaraStatsBucket {
+  total: number
+  success: number
+  fail: number
+  avgLatencyMs: number
+  byType: Record<LiaraCallType, number>
+}
+
+export interface LiveStatsSummary {
+  activeStreams: number
+  today: LiaraStatsBucket
+}
+
+export interface LiveStatsTimeseriesPoint extends LiaraStatsBucket {
+  bucket: string
+}
