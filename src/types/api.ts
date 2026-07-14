@@ -376,9 +376,11 @@ export interface LaunchCampaign {
   waitlistFullMessage: string | null
   waitlistDailyMessageLimit: number
   displayCounterEnabled: boolean
-  displayInitialPct: number
-  displayFloor: number
-  displayTickSeconds: number
+  displayInitialPctMin: number
+  displayInitialPctMax: number
+  displayFloorMin: number
+  displayFloorMax: number
+  displayAnimationTickMs: number
   displayDecrementMin: number
   displayDecrementMax: number
   grantedSmsTemplate: string | null
@@ -597,8 +599,10 @@ export interface LiaraStatsBucket {
   total: number
   success: number
   fail: number
+  // میانگین ترکیبی هر ۴ نوع تماس — برای مقایسه‌ی معنادار از avgLatencyMsByType استفاده کنید
   avgLatencyMs: number
   byType: Record<LiaraCallType, number>
+  avgLatencyMsByType: Record<LiaraCallType, number>
 }
 
 export interface LiveStatsSummary {

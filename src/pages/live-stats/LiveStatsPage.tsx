@@ -81,8 +81,8 @@ export function LiveStatsPage() {
         <Col span={6}>
           <Card>
             <Statistic
-              title="میانگین تأخیر امروز"
-              value={today?.avgLatencyMs ?? 0}
+              title="میانگین تأخیر پاسخ چت (امروز)"
+              value={today?.avgLatencyMsByType.chat ?? 0}
               suffix="ms"
               prefix={<ClockCircleOutlined style={{ marginLeft: 8 }} />}
             />
@@ -119,10 +119,19 @@ export function LiveStatsPage() {
       </Card>
 
       <Card style={{ marginTop: 16 }} title="تفکیک بر اساس نوع (امروز)">
-        <Row gutter={16}>
+        <Row gutter={[16, 16]}>
           {(Object.keys(TYPE_LABELS) as (keyof typeof TYPE_LABELS)[]).map((key) => (
             <Col span={6} key={key}>
-              <Statistic title={TYPE_LABELS[key]} value={today?.byType[key] ?? 0} />
+              <Statistic
+                title={TYPE_LABELS[key]}
+                value={today?.byType[key] ?? 0}
+                suffix={
+                  today?.avgLatencyMsByType[key]
+                    ? `(میانگین ${today.avgLatencyMsByType[key]}ms)`
+                    : undefined
+                }
+                valueStyle={{ fontSize: 20 }}
+              />
             </Col>
           ))}
         </Row>

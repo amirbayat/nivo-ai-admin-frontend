@@ -23,9 +23,11 @@ interface CampaignFormValues {
   waitlistFullMessage: string | null
   waitlistDailyMessageLimit: number
   displayCounterEnabled: boolean
-  displayInitialPct: number
-  displayFloor: number
-  displayTickSeconds: number
+  displayInitialPctMin: number
+  displayInitialPctMax: number
+  displayFloorMin: number
+  displayFloorMax: number
+  displayAnimationTickMs: number
   displayDecrementMin: number
   displayDecrementMax: number
   grantedSmsTemplate: string | null
@@ -53,11 +55,13 @@ export function CampaignsPage() {
       maxWaitlistSize: null,
       waitlistDailyMessageLimit: 4,
       displayCounterEnabled: true,
-      displayInitialPct: 20,
-      displayFloor: 5,
-      displayTickSeconds: 30,
+      displayInitialPctMin: 15,
+      displayInitialPctMax: 25,
+      displayFloorMin: 3,
+      displayFloorMax: 8,
+      displayAnimationTickMs: 500,
       displayDecrementMin: 1,
-      displayDecrementMax: 2,
+      displayDecrementMax: 3,
       reminderSteps: [],
     })
     setFormOpen(true)
@@ -202,16 +206,24 @@ export function CampaignsPage() {
             <Switch />
           </Form.Item>
           <Space wrap>
-            <Form.Item name="displayInitialPct" label={fa.campaigns.displayInitialPct}>
+            <Form.Item name="displayInitialPctMin" label={fa.campaigns.displayInitialPctMin}>
               <InputNumber min={1} max={100} style={{ width: 140 }} />
             </Form.Item>
-            <Form.Item name="displayFloor" label={fa.campaigns.displayFloor}>
+            <Form.Item name="displayInitialPctMax" label={fa.campaigns.displayInitialPctMax}>
+              <InputNumber min={1} max={100} style={{ width: 140 }} />
+            </Form.Item>
+          </Space>
+          <Space wrap>
+            <Form.Item name="displayFloorMin" label={fa.campaigns.displayFloorMin}>
+              <InputNumber min={0} style={{ width: 140 }} />
+            </Form.Item>
+            <Form.Item name="displayFloorMax" label={fa.campaigns.displayFloorMax}>
               <InputNumber min={0} style={{ width: 140 }} />
             </Form.Item>
           </Space>
           <Space wrap>
-            <Form.Item name="displayTickSeconds" label={fa.campaigns.displayTickSeconds}>
-              <InputNumber min={1} style={{ width: 140 }} />
+            <Form.Item name="displayAnimationTickMs" label={fa.campaigns.displayAnimationTickMs}>
+              <InputNumber min={50} step={50} style={{ width: 160 }} />
             </Form.Item>
             <Form.Item name="displayDecrementMin" label={fa.campaigns.displayDecrementMin}>
               <InputNumber min={1} style={{ width: 140 }} />

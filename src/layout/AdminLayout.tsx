@@ -72,37 +72,39 @@ export function AdminLayout() {
         collapsible
         collapsed={collapsed}
         trigger={null}
-        style={{
-          position: 'fixed', height: '100vh', right: 0, top: 0, zIndex: 100,
-          display: 'flex', flexDirection: 'column',
-        }}
+        style={{ position: 'fixed', height: '100vh', right: 0, top: 0, zIndex: 100 }}
       >
-        <div
-          style={{
-            height: 64,
-            flexShrink: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#fff',
-            fontWeight: 700,
-            fontSize: collapsed ? 14 : 16,
-            borderBottom: '1px solid rgba(255,255,255,0.1)',
-          }}
-        >
-          {collapsed ? 'PA' : 'پنل مدیریت'}
-        </div>
-        {/* آیتم‌های منو دارن زیاد می‌شن — بدون این scroll، آیتم‌های آخر روی صفحه‌های کوتاه‌تر
-            از دید خارج می‌شدن و هیچ راهی برای رسیدن بهشون نبود */}
-        <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
-          <Menu
-            theme="dark"
-            mode="inline"
-            selectedKeys={[location.pathname]}
-            items={menuItems}
-            onClick={({ key }) => navigate(key)}
-            style={{ borderLeft: 'none' }}
-          />
+        {/* antd خودش یک div داخلی (.ant-layout-sider-children، height:100%) دور بچه‌های Sider
+            می‌پیچد — یعنی این‌جا اولین لایه‌ای است که واقعاً می‌شود رویش flex گذاشت؛ روی خودِ
+            Sider گذاشتنش بی‌اثر بود چون آن div داخلی، نه این استایل، پدر مستقیم بچه‌ها می‌شد */}
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <div
+            style={{
+              height: 64,
+              flexShrink: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              fontWeight: 700,
+              fontSize: collapsed ? 14 : 16,
+              borderBottom: '1px solid rgba(255,255,255,0.1)',
+            }}
+          >
+            {collapsed ? 'PA' : 'پنل مدیریت'}
+          </div>
+          {/* آیتم‌های منو دارن زیاد می‌شن — بدون این scroll، آیتم‌های آخر روی صفحه‌های کوتاه‌تر
+              از دید خارج می‌شدن و هیچ راهی برای رسیدن بهشون نبود */}
+          <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+            <Menu
+              theme="dark"
+              mode="inline"
+              selectedKeys={[location.pathname]}
+              items={menuItems}
+              onClick={({ key }) => navigate(key)}
+              style={{ borderLeft: 'none' }}
+            />
+          </div>
         </div>
       </Sider>
       <Layout
