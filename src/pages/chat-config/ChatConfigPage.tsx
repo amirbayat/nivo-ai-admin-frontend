@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Alert, Button, Card, Form, InputNumber, Spin, Typography, message } from 'antd'
+import { Alert, Button, Card, Divider, Form, InputNumber, Spin, Typography, message } from 'antd'
 import { useChatConfig, useUpdateChatConfig } from '@/queries/chat-config.queries'
 import { ContextEditor } from '@/pages/sales-bot/ContextEditor'
 
@@ -8,6 +8,8 @@ const { Title, Text } = Typography
 interface ThresholdFormValues {
   summaryTriggerTokens: number
   summaryMaxTokens: number
+  maxImagesPerMessage: number
+  maxImageSizeMb: number
 }
 
 export function ChatConfigPage() {
@@ -76,6 +78,25 @@ export function ChatConfigPage() {
             rules={[{ required: true }]}
           >
             <InputNumber min={50} max={4096} step={50} style={{ width: '100%' }} />
+          </Form.Item>
+
+          <Divider>محدودیت عکس در چت</Divider>
+
+          <Form.Item
+            name="maxImagesPerMessage"
+            label="حداکثر تعداد عکس هر پیام"
+            rules={[{ required: true }]}
+          >
+            <InputNumber min={1} max={10} style={{ width: '100%' }} />
+          </Form.Item>
+
+          <Form.Item
+            name="maxImageSizeMb"
+            label="حداکثر حجم هر عکس (مگابایت)"
+            extra="بعد از decode شدن از base64 اندازه‌گیری می‌شود؛ فرانت خودش عکس‌ها را قبل از ارسال کوچک می‌کند، این فقط یک سقف امنیتی سمت سرور است."
+            rules={[{ required: true }]}
+          >
+            <InputNumber min={1} max={20} style={{ width: '100%' }} />
           </Form.Item>
 
           <Button type="primary" htmlType="submit" loading={update.isPending}>

@@ -12,6 +12,54 @@ export interface AdminUser {
   category: 'heavy' | 'moderate' | 'light' | 'inactive'
 }
 
+export interface WalletTransaction {
+  id: string
+  walletId: string
+  type: 'CREDIT' | 'DEBIT'
+  amountToman: number
+  description: string | null
+  metadata: Record<string, unknown> | null
+  createdAt: string
+}
+
+export interface UserDetailPayment {
+  id: string
+  kind: 'SUBSCRIPTION' | 'WALLET_TOPUP'
+  amount: number
+  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'REFUNDED'
+  provider: string
+  createdAt: string
+  plan: { name: string } | null
+}
+
+export interface UserDailyUsageRow {
+  id: string
+  date: string
+  freeTokensUsed: number
+  paidTokensUsed: number
+  requestsCount: number
+  costToman: number
+  costUsdMicros: number
+}
+
+export interface AdminUserDetail {
+  user: {
+    id: string
+    phone: string
+    name: string | null
+    role: 'USER' | 'ADMIN'
+    isActive: boolean
+    createdAt: string
+    lifetimeMessageCount: number
+    subscription: { status: string; periodStart: string; periodEnd: string; plan: Plan } | null
+    wallet: { id: string; balanceToman: number } | null
+  }
+  walletBalanceToman: number
+  walletTransactions: WalletTransaction[]
+  payments: UserDetailPayment[]
+  dailyUsage: UserDailyUsageRow[]
+}
+
 export interface ExchangeRateInfo {
   toman: number
   updatedAt: string | null
@@ -94,6 +142,11 @@ export interface Plan {
   trialThrottledMessageCount: number | null
   trialRollingWindowLimit: number | null
   trialRollingWindowHours: number | null
+  isPayAsYouGo: boolean
+  payAsYouGoMarkup: number | null
+  payAsYouGoMinActivationToman: number | null
+  payAsYouGoMinTopupToman: number | null
+  payAsYouGoTopupPresets: number[] | null
 }
 
 export type DiscountSource = 'WELCOME_GIFT' | 'EXPIRY_REMINDER' | 'REFERRAL' | 'MANUAL'
@@ -137,6 +190,8 @@ export interface ChatConfig {
   globalContextMd: string
   summaryTriggerTokens: number
   summaryMaxTokens: number
+  maxImagesPerMessage: number
+  maxImageSizeMb: number
   updatedAt: string
 }
 
@@ -199,6 +254,7 @@ export interface AiModel {
   inputPricePerM: number
   outputPricePerM: number
   supportsVision: boolean
+  supportsImageGen: boolean
   isActive: boolean
   sortOrder: number
   tier: 'SIMPLE' | 'MEDIUM' | 'COMPLEX'

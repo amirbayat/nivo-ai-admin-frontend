@@ -37,6 +37,7 @@ interface ModelFormValues {
   inputPricePerM: number
   outputPricePerM: number
   supportsVision: boolean
+  supportsImageGen: boolean
   isActive: boolean
   sortOrder: number
   tier: AiModel['tier']
@@ -81,6 +82,7 @@ export function ModelsPage() {
     form.setFieldsValue({
       isActive: true,
       supportsVision: false,
+      supportsImageGen: false,
       sortOrder: (models?.length ?? 0),
       provider: 'openai',
       tier: 'MEDIUM',
@@ -99,6 +101,7 @@ export function ModelsPage() {
       inputPricePerM: model.inputPricePerM,
       outputPricePerM: model.outputPricePerM,
       supportsVision: model.supportsVision,
+      supportsImageGen: model.supportsImageGen,
       isActive: model.isActive,
       sortOrder: model.sortOrder,
       tier: model.tier,
@@ -204,6 +207,13 @@ export function ModelsPage() {
       key: 'supportsVision',
       width: 100,
       render: (v: boolean) => v ? <Tag color="blue">✓ Vision</Tag> : <Tag>—</Tag>,
+    },
+    {
+      title: fa.models.imageGen,
+      dataIndex: 'supportsImageGen',
+      key: 'supportsImageGen',
+      width: 100,
+      render: (v: boolean) => v ? <Tag color="purple">✓ تولید عکس</Tag> : <Tag>—</Tag>,
     },
     {
       title: fa.models.tier,
@@ -348,6 +358,9 @@ export function ModelsPage() {
           </Form.Item>
           <Space size="large">
             <Form.Item name="supportsVision" label={fa.models.vision} valuePropName="checked">
+              <Switch />
+            </Form.Item>
+            <Form.Item name="supportsImageGen" label={fa.models.imageGen} valuePropName="checked">
               <Switch />
             </Form.Item>
             <Form.Item name="isActive" label={fa.models.active} valuePropName="checked">

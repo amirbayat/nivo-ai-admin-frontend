@@ -3,6 +3,7 @@ import { LoginPage } from '@/pages/auth/LoginPage'
 import { AdminLayout } from '@/layout/AdminLayout'
 import { DashboardPage } from '@/pages/dashboard/DashboardPage'
 import { UsersPage } from '@/pages/users/UsersPage'
+import { UserDetailPage } from '@/pages/users/UserDetailPage'
 import { PlansPage } from '@/pages/plans/PlansPage'
 import { PaymentsPage } from '@/pages/payments/PaymentsPage'
 import { FeedbackPage } from '@/pages/feedback/FeedbackPage'
@@ -43,6 +44,7 @@ export function AppRouter() {
         <Route index element={<Navigate to="/admin/dashboard" replace />} />
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="users" element={<UsersPage />} />
+        <Route path="users/:id" element={<UserDetailPage />} />
         <Route path="plans" element={<PlansPage />} />
         <Route path="payments" element={<PaymentsPage />} />
         <Route path="feedback" element={<FeedbackPage />} />

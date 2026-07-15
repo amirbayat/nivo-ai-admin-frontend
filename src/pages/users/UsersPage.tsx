@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Table, Input, Button, Tag, Space, Typography, Popconfirm,
   message, Modal, Select, Form, Tooltip,
@@ -51,6 +52,7 @@ function SparkBar({ actual, expected, charged }: { actual: number; expected: num
 }
 
 export function UsersPage() {
+  const navigate = useNavigate()
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [searchInput, setSearchInput] = useState('')
@@ -188,6 +190,9 @@ export function UsersPage() {
       width: 220,
       render: (_, record) => (
         <Space wrap>
+          <Button size="small" onClick={() => navigate(`/admin/users/${record.id}`)}>
+            جزئیات
+          </Button>
           <Button size="small" type={record.isActive ? 'default' : 'primary'} onClick={() => handleToggleActive(record)}>
             {record.isActive ? fa.users.disable : fa.users.enable}
           </Button>

@@ -55,6 +55,11 @@ interface PlanFormValues {
   trialThrottledMessageCount: number | null
   trialRollingWindowLimit: number | null
   trialRollingWindowHours: number | null
+  isPayAsYouGo: boolean
+  payAsYouGoMarkup: number | null
+  payAsYouGoMinActivationToman: number | null
+  payAsYouGoMinTopupToman: number | null
+  payAsYouGoTopupPresetsText: string // comma-separated در فرم — number[] موقع ذخیره
 }
 
 export function PlansPage() {
@@ -73,6 +78,8 @@ export function PlansPage() {
 
   // مدل‌های ویژه فقط می‌توانند زیرمجموعه‌ی مدل‌های مجاز باشند — با تغییر allowedModels فیلتر می‌شود
   const watchedAllowedModels: string[] = Form.useWatch('allowedModels', form) ?? []
+  // همون فیلد isActive موجود، خاموش/روشن کردن PAYG هم هست — فقط برچسبش برای این پلن روشن‌تر می‌شود
+  const watchedIsPayAsYouGo: boolean = Form.useWatch('isPayAsYouGo', form) ?? false
 
   function handleValuesChange(changed: Partial<PlanFormValues>) {
     if (changed.allowedModels) {
@@ -95,6 +102,11 @@ export function PlansPage() {
       isPopular: false,
       featuredModels: [],
       featuredModelsCount: 5,
+      isPayAsYouGo: false,
+      payAsYouGoMarkup: 1.3,
+      payAsYouGoMinActivationToman: 1_000_000,
+      payAsYouGoMinTopupToman: 500_000,
+      payAsYouGoTopupPresetsText: '1000000,2000000,5000000',
     })
     setOpen(true)
   }
@@ -127,6 +139,11 @@ export function PlansPage() {
       trialThrottledMessageCount: plan.trialThrottledMessageCount ?? null,
       trialRollingWindowLimit: plan.trialRollingWindowLimit ?? null,
       trialRollingWindowHours: plan.trialRollingWindowHours ?? null,
+      isPayAsYouGo: plan.isPayAsYouGo,
+      payAsYouGoMarkup: plan.payAsYouGoMarkup ?? 1.3,
+      payAsYouGoMinActivationToman: plan.payAsYouGoMinActivationToman ?? 1_000_000,
+      payAsYouGoMinTopupToman: plan.payAsYouGoMinTopupToman ?? 500_000,
+      payAsYouGoTopupPresetsText: (plan.payAsYouGoTopupPresets ?? [1_000_000, 2_000_000, 5_000_000]).join(','),
     })
     setOpen(true)
   }
@@ -160,6 +177,14 @@ export function PlansPage() {
         trialThrottledMessageCount: values.trialThrottledMessageCount ?? null,
         trialRollingWindowLimit: values.trialRollingWindowLimit ?? null,
         trialRollingWindowHours: values.trialRollingWindowHours ?? null,
+        isPayAsYouGo: values.isPayAsYouGo ?? false,
+        payAsYouGoMarkup: values.payAsYouGoMarkup ?? 1.3,
+        payAsYouGoMinActivationToman: values.payAsYouGoMinActivationToman ?? 1_000_000,
+        payAsYouGoMinTopupToman: values.payAsYouGoMinTopupToman ?? 500_000,
+        payAsYouGoTopupPresets: (values.payAsYouGoTopupPresetsText ?? '')
+          .split(',')
+          .map((s) => Number(s.trim()))
+          .filter((n) => Number.isFinite(n) && n > 0),
         // simpleModel عمداً اینجا فرستاده نمی‌شود — هم بک‌اند این فیلد را روی این endpoint
         // نمی‌پذیرد، هم مقدارش فقط باید از صفحه‌ی «مسیریابی مدل‌ها» تغییر کند (وگرنه هر ذخیره‌ی
         // معمولی پلن، مقدار تنظیم‌شده‌ی آنجا را بی‌صدا null می‌کرد)
@@ -273,6 +298,20 @@ export function PlansPage() {
       key: 'isPopular',
       width: 100,
       render: (v: boolean) => (v ? <Tag color="gold">محبوب‌ترین</Tag> : <Tag>—</Tag>),
+    },
+    {
+      title: 'Pay-as-you-go',
+      dataIndex: 'isPayAsYouGo',
+      key: 'isPayAsYouGo',
+      width: 120,
+      render: (v: boolean, r) =>
+        v ? (
+          <Tag color={r.isActive ? 'magenta' : 'default'}>
+            PAYG × {r.payAsYouGoMarkup ?? 1.3} {!r.isActive && '(خاموش)'}
+          </Tag>
+        ) : (
+          <Tag>—</Tag>
+        ),
     },
     {
       title: 'مدل‌های ویژه',
@@ -542,7 +581,52 @@ export function PlansPage() {
             <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۳" />
           </Form.Item>
 
-          <Form.Item name="isActive" label={fa.plans.active} valuePropName="checked">
+          <Divider orientation="right" style={{ fontSize: 13 }}>Pay-as-you-go (کیف‌پول)</Divider>
+
+          <Form.Item
+            name="isPayAsYouGo"
+            label="پلن Pay-as-you-go است"
+            valuePropName="checked"
+            extra="بدون بودجه‌ی روزانه/ماهانه و بدون fallback پله‌ای به مدل ارزان‌تر — فقط موجودی کیف‌پول کاربر (docs/PRD-pay-as-you-go-wallet.md)"
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item
+            name="payAsYouGoMarkup"
+            label="ضریب قیمت (مصرف واقعی × این عدد از کیف‌پول کم می‌شود)"
+          >
+            <InputNumber style={{ width: '100%' }} min={1} step={0.1} placeholder="۱.۳" />
+          </Form.Item>
+          <Form.Item
+            name="payAsYouGoMinActivationToman"
+            label="حداقل شارژ برای فعال‌سازی اولیه (تومان)"
+          >
+            <InputNumber style={{ width: '100%' }} min={0} step={100000} placeholder="۱٬۰۰۰٬۰۰۰" />
+          </Form.Item>
+          <Form.Item
+            name="payAsYouGoMinTopupToman"
+            label="حداقل شارژهای بعدی (تومان)"
+          >
+            <InputNumber style={{ width: '100%' }} min={0} step={50000} placeholder="۵۰۰٬۰۰۰" />
+          </Form.Item>
+          <Form.Item
+            name="payAsYouGoTopupPresetsText"
+            label="گزینه‌های پیش‌فرض شارژ (تومان، با کاما جدا کنید)"
+            extra="مثال: 1000000,2000000,5000000"
+          >
+            <Input placeholder="1000000,2000000,5000000" />
+          </Form.Item>
+
+          <Form.Item
+            name="isActive"
+            label={watchedIsPayAsYouGo ? 'فعال بودن Pay-as-you-go' : fa.plans.active}
+            valuePropName="checked"
+            extra={
+              watchedIsPayAsYouGo
+                ? 'خاموش کردن این کلید یعنی: کارت Pay-as-you-go از صفحه‌ی قیمت‌گذاری مخفی می‌شود و شارژ/فعال‌سازی جدید مسدود می‌شود — کاربرانی که از قبل فعال کرده‌اند و موجودی دارند، همچنان می‌توانند مثل قبل چت کنند.'
+                : undefined
+            }
+          >
             <Switch />
           </Form.Item>
         </Form>

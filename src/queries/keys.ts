@@ -1,7 +1,10 @@
 export const keys = {
   auth: { me: () => ['auth', 'me'] as const },
   dashboard: { stats: () => ['admin', 'dashboard'] as const },
-  users: { list: (page: number, search: string) => ['admin', 'users', page, search] as const },
+  users: {
+    list: (page: number, search: string) => ['admin', 'users', page, search] as const,
+    detail: (id: string) => ['admin', 'users', id] as const,
+  },
   plans: { list: () => ['admin', 'plans'] as const },
   planRouting: { detail: (planId: string) => ['admin', 'plans', planId, 'routing'] as const },
   payments: { list: (page: number) => ['admin', 'payments', page] as const },

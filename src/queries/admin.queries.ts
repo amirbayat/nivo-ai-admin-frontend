@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import type {
   AdminUser,
+  AdminUserDetail,
   AdminTicket,
   AiModel,
   CostChartPoint,
@@ -46,6 +47,14 @@ export function useAdminUsers(page: number, search: string) {
       api
         .get<PaginatedUsers>('/admin/users', { params: { page, search } })
         .then((r) => r.data),
+  })
+}
+
+export function useAdminUserDetail(id: string) {
+  return useQuery({
+    queryKey: keys.users.detail(id),
+    queryFn: () => api.get<AdminUserDetail>(`/admin/users/${id}`).then((r) => r.data),
+    enabled: !!id,
   })
 }
 
@@ -201,6 +210,19 @@ export function useChangeUserPlan() {
     mutationFn: ({ userId, planId }: { userId: string; planId: string }) =>
       api.patch(`/admin/users/${userId}/plan`, { planId }).then(r => r.data),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin', 'users'] }),
+  })
+}
+
+// docs/PRD-pay-as-you-go-wallet.md — بازگشت وجه دستی + خروج از PAYG
+export function useRefundPayg() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (userId: string) =>
+      api.post<{ refundedAmountToman: number; downgradedToFreePlan: boolean }>(`/admin/users/${userId}/refund-payg`).then(r => r.data),
+    onSuccess: (_, userId) => {
+      void qc.invalidateQueries({ queryKey: keys.users.detail(userId) })
+      void qc.invalidateQueries({ queryKey: ['admin', 'users'] })
+    },
   })
 }
 

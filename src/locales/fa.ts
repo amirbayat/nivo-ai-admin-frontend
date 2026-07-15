@@ -223,6 +223,7 @@ export const fa = {
     inputPrice: 'قیمت ورودی ($/M)',
     outputPrice: 'قیمت خروجی ($/M)',
     vision: 'پشتیبانی از تصویر',
+    imageGen: 'تولید عکس',
     addModel: 'افزودن مدل',
     editModel: 'ویرایش مدل',
     deleteModel: 'حذف مدل',
