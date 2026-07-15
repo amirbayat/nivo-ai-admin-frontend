@@ -1,15 +1,24 @@
 import { useEffect, useState } from 'react'
-import { Alert, Button, Card, Divider, Form, InputNumber, Spin, Typography, message } from 'antd'
+import { Alert, Button, Card, Divider, Form, InputNumber, Select, Spin, Switch, Typography, message } from 'antd'
 import { useChatConfig, useUpdateChatConfig } from '@/queries/chat-config.queries'
 import { ContextEditor } from '@/pages/sales-bot/ContextEditor'
 
 const { Title, Text } = Typography
+
+const IMAGE_FORMAT_OPTIONS = [
+  { value: 'png', label: 'PNG' },
+  { value: 'jpeg', label: 'JPEG' },
+  { value: 'webp', label: 'WEBP' },
+  { value: 'gif', label: 'GIF' },
+]
 
 interface ThresholdFormValues {
   summaryTriggerTokens: number
   summaryMaxTokens: number
   maxImagesPerMessage: number
   maxImageSizeMb: number
+  allowedImageFormats: string[]
+  implicitImageGenEnabled: boolean
 }
 
 export function ChatConfigPage() {
@@ -97,6 +106,24 @@ export function ChatConfigPage() {
             rules={[{ required: true }]}
           >
             <InputNumber min={1} max={20} style={{ width: '100%' }} />
+          </Form.Item>
+
+          <Form.Item
+            name="allowedImageFormats"
+            label="فرمت‌های مجاز عکس"
+            extra="فقط این فرمت‌ها پذیرفته می‌شوند — بقیه (مثل SVG) رد می‌شوند، چون می‌توانند محتوای غیرمنتظره حمل کنند."
+            rules={[{ required: true, type: 'array', min: 1 }]}
+          >
+            <Select mode="multiple" options={IMAGE_FORMAT_OPTIONS} placeholder="انتخاب فرمت‌ها" />
+          </Form.Item>
+
+          <Form.Item
+            name="implicitImageGenEnabled"
+            label="تشخیص خودکار نیت تولید عکس وسط چت معمولی"
+            valuePropName="checked"
+            extra="اگر روشن باشد، وقتی کاربر بدون فعال‌کردن حالت «تولید عکس» چیزی مثل «یک عکس از گربه بکش» بنویسد، خودکار تشخیص داده و به مدل تولید عکس ارسال می‌شود — یک heuristic ساده است، نه قطعی؛ اگر تشخیص‌های اشتباه زیاد شد از همینجا خاموشش کن."
+          >
+            <Switch />
           </Form.Item>
 
           <Button type="primary" htmlType="submit" loading={update.isPending}>

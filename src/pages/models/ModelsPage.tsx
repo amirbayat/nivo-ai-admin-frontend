@@ -38,6 +38,7 @@ interface ModelFormValues {
   outputPricePerM: number
   supportsVision: boolean
   supportsImageGen: boolean
+  imageGenPriceUsd: number | null
   isActive: boolean
   sortOrder: number
   tier: AiModel['tier']
@@ -75,6 +76,7 @@ export function ModelsPage() {
   const importModels = useImportModels()
 
   const filteredModels = (models ?? []).filter((m) => !typeFilter || m.modelType === typeFilter)
+  const watchedSupportsImageGen: boolean = Form.useWatch('supportsImageGen', form) ?? false
 
   function openAdd() {
     setEditing(null)
@@ -83,6 +85,7 @@ export function ModelsPage() {
       isActive: true,
       supportsVision: false,
       supportsImageGen: false,
+      imageGenPriceUsd: null,
       sortOrder: (models?.length ?? 0),
       provider: 'openai',
       tier: 'MEDIUM',
@@ -102,6 +105,7 @@ export function ModelsPage() {
       outputPricePerM: model.outputPricePerM,
       supportsVision: model.supportsVision,
       supportsImageGen: model.supportsImageGen,
+      imageGenPriceUsd: model.imageGenPriceUsd,
       isActive: model.isActive,
       sortOrder: model.sortOrder,
       tier: model.tier,
@@ -367,6 +371,16 @@ export function ModelsPage() {
               <Switch />
             </Form.Item>
           </Space>
+
+          {watchedSupportsImageGen && (
+            <Form.Item
+              name="imageGenPriceUsd"
+              label="هزینه‌ی هر عکس تولیدشده ($)"
+              extra="هزینه‌ی ثابت هر بار تولید عکس با این مدل — برای پلن Pay-as-you-go در ضریب مصرف هم ضرب می‌شود"
+            >
+              <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="مثلاً ۰.۰۴" />
+            </Form.Item>
+          )}
         </Form>
       </Modal>
     </div>

@@ -192,6 +192,8 @@ export interface ChatConfig {
   summaryMaxTokens: number
   maxImagesPerMessage: number
   maxImageSizeMb: number
+  allowedImageFormats: string[]
+  implicitImageGenEnabled: boolean
   updatedAt: string
 }
 
@@ -255,6 +257,7 @@ export interface AiModel {
   outputPricePerM: number
   supportsVision: boolean
   supportsImageGen: boolean
+  imageGenPriceUsd: number | null
   isActive: boolean
   sortOrder: number
   tier: 'SIMPLE' | 'MEDIUM' | 'COMPLEX'
