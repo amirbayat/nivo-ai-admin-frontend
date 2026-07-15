@@ -245,7 +245,7 @@ export interface AdminTicket {
   replies: Array<{ id: string; fromAdmin: boolean; body: string; createdAt: string }>
 }
 
-export type AiModelType = 'CHAT' | 'EMBEDDING'
+export type AiModelType = 'CHAT' | 'EMBEDDING' | 'IMAGE_GEN'
 
 export interface AiModel {
   id: string

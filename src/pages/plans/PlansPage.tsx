@@ -70,8 +70,10 @@ export function PlansPage() {
 
   const { data: plans, isLoading } = usePlans()
   const { data: allModels, isLoading: modelsLoading } = useModels()
-  // مدل‌های embedding فقط برای پایگاه دانش ربات فروش هستند، هرگز گزینه‌ی چت پلن نمی‌شوند
-  const availableModels = allModels?.filter((m) => m.modelType === 'CHAT')
+  // مدل‌های embedding فقط برای پایگاه دانش ربات فروش هستند، هرگز گزینه‌ی پلن نمی‌شوند —
+  // مدل‌های IMAGE_GEN اینجا مجازند چون باید بشود آن‌ها را هم به allowedModels یک پلن اضافه کرد
+  // (مسیریاب مدل جدا و همچنان فقط modelType:'CHAT' برای پاسخ متنی فیلتر می‌کند)
+  const availableModels = allModels?.filter((m) => m.modelType !== 'EMBEDDING')
   const createPlan = useCreatePlan()
   const updatePlan = useUpdatePlan()
   const deletePlan = useDeletePlan()
@@ -402,7 +404,9 @@ export function PlansPage() {
               placeholder="انتخاب مدل‌های مجاز"
               options={(availableModels ?? []).filter(m => m.isActive).map(m => ({
                 value: m.name,
-                label: `${m.displayName} (${m.name})`,
+                label: m.modelType === 'IMAGE_GEN'
+                  ? `🎨 ${m.displayName} (${m.name})`
+                  : `${m.displayName} (${m.name})`,
               }))}
             />
           </Form.Item>
@@ -417,7 +421,12 @@ export function PlansPage() {
               placeholder="انتخاب مدل‌های ویژه (اختیاری — خالی = همه‌ی مدل‌های مجاز)"
               options={(availableModels ?? [])
                 .filter(m => watchedAllowedModels.includes(m.name))
-                .map(m => ({ value: m.name, label: `${m.displayName} (${m.name})` }))}
+                .map(m => ({
+                  value: m.name,
+                  label: m.modelType === 'IMAGE_GEN'
+                    ? `🎨 ${m.displayName} (${m.name})`
+                    : `${m.displayName} (${m.name})`,
+                }))}
             />
           </Form.Item>
           <Form.Item

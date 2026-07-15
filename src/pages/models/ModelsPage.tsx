@@ -53,6 +53,13 @@ const TIER_COLORS: Record<AiModel['tier'], string> = {
 const MODEL_TYPE_LABELS: Record<AiModel['modelType'], string> = {
   CHAT: 'چت',
   EMBEDDING: 'Embedding',
+  IMAGE_GEN: 'تولید عکس',
+}
+
+const MODEL_TYPE_TAG_COLORS: Record<AiModel['modelType'], string> = {
+  CHAT: 'default',
+  EMBEDDING: 'cyan',
+  IMAGE_GEN: 'magenta',
 }
 
 const PROVIDER_COLORS: Record<string, string> = {
@@ -77,6 +84,21 @@ export function ModelsPage() {
 
   const filteredModels = (models ?? []).filter((m) => !typeFilter || m.modelType === typeFilter)
   const watchedSupportsImageGen: boolean = Form.useWatch('supportsImageGen', form) ?? false
+  const watchedModelType: AiModel['modelType'] | undefined = Form.useWatch('modelType', form)
+  const isImageGenType = watchedModelType === 'IMAGE_GEN'
+
+  // مدل IMAGE_GEN اصلاً قابلیت چت/vision ندارد و قیمت‌گذاری‌اش per-image است نه per-token —
+  // فیلدهای مخصوص چت را با مقدار خنثی پر می‌کنیم تا validation بدون نمایش UI بی‌ربط رد شود
+  function handleValuesChange(changed: Partial<ModelFormValues>) {
+    if (changed.modelType === 'IMAGE_GEN') {
+      form.setFieldsValue({
+        supportsImageGen: true,
+        supportsVision: false,
+        inputPricePerM: 0,
+        outputPricePerM: 0,
+      })
+    }
+  }
 
   function openAdd() {
     setEditing(null)
@@ -188,7 +210,7 @@ export function ModelsPage() {
       key: 'modelType',
       width: 100,
       render: (v: AiModel['modelType']) => (
-        <Tag color={v === 'EMBEDDING' ? 'cyan' : 'default'}>{MODEL_TYPE_LABELS[v]}</Tag>
+        <Tag color={MODEL_TYPE_TAG_COLORS[v]}>{MODEL_TYPE_LABELS[v]}</Tag>
       ),
     },
     {
@@ -271,7 +293,11 @@ export function ModelsPage() {
             style={{ width: 160 }}
             value={typeFilter}
             onChange={setTypeFilter}
-            options={[{ value: 'CHAT', label: 'چت' }, { value: 'EMBEDDING', label: 'Embedding' }]}
+            options={[
+              { value: 'CHAT', label: 'چت' },
+              { value: 'EMBEDDING', label: 'Embedding' },
+              { value: 'IMAGE_GEN', label: 'تولید عکس' },
+            ]}
           />
           <Button icon={<DownloadOutlined />} href="/modelSample.xlsx" target="_blank">
             {fa.models.downloadSample}
@@ -309,7 +335,7 @@ export function ModelsPage() {
         confirmLoading={isSaving}
         width={520}
       >
-        <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
+        <Form form={form} layout="vertical" style={{ marginTop: 16 }} onValuesChange={handleValuesChange}>
           <Form.Item
             name="name"
             label={fa.models.name}
@@ -328,44 +354,55 @@ export function ModelsPage() {
             name="modelType"
             label="نوع مدل"
             rules={[{ required: true }]}
-            extra="مدل‌های Embedding فقط برای پایگاه دانش ربات فروش استفاده می‌شوند و در دراپ‌داون‌های چت نمایش داده نمی‌شوند"
+            extra={
+              isImageGenType
+                ? 'مدل تولید عکس — هیچ قابلیت چت/متنی ندارد، فقط با supportsImageGen و هزینه‌ی هر عکس کار می‌کند'
+                : 'مدل‌های Embedding فقط برای پایگاه دانش ربات فروش استفاده می‌شوند و در دراپ‌داون‌های چت نمایش داده نمی‌شوند'
+            }
           >
             <Select
               options={[
                 { value: 'CHAT', label: 'چت (تولید متن)' },
                 { value: 'EMBEDDING', label: 'Embedding' },
+                { value: 'IMAGE_GEN', label: 'تولید عکس' },
               ]}
             />
           </Form.Item>
-          <Form.Item name="inputPricePerM" label={fa.models.inputPrice} rules={[{ required: true }]}>
-            <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="2.50" />
-          </Form.Item>
-          <Form.Item name="outputPricePerM" label={fa.models.outputPrice} rules={[{ required: true }]}>
-            <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="10.00" />
-          </Form.Item>
-          <Form.Item
-            name="tier"
-            label={fa.models.tier}
-            rules={[{ required: true }]}
-            extra="مسیریاب هوشمند برای پیام‌های ساده/متوسط/پیچیده از این سطح استفاده می‌کند"
-          >
-            <Select
-              options={[
-                { value: 'SIMPLE', label: fa.models.tiers.SIMPLE },
-                { value: 'MEDIUM', label: fa.models.tiers.MEDIUM },
-                { value: 'COMPLEX', label: fa.models.tiers.COMPLEX },
-              ]}
-            />
-          </Form.Item>
+          {!isImageGenType && (
+            <>
+              <Form.Item name="inputPricePerM" label={fa.models.inputPrice} rules={[{ required: true }]}>
+                <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="2.50" />
+              </Form.Item>
+              <Form.Item name="outputPricePerM" label={fa.models.outputPrice} rules={[{ required: true }]}>
+                <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="10.00" />
+              </Form.Item>
+              <Form.Item
+                name="tier"
+                label={fa.models.tier}
+                rules={[{ required: true }]}
+                extra="مسیریاب هوشمند برای پیام‌های ساده/متوسط/پیچیده از این سطح استفاده می‌کند"
+              >
+                <Select
+                  options={[
+                    { value: 'SIMPLE', label: fa.models.tiers.SIMPLE },
+                    { value: 'MEDIUM', label: fa.models.tiers.MEDIUM },
+                    { value: 'COMPLEX', label: fa.models.tiers.COMPLEX },
+                  ]}
+                />
+              </Form.Item>
+            </>
+          )}
           <Form.Item name="sortOrder" label={fa.models.sortOrder}>
             <InputNumber style={{ width: '100%' }} min={0} />
           </Form.Item>
           <Space size="large">
-            <Form.Item name="supportsVision" label={fa.models.vision} valuePropName="checked">
-              <Switch />
-            </Form.Item>
+            {!isImageGenType && (
+              <Form.Item name="supportsVision" label={fa.models.vision} valuePropName="checked">
+                <Switch />
+              </Form.Item>
+            )}
             <Form.Item name="supportsImageGen" label={fa.models.imageGen} valuePropName="checked">
-              <Switch />
+              <Switch disabled={isImageGenType} />
             </Form.Item>
             <Form.Item name="isActive" label={fa.models.active} valuePropName="checked">
               <Switch />
