@@ -19,6 +19,7 @@ import { ArticlesPage } from '@/pages/articles/ArticlesPage'
 import { ArticleCategoriesPage } from '@/pages/articles/ArticleCategoriesPage'
 import { OtpListPage } from '@/pages/otp/OtpListPage'
 import { LiveStatsPage } from '@/pages/live-stats/LiveStatsPage'
+import { NetworkOutagePage } from '@/pages/network-outage/NetworkOutagePage'
 import { ACCESS_KEY } from '@/lib/api'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -58,6 +59,7 @@ export function AppRouter() {
         <Route path="article-categories" element={<ArticleCategoriesPage />} />
         <Route path="otp" element={<OtpListPage />} />
         <Route path="live-stats" element={<LiveStatsPage />} />
+        <Route path="network-outage" element={<NetworkOutagePage />} />
       </Route>
       <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />

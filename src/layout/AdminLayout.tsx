@@ -23,6 +23,7 @@ import {
   GiftOutlined,
   KeyOutlined,
   ThunderboltOutlined,
+  DisconnectOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
 import { fa } from '@/locales/fa'
@@ -49,6 +50,7 @@ const menuItems = [
   { key: '/admin/feedback', icon: <MessageOutlined />, label: fa.nav.feedback },
   { key: '/admin/tickets', icon: <CustomerServiceOutlined />, label: fa.nav.tickets },
   { key: '/admin/otp', icon: <KeyOutlined />, label: fa.nav.otp },
+  { key: '/admin/network-outage', icon: <DisconnectOutlined />, label: fa.nav.networkOutage },
 ]
 
 export function AdminLayout() {

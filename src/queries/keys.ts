@@ -70,4 +70,8 @@ export const keys = {
     timeseries: (minutes: number) => ['admin', 'live-stats', 'timeseries', minutes] as const,
     dailyPeaks: (days: number) => ['admin', 'live-stats', 'daily-peaks', days] as const,
   },
+  networkOutage: {
+    current: () => ['admin', 'network-outage', 'current'] as const,
+    history: (limit: number) => ['admin', 'network-outage', 'history', limit] as const,
+  },
 } as const

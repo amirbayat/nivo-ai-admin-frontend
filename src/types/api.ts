@@ -388,6 +388,16 @@ export interface LaunchCampaign {
   createdAt: string
 }
 
+export interface NetworkOutage {
+  id: string
+  startedAt: string
+  endedAt: string | null
+  extendedDays: number | null
+  affectedCount: number | null
+  createdByAdminId: string | null
+  createdAt: string
+}
+
 export interface WaitlistEntry {
   id: string
   campaignId: string
