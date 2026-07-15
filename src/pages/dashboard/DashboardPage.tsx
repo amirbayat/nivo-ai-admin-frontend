@@ -5,8 +5,8 @@ import {
   MessageOutlined, CalendarOutlined, WarningOutlined, ClockCircleOutlined,
 } from '@ant-design/icons'
 import { useDashboardStats, useCostChart, usePricingAlert } from '@/queries/admin.queries'
-import type { CostChartPoint } from '@/types/api'
 import { fa } from '@/locales/fa'
+import { CostCanvasChart } from './CostCanvasChart'
 
 const { Title, Text } = Typography
 
@@ -23,56 +23,6 @@ function StatCard({ title, value, suffix, icon, color }: {
         valueStyle={{ color }}
       />
     </Card>
-  )
-}
-
-function CostChart({ data }: { data: CostChartPoint[]; days: number }) {
-  if (!data.length) return <div style={{ textAlign: 'center', padding: 40, color: '#888' }}>داده‌ای برای نمایش وجود ندارد</div>
-
-  const W = 700, H = 200, PAD = { top: 20, right: 20, bottom: 40, left: 60 }
-  const plotW = W - PAD.left - PAD.right
-  const plotH = H - PAD.top - PAD.bottom
-
-  const maxVal = Math.max(...data.flatMap(d => [d.aiCostToman, d.revenueToman]), 1)
-
-  function x(i: number) { return PAD.left + (i / Math.max(data.length - 1, 1)) * plotW }
-  function y(v: number) { return PAD.top + plotH - (v / maxVal) * plotH }
-
-  const revenuePath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(d.revenueToman).toFixed(1)}`).join(' ')
-  const costPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(d.aiCostToman).toFixed(1)}`).join(' ')
-
-  const step = Math.ceil(data.length / 6)
-
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', direction: 'ltr' }}>
-      {/* grid lines */}
-      {[0, 0.25, 0.5, 0.75, 1].map(t => (
-        <g key={t}>
-          <line x1={PAD.left} y1={y(maxVal * t)} x2={W - PAD.right} y2={y(maxVal * t)} stroke="#333" strokeDasharray="3,3" />
-          <text x={PAD.left - 6} y={y(maxVal * t) + 4} fontSize={10} fill="#888" textAnchor="end">
-            {Math.round(maxVal * t / 1000)}k
-          </text>
-        </g>
-      ))}
-
-      {/* revenue line */}
-      <path d={revenuePath} fill="none" stroke="#10b981" strokeWidth={2} />
-      {/* cost line */}
-      <path d={costPath} fill="none" stroke="#f59e0b" strokeWidth={2} strokeDasharray="5,3" />
-
-      {/* x-axis labels */}
-      {data.map((d, i) => i % step === 0 ? (
-        <text key={i} x={x(i)} y={H - 8} fontSize={9} fill="#888" textAnchor="middle">
-          {d.date.slice(5)}
-        </text>
-      ) : null)}
-
-      {/* legend */}
-      <line x1={W - 140} y1={15} x2={W - 120} y2={15} stroke="#10b981" strokeWidth={2} />
-      <text x={W - 115} y={19} fontSize={10} fill="#10b981">درآمد (تومان)</text>
-      <line x1={W - 140} y1={30} x2={W - 120} y2={30} stroke="#f59e0b" strokeWidth={2} strokeDasharray="5,3" />
-      <text x={W - 115} y={34} fontSize={10} fill="#f59e0b">هزینه AI (تومان)</text>
-    </svg>
   )
 }
 
@@ -141,7 +91,7 @@ export function DashboardPage() {
           />
         }
       >
-        {chartData ? <CostChart data={chartData} days={days} /> : <Spin />}
+        {chartData ? <CostCanvasChart data={chartData} /> : <Spin />}
         {alert && (
           <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
             <Tag color={alert.alertLevel === 'critical' ? 'red' : alert.alertLevel === 'warning' ? 'orange' : 'green'}>
