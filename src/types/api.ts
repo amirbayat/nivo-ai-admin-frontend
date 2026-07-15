@@ -257,7 +257,8 @@ export interface AiModel {
   outputPricePerM: number
   supportsVision: boolean
   supportsImageGen: boolean
-  imageGenPriceUsd: number | null
+  imageGenInputImagePricePerM: number | null
+  imageGenOutputImagePricePerM: number | null
   imageGenQuality: string | null
   imageGenSize: string | null
   isActive: boolean

@@ -38,7 +38,8 @@ interface ModelFormValues {
   outputPricePerM: number
   supportsVision: boolean
   supportsImageGen: boolean
-  imageGenPriceUsd: number | null
+  imageGenInputImagePricePerM: number | null
+  imageGenOutputImagePricePerM: number | null
   imageGenQuality: string | null
   imageGenSize: string | null
   isActive: boolean
@@ -89,14 +90,13 @@ export function ModelsPage() {
   const watchedModelType: AiModel['modelType'] | undefined = Form.useWatch('modelType', form)
   const isImageGenType = watchedModelType === 'IMAGE_GEN'
 
-  // مدل IMAGE_GEN اصلاً قابلیت چت/vision ندارد و قیمت‌گذاری‌اش per-image است نه per-token —
-  // فیلدهای مخصوص چت را با مقدار خنثی پر می‌کنیم تا validation بدون نمایش UI بی‌ربط رد شود
+  // مدل IMAGE_GEN اصلاً قابلیت چت/vision ندارد، ولی inputPricePerM همچنان معنادار است (قیمت
+  // توکن متنی prompt) — فقط outputPricePerM (خروجی متنی) بی‌ربط است، چون این مدل متن خروجی ندارد
   function handleValuesChange(changed: Partial<ModelFormValues>) {
     if (changed.modelType === 'IMAGE_GEN') {
       form.setFieldsValue({
         supportsImageGen: true,
         supportsVision: false,
-        inputPricePerM: 0,
         outputPricePerM: 0,
       })
     }
@@ -109,7 +109,6 @@ export function ModelsPage() {
       isActive: true,
       supportsVision: false,
       supportsImageGen: false,
-      imageGenPriceUsd: null,
       sortOrder: (models?.length ?? 0),
       provider: 'openai',
       tier: 'MEDIUM',
@@ -129,7 +128,8 @@ export function ModelsPage() {
       outputPricePerM: model.outputPricePerM,
       supportsVision: model.supportsVision,
       supportsImageGen: model.supportsImageGen,
-      imageGenPriceUsd: model.imageGenPriceUsd,
+      imageGenInputImagePricePerM: model.imageGenInputImagePricePerM,
+      imageGenOutputImagePricePerM: model.imageGenOutputImagePricePerM,
       imageGenQuality: model.imageGenQuality,
       imageGenSize: model.imageGenSize,
       isActive: model.isActive,
@@ -372,15 +372,18 @@ export function ModelsPage() {
               ]}
             />
           </Form.Item>
+          <Form.Item
+            name="inputPricePerM"
+            label={isImageGenType ? 'قیمت توکن متنی ورودی — prompt ($ به ازای هر ۱M توکن)' : fa.models.inputPrice}
+            rules={[{ required: true }]}
+            extra={isImageGenType ? 'همون متنی که به‌عنوان توصیف عکس می‌فرستید — معمولاً سهم کوچکی از هزینه‌ی کل است' : undefined}
+          >
+            <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="2.50" />
+          </Form.Item>
           {!isImageGenType && (
-            <>
-              <Form.Item name="inputPricePerM" label={fa.models.inputPrice} rules={[{ required: true }]}>
-                <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="2.50" />
-              </Form.Item>
-              <Form.Item name="outputPricePerM" label={fa.models.outputPrice} rules={[{ required: true }]}>
-                <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="10.00" />
-              </Form.Item>
-            </>
+            <Form.Item name="outputPricePerM" label={fa.models.outputPrice} rules={[{ required: true }]}>
+              <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="10.00" />
+            </Form.Item>
           )}
           <Form.Item
             name="tier"
@@ -434,11 +437,18 @@ export function ModelsPage() {
                 <Input placeholder="medium" style={{ fontFamily: 'monospace' }} />
               </Form.Item>
               <Form.Item
-                name="imageGenPriceUsd"
-                label="هزینه‌ی هر عکس با همین ابعاد/کیفیت ($)"
-                extra="چون قیمت مدل‌های تولید عکس معمولاً بر اساس ترکیب کیفیت×ابعاد فرق می‌کند (نه یک عدد ثابت)، این قیمت باید دقیقاً مال همین ترکیبی باشد که بالا نوشتی — اگر می‌خوای چند کیفیت/ابعاد مختلف از یک مدل پیشنهاد بدی، برای هرکدام یک ردیف مدل جدا (با نام نمایشی متفاوت، مثل «GPT Image — کیفیت بالا») بساز. برای پلن Pay-as-you-go در ضریب مصرف هم ضرب می‌شود."
+                name="imageGenOutputImagePricePerM"
+                label="قیمت توکن عکس خروجی ($ به ازای هر ۱M توکن)"
+                extra="هزینه‌ی اصلی تولید عکس. provider بعد از هر بار تولید تعداد توکن خروجی واقعی را برمی‌گرداند و هزینه از همون عدد واقعی حساب می‌شود — نه یک عدد ثابت هر عکس (چون کیفیت/ابعاد بالاتر یعنی توکن خروجی بیشتر، خودش خودکار حساب می‌شود)."
               >
-                <InputNumber style={{ width: '100%' }} min={0} step={0.001} placeholder="مثلاً ۰.۰۳۶" />
+                <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="8.00" />
+              </Form.Item>
+              <Form.Item
+                name="imageGenInputImagePricePerM"
+                label="قیمت توکن عکس ورودی ($ به ازای هر ۱M توکن) — فقط حالت ویرایش"
+                extra="وقتی کاربر عکس آپلود می‌کند و می‌خواهد ویرایش/ترکیبش کنید، خود عکس(های) ورودی هم توکن مصرف می‌کنند و جدا حساب می‌شوند. برای تولید از صفر (بدون عکس ورودی) این هزینه صفر می‌ماند."
+              >
+                <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="2.50" />
               </Form.Item>
             </>
           )}
