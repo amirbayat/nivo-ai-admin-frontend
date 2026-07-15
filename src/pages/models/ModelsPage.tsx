@@ -380,22 +380,26 @@ export function ModelsPage() {
               <Form.Item name="outputPricePerM" label={fa.models.outputPrice} rules={[{ required: true }]}>
                 <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="10.00" />
               </Form.Item>
-              <Form.Item
-                name="tier"
-                label={fa.models.tier}
-                rules={[{ required: true }]}
-                extra="مسیریاب هوشمند برای پیام‌های ساده/متوسط/پیچیده از این سطح استفاده می‌کند"
-              >
-                <Select
-                  options={[
-                    { value: 'SIMPLE', label: fa.models.tiers.SIMPLE },
-                    { value: 'MEDIUM', label: fa.models.tiers.MEDIUM },
-                    { value: 'COMPLEX', label: fa.models.tiers.COMPLEX },
-                  ]}
-                />
-              </Form.Item>
             </>
           )}
+          <Form.Item
+            name="tier"
+            label={isImageGenType ? 'سطح کیفیت' : fa.models.tier}
+            rules={[{ required: true }]}
+            extra={
+              isImageGenType
+                ? 'وقتی چند ردیف مدل تولید عکس (با کیفیت/قیمت مختلف) توی یک پلن مجاز باشند، سیستم بر اساس پیچیدگی درخواست کاربر و (برای Pay-as-you-go) موجودی کیف‌پولش خودش این سطح را انتخاب می‌کند — SIMPLE = ارزان‌ترین/ساده‌ترین کیفیت (مثلاً low)، COMPLEX = گران‌ترین/بهترین کیفیت (مثلاً high)'
+                : 'مسیریاب هوشمند برای پیام‌های ساده/متوسط/پیچیده از این سطح استفاده می‌کند'
+            }
+          >
+            <Select
+              options={[
+                { value: 'SIMPLE', label: isImageGenType ? 'ساده / ارزان (مثل low)' : fa.models.tiers.SIMPLE },
+                { value: 'MEDIUM', label: isImageGenType ? 'متوسط (مثل medium)' : fa.models.tiers.MEDIUM },
+                { value: 'COMPLEX', label: isImageGenType ? 'بالا / گران (مثل high)' : fa.models.tiers.COMPLEX },
+              ]}
+            />
+          </Form.Item>
           <Form.Item name="sortOrder" label={fa.models.sortOrder}>
             <InputNumber style={{ width: '100%' }} min={0} />
           </Form.Item>
