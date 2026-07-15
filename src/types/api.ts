@@ -258,6 +258,8 @@ export interface AiModel {
   supportsVision: boolean
   supportsImageGen: boolean
   imageGenPriceUsd: number | null
+  imageGenQuality: string | null
+  imageGenSize: string | null
   isActive: boolean
   sortOrder: number
   tier: 'SIMPLE' | 'MEDIUM' | 'COMPLEX'

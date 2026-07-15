@@ -39,6 +39,8 @@ interface ModelFormValues {
   supportsVision: boolean
   supportsImageGen: boolean
   imageGenPriceUsd: number | null
+  imageGenQuality: string | null
+  imageGenSize: string | null
   isActive: boolean
   sortOrder: number
   tier: AiModel['tier']
@@ -128,6 +130,8 @@ export function ModelsPage() {
       supportsVision: model.supportsVision,
       supportsImageGen: model.supportsImageGen,
       imageGenPriceUsd: model.imageGenPriceUsd,
+      imageGenQuality: model.imageGenQuality,
+      imageGenSize: model.imageGenSize,
       isActive: model.isActive,
       sortOrder: model.sortOrder,
       tier: model.tier,
@@ -410,13 +414,29 @@ export function ModelsPage() {
           </Space>
 
           {watchedSupportsImageGen && (
-            <Form.Item
-              name="imageGenPriceUsd"
-              label="هزینه‌ی هر عکس تولیدشده ($)"
-              extra="هزینه‌ی ثابت هر بار تولید عکس با این مدل — برای پلن Pay-as-you-go در ضریب مصرف هم ضرب می‌شود"
-            >
-              <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="مثلاً ۰.۰۴" />
-            </Form.Item>
+            <>
+              <Form.Item
+                name="imageGenSize"
+                label="ابعاد تصویر"
+                extra="دقیقاً همان مقداری که به provider پاس داده می‌شود — مثل 1024x1024، 1024x1536، 1536x1024"
+              >
+                <Input placeholder="1024x1024" style={{ fontFamily: 'monospace' }} />
+              </Form.Item>
+              <Form.Item
+                name="imageGenQuality"
+                label="کیفیت"
+                extra="دقیقاً همان مقداری که provider می‌پذیرد — مثلاً low/medium/high (خانواده‌ی gpt-image) یا standard/hd (dall-e-3)"
+              >
+                <Input placeholder="medium" style={{ fontFamily: 'monospace' }} />
+              </Form.Item>
+              <Form.Item
+                name="imageGenPriceUsd"
+                label="هزینه‌ی هر عکس با همین ابعاد/کیفیت ($)"
+                extra="چون قیمت مدل‌های تولید عکس معمولاً بر اساس ترکیب کیفیت×ابعاد فرق می‌کند (نه یک عدد ثابت)، این قیمت باید دقیقاً مال همین ترکیبی باشد که بالا نوشتی — اگر می‌خوای چند کیفیت/ابعاد مختلف از یک مدل پیشنهاد بدی، برای هرکدام یک ردیف مدل جدا (با نام نمایشی متفاوت، مثل «GPT Image — کیفیت بالا») بساز. برای پلن Pay-as-you-go در ضریب مصرف هم ضرب می‌شود."
+              >
+                <InputNumber style={{ width: '100%' }} min={0} step={0.001} placeholder="مثلاً ۰.۰۳۶" />
+              </Form.Item>
+            </>
           )}
         </Form>
       </Modal>
