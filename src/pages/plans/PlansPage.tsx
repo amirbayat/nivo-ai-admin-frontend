@@ -60,6 +60,10 @@ interface PlanFormValues {
   payAsYouGoMinActivationToman: number | null
   payAsYouGoMinTopupToman: number | null
   payAsYouGoTopupPresetsText: string // comma-separated در فرم — number[] موقع ذخیره
+  defaultImageGenModel: string | null
+  maxImageGenPerDay: number | null
+  maxImageGenPerWindow: number | null
+  imageGenWindowHours: number | null
 }
 
 export function PlansPage() {
@@ -109,6 +113,10 @@ export function PlansPage() {
       payAsYouGoMinActivationToman: 1_000_000,
       payAsYouGoMinTopupToman: 500_000,
       payAsYouGoTopupPresetsText: '1000000,2000000,5000000',
+      defaultImageGenModel: null,
+      maxImageGenPerDay: null,
+      maxImageGenPerWindow: null,
+      imageGenWindowHours: 24,
     })
     setOpen(true)
   }
@@ -146,6 +154,10 @@ export function PlansPage() {
       payAsYouGoMinActivationToman: plan.payAsYouGoMinActivationToman ?? 1_000_000,
       payAsYouGoMinTopupToman: plan.payAsYouGoMinTopupToman ?? 500_000,
       payAsYouGoTopupPresetsText: (plan.payAsYouGoTopupPresets ?? [1_000_000, 2_000_000, 5_000_000]).join(','),
+      defaultImageGenModel: plan.defaultImageGenModel ?? null,
+      maxImageGenPerDay: plan.maxImageGenPerDay ?? null,
+      maxImageGenPerWindow: plan.maxImageGenPerWindow ?? null,
+      imageGenWindowHours: plan.imageGenWindowHours ?? 24,
     })
     setOpen(true)
   }
@@ -187,6 +199,10 @@ export function PlansPage() {
           .split(',')
           .map((s) => Number(s.trim()))
           .filter((n) => Number.isFinite(n) && n > 0),
+        defaultImageGenModel: values.defaultImageGenModel ?? null,
+        maxImageGenPerDay: values.maxImageGenPerDay ?? null,
+        maxImageGenPerWindow: values.maxImageGenPerWindow ?? null,
+        imageGenWindowHours: values.imageGenWindowHours ?? 24,
         // simpleModel عمداً اینجا فرستاده نمی‌شود — هم بک‌اند این فیلد را روی این endpoint
         // نمی‌پذیرد، هم مقدارش فقط باید از صفحه‌ی «مسیریابی مدل‌ها» تغییر کند (وگرنه هر ذخیره‌ی
         // معمولی پلن، مقدار تنظیم‌شده‌ی آنجا را بی‌صدا null می‌کرد)
@@ -624,6 +640,43 @@ export function PlansPage() {
             extra="مثال: 1000000,2000000,5000000"
           >
             <Input placeholder="1000000,2000000,5000000" />
+          </Form.Item>
+
+          <Divider orientation="right" style={{ fontSize: 13 }}>تولید/ویرایش عکس</Divider>
+
+          <Form.Item
+            name="defaultImageGenModel"
+            label="مدل پیش‌فرض تولید عکس این پلن"
+            extra="اگر ست شود، به‌جای تشخیص خودکار کیفیت/ابعاد از روی متن پیام، اول همین مدل امتحان می‌شود (اگر fail کند، به بقیه‌ی مدل‌های تولید عکس مجاز این پلن fallback می‌شود) — خالی = کاملاً خودکار"
+          >
+            <Select
+              allowClear
+              placeholder="خودکار (بر اساس پیچیدگی درخواست)"
+              loading={modelsLoading}
+              options={(availableModels ?? [])
+                .filter(m => m.supportsImageGen && watchedAllowedModels.includes(m.name))
+                .map(m => ({ value: m.name, label: `🎨 ${m.displayName} (${m.name})` }))}
+            />
+          </Form.Item>
+          <Form.Item
+            name="maxImageGenPerDay"
+            label="حداکثر تعداد تولید/ویرایش عکس در روز"
+            extra="خالی = بدون سقف — چون هر عکس چند برابر گران‌تر از یک پیام متنی است"
+          >
+            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۲۰" />
+          </Form.Item>
+          <Form.Item
+            name="maxImageGenPerWindow"
+            label="سقف تعداد در پنجره‌ی لغزان"
+            extra="خالی = غیرفعال"
+          >
+            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۵" />
+          </Form.Item>
+          <Form.Item
+            name="imageGenWindowHours"
+            label="طول پنجره‌ی لغزان — ساعت"
+          >
+            <InputNumber style={{ width: '100%' }} min={1} placeholder="۲۴" />
           </Form.Item>
 
           <Form.Item

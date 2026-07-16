@@ -147,6 +147,10 @@ export interface Plan {
   payAsYouGoMinActivationToman: number | null
   payAsYouGoMinTopupToman: number | null
   payAsYouGoTopupPresets: number[] | null
+  defaultImageGenModel: string | null
+  maxImageGenPerDay: number | null
+  maxImageGenPerWindow: number | null
+  imageGenWindowHours: number | null
 }
 
 export type DiscountSource = 'WELCOME_GIFT' | 'EXPIRY_REMINDER' | 'REFERRAL' | 'MANUAL'
