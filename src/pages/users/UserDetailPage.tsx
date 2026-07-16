@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Typography, Card, Row, Col, Statistic, Tag, Table, Spin, Alert, Button, Space, Popconfirm, message } from 'antd'
 import { ArrowRightOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
-import type { WalletTransaction, UserDetailPayment, UserDailyUsageRow } from '@/types/api'
+import type { WalletTransaction, UserDetailPayment, UserDailyUsageRow, AnalyticsUserTypeUsage } from '@/types/api'
 import { useAdminUserDetail, useRefundPayg } from '@/queries/admin.queries'
 import { fa } from '@/locales/fa'
 
@@ -77,6 +77,23 @@ const usageColumns: ColumnsType<UserDailyUsageRow> = [
   },
 ]
 
+function TypeUsageCard({ title, usage }: { title: string; usage: AnalyticsUserTypeUsage }) {
+  return (
+    <Card title={title}>
+      <Row gutter={16}>
+        <Col span={8}><Statistic title="پیام" value={usage.messages} /></Col>
+        <Col span={8}>
+          <Statistic title="توکن (ورودی/خروجی)" value={`${usage.tokensInput} / ${usage.tokensOutput}`} />
+        </Col>
+        <Col span={8}><Statistic title="هزینه" value={`${toman(usage.costToman)} ت`} /></Col>
+      </Row>
+      <Text type="secondary" style={{ fontSize: 12 }}>
+        پرمصرف‌ترین مدل: {usage.mostUsedModel ?? '—'}
+      </Text>
+    </Card>
+  )
+}
+
 export function UserDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -87,7 +104,7 @@ export function UserDetailPage() {
   if (isLoading) return <Spin />
   if (isError || !data) return <Alert type="error" message={fa.common.error} />
 
-  const { user, walletBalanceToman, walletTransactions, payments, dailyUsage } = data
+  const { user, walletBalanceToman, walletTransactions, payments, dailyUsage, textUsage, imageUsage } = data
   const isPayg = Boolean(user.subscription?.plan.isPayAsYouGo)
 
   function handleRefund() {
@@ -204,6 +221,11 @@ export function UserDetailPage() {
           scroll={{ x: 'max-content' }}
         />
       </Card>
+
+      <Row gutter={16} style={{ marginTop: 16 }}>
+        <Col span={12}><TypeUsageCard title="مصرف مدل‌های تولید متن (۳۰ روز اخیر)" usage={textUsage} /></Col>
+        <Col span={12}><TypeUsageCard title="مصرف مدل‌های تولید عکس (۳۰ روز اخیر)" usage={imageUsage} /></Col>
+      </Row>
     </div>
   )
 }

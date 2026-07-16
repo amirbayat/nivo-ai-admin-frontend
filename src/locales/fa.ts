@@ -129,6 +129,8 @@ export const fa = {
     modelTypeColumn: 'نوع',
     modelTypeText: 'متن',
     modelTypeImage: 'عکس',
+    textUsageColumn: 'مصرف متن',
+    imageUsageColumn: 'مصرف عکس',
     trendTitle: 'روند مصرف',
     modelsTitle: 'مصرف به تفکیک مدل',
     topicsTitle: 'توزیع موضوعی',

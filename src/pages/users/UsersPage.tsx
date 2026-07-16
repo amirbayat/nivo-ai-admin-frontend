@@ -167,6 +167,18 @@ export function UsersPage() {
       ),
     },
     {
+      title: 'مصرف متن (ت)',
+      key: 'aiCostText',
+      width: 100,
+      render: (_, r) => <span style={{ fontSize: 12 }}>{Math.round(r.aiCostTextThisMonth).toLocaleString('fa-IR')}</span>,
+    },
+    {
+      title: 'مصرف عکس (ت)',
+      key: 'aiCostImage',
+      width: 100,
+      render: (_, r) => <span style={{ fontSize: 12 }}>{Math.round(r.aiCostImageThisMonth).toLocaleString('fa-IR')}</span>,
+    },
+    {
       title: 'انتظار تا الان',
       key: 'expected',
       width: 110,
@@ -233,7 +245,7 @@ export function UsersPage() {
         dataSource={data?.users ?? []}
         columns={columns}
         loading={isLoading}
-        scroll={{ x: 1000 }}
+        scroll={{ x: 1200 }}
         locale={{ emptyText: fa.common.noData }}
         pagination={{ current: page, pageSize: 10, total: data?.total ?? 0, onChange: setPage, showSizeChanger: false }}
       />

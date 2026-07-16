@@ -8,6 +8,10 @@ export interface AdminUser {
   chargedThisMonth: number
   aiCostThisMonth: number
   aiCostUsdThisMonth: number
+  aiCostTextThisMonth: number
+  aiCostImageThisMonth: number
+  aiCostTextUsdThisMonth: number
+  aiCostImageUsdThisMonth: number
   expectedByNow: number
   category: 'heavy' | 'moderate' | 'light' | 'inactive'
 }
@@ -58,6 +62,8 @@ export interface AdminUserDetail {
   walletTransactions: WalletTransaction[]
   payments: UserDetailPayment[]
   dailyUsage: UserDailyUsageRow[]
+  textUsage: AnalyticsUserTypeUsage
+  imageUsage: AnalyticsUserTypeUsage
 }
 
 export interface ExchangeRateInfo {
@@ -384,6 +390,15 @@ export interface AnalyticsLimitHits {
   uniqueUsers: number
 }
 
+export interface AnalyticsUserTypeUsage {
+  messages: number
+  tokensInput: number
+  tokensOutput: number
+  costToman: number
+  costUsd: number
+  mostUsedModel: string | null
+}
+
 export interface AnalyticsUserRow {
   userId: string
   phone: string | null
@@ -399,6 +414,8 @@ export interface AnalyticsUserRow {
   marginToman: number
   mostUsedModel: string | null
   segment: string | null
+  text: AnalyticsUserTypeUsage
+  image: AnalyticsUserTypeUsage
 }
 
 export interface AnalyticsSegmentBreakdown {

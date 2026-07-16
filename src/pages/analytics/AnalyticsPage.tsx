@@ -194,6 +194,26 @@ export function AnalyticsPage() {
     },
     { title: 'پرمصرف‌ترین مدل', dataIndex: 'mostUsedModel', key: 'mostUsedModel', render: (v: string | null) => v ?? '—' },
     {
+      title: fa.analytics.textUsageColumn,
+      key: 'textUsage',
+      render: (_, r) => (
+        <Space direction="vertical" size={0}>
+          <span>{r.text.messages} پیام / {toman(r.text.costToman)} ت</span>
+          <Text type="secondary" style={{ fontSize: 12 }}>{r.text.mostUsedModel ?? '—'}</Text>
+        </Space>
+      ),
+    },
+    {
+      title: fa.analytics.imageUsageColumn,
+      key: 'imageUsage',
+      render: (_, r) => (
+        <Space direction="vertical" size={0}>
+          <span>{r.image.messages} پیام / {toman(r.image.costToman)} ت</span>
+          <Text type="secondary" style={{ fontSize: 12 }}>{r.image.mostUsedModel ?? '—'}</Text>
+        </Space>
+      ),
+    },
+    {
       title: 'دسته',
       dataIndex: 'segment',
       key: 'segment',
