@@ -302,6 +302,19 @@ export interface ModelFeedbackSummary {
 
 // ── Usage Analytics ─────────────────────────────────────────────────────────
 
+export interface AnalyticsModelTypeBreakdown {
+  messages: number
+  totalTokens: number
+  avgTokensPerMessage: number
+  avgInputTokensPerMessage: number
+  avgOutputTokensPerMessage: number
+  avgInputPricePerMillionUsd: number
+  avgOutputPricePerMillionUsd: number
+  avgInputPricePerMillionToman: number
+  avgOutputPricePerMillionToman: number
+  topModel: string | null
+}
+
 export interface AnalyticsOverviewData {
   totalTokens: number
   totalMessages: number
@@ -318,6 +331,8 @@ export interface AnalyticsOverviewData {
   avgInputPricePerMillionToman: number
   avgOutputPricePerMillionToman: number
   topModel: string | null
+  text: AnalyticsModelTypeBreakdown
+  image: AnalyticsModelTypeBreakdown
 }
 
 export interface AnalyticsOverview {
@@ -342,6 +357,7 @@ export interface AnalyticsTimeseriesPoint {
 
 export interface AnalyticsModelBreakdown {
   model: string
+  modelType: 'TEXT' | 'IMAGE'
   messages: number
   tokensInput: number
   tokensOutput: number

@@ -15,7 +15,7 @@ import {
   downloadAnalyticsUsersCsv,
 } from '@/queries/analytics.queries'
 import type {
-  AnalyticsModelBreakdown, AnalyticsSegmentBreakdown, AnalyticsUserRow,
+  AnalyticsModelBreakdown, AnalyticsModelTypeBreakdown, AnalyticsSegmentBreakdown, AnalyticsUserRow,
 } from '@/types/api'
 import { fa } from '@/locales/fa'
 import { SegmentsManager } from './SegmentsManager'
@@ -36,6 +36,39 @@ function pct(v: number | null): string {
 
 function usd(v: number): string {
   return `$${v.toFixed(v < 1 ? 4 : 2)}`
+}
+
+function ModelTypeSection({ title, data }: { title: string; data: AnalyticsModelTypeBreakdown }) {
+  return (
+    <Card style={{ marginTop: 16 }} title={title}>
+      <Row gutter={[16, 16]}>
+        <Col xs={24} sm={12} lg={6}>
+          <Statistic title={fa.analytics.avgTokensPerMessage} value={data.avgTokensPerMessage} />
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Statistic
+            title={fa.analytics.avgInputPrice}
+            value={`${toman(data.avgInputPricePerMillionToman)} ت`}
+          />
+          <Text type="secondary" style={{ fontSize: 12 }}>{usd(data.avgInputPricePerMillionUsd)}</Text>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Statistic
+            title={fa.analytics.avgOutputPrice}
+            value={`${toman(data.avgOutputPricePerMillionToman)} ت`}
+          />
+          <Text type="secondary" style={{ fontSize: 12 }}>{usd(data.avgOutputPricePerMillionUsd)}</Text>
+        </Col>
+        <Col xs={24} sm={12} lg={6}>
+          <Statistic
+            title={fa.analytics.topModel}
+            value={data.topModel ?? '—'}
+            valueStyle={{ fontFamily: 'monospace', fontSize: 16 }}
+          />
+        </Col>
+      </Row>
+    </Card>
+  )
 }
 
 function GrowthTag({ value }: { value: number | null }) {
@@ -77,6 +110,16 @@ export function AnalyticsPage() {
 
   const modelColumns: ColumnsType<AnalyticsModelBreakdown> = [
     { title: 'مدل', dataIndex: 'model', key: 'model', render: (v: string) => <span style={{ fontFamily: 'monospace' }}>{v}</span> },
+    {
+      title: fa.analytics.modelTypeColumn,
+      dataIndex: 'modelType',
+      key: 'modelType',
+      render: (v: 'TEXT' | 'IMAGE') => (
+        <Tag color={v === 'IMAGE' ? 'purple' : 'blue'}>
+          {v === 'IMAGE' ? fa.analytics.modelTypeImage : fa.analytics.modelTypeText}
+        </Tag>
+      ),
+    },
     { title: 'پیام', dataIndex: 'messages', key: 'messages' },
     { title: 'توکن ورودی', dataIndex: 'tokensInput', key: 'tokensInput' },
     { title: 'توکن خروجی', dataIndex: 'tokensOutput', key: 'tokensOutput' },
@@ -269,6 +312,13 @@ export function AnalyticsPage() {
             </Card>
           </Col>
         </Row>
+      )}
+
+      {overview && (
+        <>
+          <ModelTypeSection title={fa.analytics.textModelsSectionTitle} data={overview.current.text} />
+          <ModelTypeSection title={fa.analytics.imageModelsSectionTitle} data={overview.current.image} />
+        </>
       )}
 
       <Card
