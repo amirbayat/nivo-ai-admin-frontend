@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Outlet, useNavigate, useLocation } from 'react-router-dom'
-import { Layout, Menu, Button, Typography, theme } from 'antd'
+import { Layout, Menu, Button, Typography, Badge, theme } from 'antd'
 import {
   DashboardOutlined,
   UserOutlined,
@@ -24,8 +24,10 @@ import {
   KeyOutlined,
   ThunderboltOutlined,
   DisconnectOutlined,
+  BellOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
+import { useUnreadNotificationCount } from '@/queries/admin-notifications.queries'
 import { fa } from '@/locales/fa'
 
 const { Sider, Header, Content } = Layout
@@ -51,6 +53,7 @@ const menuItems = [
   { key: '/admin/tickets', icon: <CustomerServiceOutlined />, label: fa.nav.tickets },
   { key: '/admin/otp', icon: <KeyOutlined />, label: fa.nav.otp },
   { key: '/admin/network-outage', icon: <DisconnectOutlined />, label: fa.nav.networkOutage },
+  { key: '/admin/notifications', icon: <BellOutlined />, label: fa.nav.notifications },
 ]
 
 export function AdminLayout() {
@@ -58,6 +61,7 @@ export function AdminLayout() {
   const navigate = useNavigate()
   const location = useLocation()
   const logout = useLogout()
+  const { data: unreadCount } = useUnreadNotificationCount()
   const { token } = theme.useToken()
 
   function handleLogout() {
@@ -136,14 +140,23 @@ export function AdminLayout() {
           <Text strong style={{ fontSize: 16 }}>
             {fa.dashboard.title}
           </Text>
-          <Button
-            type="text"
-            icon={<LogoutOutlined />}
-            onClick={handleLogout}
-            loading={logout.isPending}
-          >
-            {fa.nav.logout}
-          </Button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Badge count={unreadCount ?? 0} size="small">
+              <Button
+                type="text"
+                icon={<BellOutlined />}
+                onClick={() => navigate('/admin/notifications')}
+              />
+            </Badge>
+            <Button
+              type="text"
+              icon={<LogoutOutlined />}
+              onClick={handleLogout}
+              loading={logout.isPending}
+            >
+              {fa.nav.logout}
+            </Button>
+          </div>
         </Header>
         <Content style={{ margin: 24, minHeight: 'calc(100vh - 112px)' }}>
           <Outlet />

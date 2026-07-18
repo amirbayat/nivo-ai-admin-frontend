@@ -77,4 +77,8 @@ export const keys = {
     current: () => ['admin', 'network-outage', 'current'] as const,
     history: (limit: number) => ['admin', 'network-outage', 'history', limit] as const,
   },
+  adminNotifications: {
+    list: (page: number) => ['admin', 'notifications', page] as const,
+    unreadCount: () => ['admin', 'notifications', 'unread-count'] as const,
+  },
 } as const

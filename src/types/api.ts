@@ -497,6 +497,30 @@ export interface NetworkOutage {
   createdAt: string
 }
 
+export type AdminNotificationType =
+  | 'PAYMENT_COMPLETED'
+  | 'WALLET_TOPUP_COMPLETED'
+  | 'TICKET_CREATED'
+  | 'SYSTEM_ERROR_SPIKE'
+  | 'LIARA_ERROR_RATE'
+
+export interface AdminNotification {
+  id: string
+  type: AdminNotificationType
+  title: string
+  body: string
+  metadata: Record<string, unknown> | null
+  readBy: string[]
+  createdAt: string
+}
+
+export interface AdminNotificationList {
+  items: AdminNotification[]
+  total: number
+  page: number
+  pageSize: number
+}
+
 export interface WaitlistEntry {
   id: string
   campaignId: string

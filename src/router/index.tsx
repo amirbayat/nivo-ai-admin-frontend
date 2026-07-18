@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { LoginPage } from '@/pages/auth/LoginPage'
 import { AdminLayout } from '@/layout/AdminLayout'
 import { DashboardPage } from '@/pages/dashboard/DashboardPage'
@@ -21,11 +21,13 @@ import { ArticleCategoriesPage } from '@/pages/articles/ArticleCategoriesPage'
 import { OtpListPage } from '@/pages/otp/OtpListPage'
 import { LiveStatsPage } from '@/pages/live-stats/LiveStatsPage'
 import { NetworkOutagePage } from '@/pages/network-outage/NetworkOutagePage'
+import { NotificationsPage } from '@/pages/notifications/NotificationsPage'
 import { ACCESS_KEY } from '@/lib/api'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = localStorage.getItem(ACCESS_KEY)
-  if (!token) return <Navigate to="/login" replace />
+  const location = useLocation()
+  if (!token) return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} replace />
   return <>{children}</>
 }
 
@@ -33,6 +35,16 @@ export function AppRouter() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      {/* docs/PRD-admin-notifications-and-mobile.md بخش ۶ — روت مستقل بدون AdminLayout، برای
+          WebView اپ موبایل ادمین (بدون Sider/Header دسکتاپ) */}
+      <Route
+        path="/embedded/notifications"
+        element={
+          <ProtectedRoute>
+            <NotificationsPage embedded />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/admin"
         element={
@@ -62,6 +74,7 @@ export function AppRouter() {
         <Route path="otp" element={<OtpListPage />} />
         <Route path="live-stats" element={<LiveStatsPage />} />
         <Route path="network-outage" element={<NetworkOutagePage />} />
+        <Route path="notifications" element={<NotificationsPage />} />
       </Route>
       <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />

@@ -31,6 +31,7 @@ export const fa = {
     articleCategories: 'دسته‌بندی مقالات',
     otp: 'کدهای OTP',
     networkOutage: 'قطعی نت',
+    notifications: 'نوتیفیکیشن‌ها',
     logout: 'خروج',
   },
   networkOutage: {
@@ -53,6 +54,21 @@ export const fa = {
     colDuration: 'مدت (روز)',
     colAffected: 'کاربران جبران‌شده',
     noHistory: 'هنوز قطعی‌ای ثبت نشده',
+  },
+  adminNotifications: {
+    title: 'نوتیفیکیشن‌ها',
+    description: 'پرداخت جدید، تیکت جدید، مشکل سیستمی، و نرخ خطای بالای Liara AI — همه اینجا لیست می‌شوند.',
+    markAllRead: 'علامت‌گذاری همه به‌عنوان خوانده‌شده',
+    markRead: 'خوانده شد',
+    unread: 'نخوانده',
+    empty: 'نوتیفیکیشنی وجود ندارد',
+    typeLabels: {
+      PAYMENT_COMPLETED: 'پرداخت',
+      WALLET_TOPUP_COMPLETED: 'شارژ کیف‌پول',
+      TICKET_CREATED: 'تیکت',
+      SYSTEM_ERROR_SPIKE: 'مشکل سیستمی',
+      LIARA_ERROR_RATE: 'خطای Liara AI',
+    } as Record<string, string>,
   },
   campaigns: {
     title: 'کمپین‌های سافت‌لانچ',

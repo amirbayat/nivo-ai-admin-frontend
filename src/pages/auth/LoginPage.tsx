@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Card, Form, Input, Button, Typography, Alert, Space } from 'antd'
 import { useSendOtp, useVerifyOtp } from '@/queries/auth.queries'
 import { fa } from '@/locales/fa'
@@ -11,6 +11,14 @@ const COUNTDOWN = 120
 
 export function LoginPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  // اپ موبایل ادمین (docs/PRD-admin-notifications-and-mobile.md بخش ۶) به /login?redirect=/embedded/notifications
+  // می‌رود؛ بعد از لاگین باید به همان‌جا برگردد، نه داشبورد کامل دسکتاپ. فقط مسیرهای داخلی
+  // مجازند (بدون :// ) تا این پارامتر به‌عنوان open-redirect به دامنه‌ی دیگری سوءاستفاده نشود.
+  const redirectTarget =
+    searchParams.get('redirect')?.startsWith('/') && !searchParams.get('redirect')!.includes('://')
+      ? searchParams.get('redirect')!
+      : '/admin/dashboard'
   const [step, setStep] = useState<'phone' | 'otp'>('phone')
   const [phone, setPhone] = useState('')
   const [otp, setOtp] = useState('')
@@ -58,7 +66,7 @@ export function LoginPage() {
       { phone, otp },
       {
         onSuccess: () => {
-          navigate('/admin/dashboard', { replace: true })
+          navigate(redirectTarget, { replace: true })
         },
         onError: (err) => {
           if (err.message === 'NOT_ADMIN') {
