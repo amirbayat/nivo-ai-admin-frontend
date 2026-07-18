@@ -521,6 +521,33 @@ export interface AdminNotificationList {
   pageSize: number
 }
 
+// docs/PRD-user-push-notifications-and-mobile-app-flows.md بخش ۳ — پوش دلخواه ادمین به کاربران عادی
+export type PushCampaignSegment =
+  | 'ALL'
+  | 'REGISTERED_ONLY'
+  | 'ANONYMOUS_ONLY'
+  | 'ACTIVE_SUBSCRIBERS'
+  | 'PHONE_LIST'
+
+export interface PushCampaign {
+  id: string
+  title: string
+  body: string
+  segment: PushCampaignSegment
+  phoneList: string[]
+  sentCount: number
+  failedCount: number
+  createdByAdminId: string
+  createdAt: string
+}
+
+export interface PushCampaignList {
+  items: PushCampaign[]
+  total: number
+  page: number
+  pageSize: number
+}
+
 export interface WaitlistEntry {
   id: string
   campaignId: string

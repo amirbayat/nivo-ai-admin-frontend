@@ -25,6 +25,7 @@ import {
   ThunderboltOutlined,
   DisconnectOutlined,
   BellOutlined,
+  SendOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
 import { useUnreadNotificationCount } from '@/queries/admin-notifications.queries'
@@ -54,6 +55,7 @@ const menuItems = [
   { key: '/admin/otp', icon: <KeyOutlined />, label: fa.nav.otp },
   { key: '/admin/network-outage', icon: <DisconnectOutlined />, label: fa.nav.networkOutage },
   { key: '/admin/notifications', icon: <BellOutlined />, label: fa.nav.notifications },
+  { key: '/admin/push-notifications', icon: <SendOutlined />, label: fa.nav.pushNotifications },
 ]
 
 export function AdminLayout() {

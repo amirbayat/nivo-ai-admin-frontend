@@ -81,4 +81,7 @@ export const keys = {
     list: (page: number) => ['admin', 'notifications', page] as const,
     unreadCount: () => ['admin', 'notifications', 'unread-count'] as const,
   },
+  pushNotifications: {
+    list: (page: number) => ['admin', 'push-notifications', page] as const,
+  },
 } as const

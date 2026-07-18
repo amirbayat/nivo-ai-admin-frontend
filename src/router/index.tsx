@@ -22,6 +22,7 @@ import { OtpListPage } from '@/pages/otp/OtpListPage'
 import { LiveStatsPage } from '@/pages/live-stats/LiveStatsPage'
 import { NetworkOutagePage } from '@/pages/network-outage/NetworkOutagePage'
 import { NotificationsPage } from '@/pages/notifications/NotificationsPage'
+import { PushNotificationsPage } from '@/pages/push-notifications/PushNotificationsPage'
 import { ACCESS_KEY } from '@/lib/api'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -75,6 +76,7 @@ export function AppRouter() {
         <Route path="live-stats" element={<LiveStatsPage />} />
         <Route path="network-outage" element={<NetworkOutagePage />} />
         <Route path="notifications" element={<NotificationsPage />} />
+        <Route path="push-notifications" element={<PushNotificationsPage />} />
       </Route>
       <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
