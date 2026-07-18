@@ -78,11 +78,13 @@ export const fa = {
     formBodyLabel: 'متن پیام',
     formSegmentLabel: 'ارسال به',
     formPhoneListLabel: 'شماره‌های موبایل (هرکدام در یک خط)',
+    formPlanIdsLabel: 'پلن‌ها',
     segmentLabels: {
       ALL: 'همه‌ی کاربران (ثبت‌نام‌شده + ناشناس)',
       REGISTERED_ONLY: 'فقط ثبت‌نام‌شده‌ها',
       ANONYMOUS_ONLY: 'فقط ناشناس‌ها (هنوز لاگین نکرده)',
       ACTIVE_SUBSCRIBERS: 'فقط مشترکین فعال',
+      BY_PLAN: 'مشترکین یک یا چند پلن خاص',
       PHONE_LIST: 'لیست شماره‌ی دستی',
     } as Record<string, string>,
     send: 'ارسال',

@@ -5,6 +5,7 @@ import { SendOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { PushCampaign, PushCampaignSegment } from '@/types/api'
 import { usePushCampaigns, useSendPushNotification } from '@/queries/push-notifications.queries'
+import { usePlans } from '@/queries/admin.queries'
 import { fa } from '@/locales/fa'
 
 const { Title, Paragraph } = Typography
@@ -15,6 +16,7 @@ interface FormValues {
   body: string
   segment: PushCampaignSegment
   phoneListText?: string
+  planIds?: string[]
 }
 
 const SEGMENT_OPTIONS: PushCampaignSegment[] = [
@@ -22,6 +24,7 @@ const SEGMENT_OPTIONS: PushCampaignSegment[] = [
   'REGISTERED_ONLY',
   'ANONYMOUS_ONLY',
   'ACTIVE_SUBSCRIBERS',
+  'BY_PLAN',
   'PHONE_LIST',
 ]
 
@@ -32,19 +35,23 @@ export function PushNotificationsPage() {
   const segment = Form.useWatch('segment', form)
 
   const { data, isLoading } = usePushCampaigns(page)
+  const { data: plans } = usePlans()
   const sendPush = useSendPushNotification()
+
+  const planNameById = Object.fromEntries((plans ?? []).map((p) => [p.id, p.name]))
 
   function submit(values: FormValues) {
     const phoneList = values.segment === 'PHONE_LIST'
       ? (values.phoneListText ?? '').split('\n').map((p) => p.trim()).filter(Boolean)
       : undefined
+    const planIds = values.segment === 'BY_PLAN' ? values.planIds : undefined
 
     Modal.confirm({
       title: fa.pushNotifications.sendConfirmTitle,
       content: fa.pushNotifications.sendConfirmContent,
       okText: fa.pushNotifications.send,
       onOk: () =>
-        sendPush.mutateAsync({ title: values.title, body: values.body, segment: values.segment, phoneList }).then(() => {
+        sendPush.mutateAsync({ title: values.title, body: values.body, segment: values.segment, phoneList, planIds }).then(() => {
           messageApi.success(fa.pushNotifications.sendSuccess)
           form.resetFields()
         }),
@@ -56,8 +63,13 @@ export function PushNotificationsPage() {
     {
       title: fa.pushNotifications.colSegment,
       dataIndex: 'segment',
-      render: (segment: PushCampaignSegment) => (
-        <Tag>{fa.pushNotifications.segmentLabels[segment] ?? segment}</Tag>
+      render: (segment: PushCampaignSegment, record) => (
+        <>
+          <Tag>{fa.pushNotifications.segmentLabels[segment] ?? segment}</Tag>
+          {segment === 'BY_PLAN' && record.planIds.map((id) => (
+            <Tag key={id} color="green">{planNameById[id] ?? id}</Tag>
+          ))}
+        </>
       ),
     },
     { title: fa.pushNotifications.colSent, dataIndex: 'sentCount' },
@@ -120,6 +132,19 @@ export function PushNotificationsPage() {
               rules={[{ required: true }]}
             >
               <TextArea rows={5} placeholder={'09121234567\n09123456789'} />
+            </Form.Item>
+          )}
+
+          {segment === 'BY_PLAN' && (
+            <Form.Item
+              name="planIds"
+              label={fa.pushNotifications.formPlanIdsLabel}
+              rules={[{ required: true }]}
+            >
+              <Select
+                mode="multiple"
+                options={(plans ?? []).map((p) => ({ value: p.id, label: p.name }))}
+              />
             </Form.Item>
           )}
 

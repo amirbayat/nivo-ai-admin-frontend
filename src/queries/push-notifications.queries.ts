@@ -17,6 +17,7 @@ export interface SendPushNotificationInput {
   body: string
   segment: PushCampaignSegment
   phoneList?: string[]
+  planIds?: string[]
 }
 
 export function useSendPushNotification() {

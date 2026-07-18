@@ -527,6 +527,7 @@ export type PushCampaignSegment =
   | 'REGISTERED_ONLY'
   | 'ANONYMOUS_ONLY'
   | 'ACTIVE_SUBSCRIBERS'
+  | 'BY_PLAN'
   | 'PHONE_LIST'
 
 export interface PushCampaign {
@@ -535,6 +536,7 @@ export interface PushCampaign {
   body: string
   segment: PushCampaignSegment
   phoneList: string[]
+  planIds: string[]
   sentCount: number
   failedCount: number
   createdByAdminId: string
