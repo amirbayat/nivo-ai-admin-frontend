@@ -84,4 +84,14 @@ export const keys = {
   pushNotifications: {
     list: (page: number) => ['admin', 'push-notifications', page] as const,
   },
+  behavior: {
+    overview: (from: string, to: string) => ['events', 'overview', from, to] as const,
+    journey: (actorId: string) => ['events', 'journey', actorId] as const,
+    topNextEvents: (after: string, from: string, to: string) =>
+      ['events', 'top-next-events', after, from, to] as const,
+    explorer: (page: number, eventName?: string, userId?: string) =>
+      ['events', 'explorer', page, eventName ?? 'all', userId ?? 'all'] as const,
+    dimensionValues: (key: string, from: string, to: string) =>
+      ['events', 'dimension-values', key, from, to] as const,
+  },
 } as const

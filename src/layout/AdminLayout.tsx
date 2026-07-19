@@ -26,6 +26,7 @@ import {
   DisconnectOutlined,
   BellOutlined,
   SendOutlined,
+  RadarChartOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
 import { useUnreadNotificationCount } from '@/queries/admin-notifications.queries'
@@ -45,6 +46,7 @@ const menuItems = [
   { key: '/admin/chat-config', icon: <CommentOutlined />, label: fa.nav.chatConfig },
   { key: '/admin/growth', icon: <GiftOutlined />, label: fa.nav.growth },
   { key: '/admin/analytics', icon: <BarChartOutlined />, label: fa.nav.analytics },
+  { key: '/admin/behavior', icon: <RadarChartOutlined />, label: fa.nav.behavior },
   { key: '/admin/sales-bot', icon: <ShopOutlined />, label: fa.nav.salesBot },
   { key: '/admin/campaigns', icon: <RocketOutlined />, label: fa.nav.campaigns },
   { key: '/admin/articles', icon: <ReadOutlined />, label: fa.nav.articles },

@@ -33,6 +33,7 @@ export const fa = {
     networkOutage: 'قطعی نت',
     notifications: 'نوتیفیکیشن‌ها',
     pushNotifications: 'ارسال نوتیف به کاربران',
+    behavior: 'رفتار کاربران',
     logout: 'خروج',
   },
   networkOutage: {
