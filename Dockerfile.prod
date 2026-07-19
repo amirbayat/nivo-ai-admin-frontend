@@ -8,8 +8,9 @@ RUN npm install
 
 COPY . .
 
-# متغیر Vite در زمان build خونده می‌شه — اگر توی پنل دارکوب
-# مقدار دیگه‌ای ست کردی، همون جایگزین این default می‌شه
+# متغیرهای Vite فقط در زمان build خونده می‌شن (import.meta.env، نه process.env runtime).
+# دارکوب مقدار پنل «Environment Variables» رو به این build-arg ها نمی‌رسونه (تست شده) —
+# پس مقدار واقعی پروداکشن مستقیم این‌جا هاردکد شده. برای عوض‌کردن مقدار، همین‌جا ویرایش کن.
 ARG VITE_API_URL=https://api.nivoai.ir/api/v1
 ARG VITE_PUBLIC_SITE_URL=https://nivoai.ir
 ARG VITE_EVENTS_API_URL=https://event.nivoai.ir
