@@ -98,5 +98,6 @@ export function useDimensionValues(key: string, from: string, to: string) {
       eventsApi
         .get<{ value: string; count: number }[]>('/query/dimension-values', { params: { key, from, to } })
         .then((r) => r.data),
+    enabled: !!key.trim(),
   })
 }
