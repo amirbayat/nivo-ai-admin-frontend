@@ -81,6 +81,14 @@ function GrowthTag({ value }: { value: number | null }) {
   )
 }
 
+// docs/PRD-liara-usage-reconciliation.md — null یعنی هنوز داده‌ی واقعی لیارا نداریم (نه ۰٪،
+// که با رنگ قرمز اشتباه‌گرفته می‌شد)
+function LiaraMatchTag({ matchPct }: { matchPct: number | null }) {
+  if (matchPct === null) return <Text type="secondary">{fa.analytics.liaraNoData}</Text>
+  const color = matchPct >= 95 ? 'green' : matchPct >= 80 ? 'orange' : 'red'
+  return <Tag color={color}>{matchPct.toFixed(1)}٪</Tag>
+}
+
 export function AnalyticsPage() {
   const [range, setRange] = useState<[Dayjs, Dayjs]>([dayjs().subtract(29, 'day'), dayjs()])
   const [compare, setCompare] = useState(false)
@@ -219,6 +227,25 @@ export function AnalyticsPage() {
       key: 'segment',
       render: (v: string | null) => (v ? <Tag>{v}</Tag> : <Tag>{fa.analytics.noSegment}</Tag>),
     },
+    {
+      title: fa.analytics.liaraRealCost,
+      dataIndex: 'liaraRealCostToman',
+      key: 'liaraRealCostToman',
+      render: (v: number | null) => (v === null ? fa.analytics.liaraNoData : toman(v)),
+    },
+    { title: fa.analytics.liaraRequestCount, dataIndex: 'liaraRequestCount', key: 'liaraRequestCount' },
+    {
+      title: (
+        <Space size={4}>
+          {fa.analytics.liaraMatchPct}
+          <Tooltip title={fa.analytics.liaraMatchPctHint}>
+            <QuestionCircleOutlined style={{ color: '#888' }} />
+          </Tooltip>
+        </Space>
+      ),
+      key: 'liaraMatchPct',
+      render: (_, r) => <LiaraMatchTag matchPct={r.liaraMatchPct} />,
+    },
   ]
 
   return (
@@ -329,6 +356,26 @@ export function AnalyticsPage() {
               <Text type="secondary" style={{ fontSize: 12 }}>{usd(overview.current.avgOutputPricePerMillionUsd)}</Text>
               <br />
               <Text type="secondary" style={{ fontSize: 11 }}>{fa.analytics.weightedAvgHint}</Text>
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <Card>
+              <Statistic title={fa.analytics.liaraRealCost} value={toman(overview.current.liaraRealCostToman)} />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <Card>
+              <Statistic
+                title={
+                  <Space size={4}>
+                    {fa.analytics.liaraMatchPct}
+                    <Tooltip title={fa.analytics.liaraMatchPctHint}>
+                      <QuestionCircleOutlined style={{ color: '#888' }} />
+                    </Tooltip>
+                  </Space>
+                }
+                valueRender={() => <LiaraMatchTag matchPct={overview.current.liaraMatchPct} />}
+              />
             </Card>
           </Col>
         </Row>

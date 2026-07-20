@@ -339,6 +339,11 @@ export interface AnalyticsOverviewData {
   topModel: string | null
   text: AnalyticsModelTypeBreakdown
   image: AnalyticsModelTypeBreakdown
+  // docs/PRD-liara-usage-reconciliation.md — مصرف واقعیِ گزارش‌شده توسط لیارا (کلیدهای اختصاصی
+  // کاربران) در برابر costToman بالا (محاسبه‌ی داخلی). liaraMatchPct=null یعنی هنوز داده‌ای
+  // برای این بازه نداریم، نه ۰٪.
+  liaraRealCostToman: number
+  liaraMatchPct: number | null
 }
 
 export interface AnalyticsOverview {
@@ -416,6 +421,11 @@ export interface AnalyticsUserRow {
   segment: string | null
   text: AnalyticsUserTypeUsage
   image: AnalyticsUserTypeUsage
+  // docs/PRD-liara-usage-reconciliation.md — null یعنی هنوز LiaraUsageSnapshot ای برای این
+  // کاربر/بازه نداریم (نمایش «—»)، نه صفر واقعی.
+  liaraRealCostToman: number | null
+  liaraRequestCount: number
+  liaraMatchPct: number | null
 }
 
 export interface AnalyticsSegmentBreakdown {
