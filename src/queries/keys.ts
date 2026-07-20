@@ -39,6 +39,7 @@ export const keys = {
     segmentBreakdown: (from: string, to: string) =>
       ['admin', 'analytics', 'segments', 'breakdown', from, to] as const,
     topicsList: () => ['admin', 'topics'] as const,
+    liaraProvisioningIssues: () => ['admin', 'liara', 'provisioning-issues'] as const,
   },
   campaigns: {
     list: () => ['admin', 'campaigns'] as const,

@@ -12,10 +12,11 @@ import type { ColumnsType } from 'antd/es/table'
 import {
   useAnalyticsOverview, useAnalyticsTimeseries, useAnalyticsModels, useAnalyticsTopics,
   useAnalyticsLimitHits, useAnalyticsUsers, useAnalyticsUserModels, useAnalyticsSegmentBreakdown,
-  downloadAnalyticsUsersCsv,
+  useLiaraProvisioningIssues, downloadAnalyticsUsersCsv,
 } from '@/queries/analytics.queries'
 import type {
   AnalyticsModelBreakdown, AnalyticsModelTypeBreakdown, AnalyticsSegmentBreakdown, AnalyticsUserRow,
+  LiaraProvisioningIssue,
 } from '@/types/api'
 import { fa } from '@/locales/fa'
 import { SegmentsManager } from './SegmentsManager'
@@ -106,6 +107,7 @@ export function AnalyticsPage() {
   const { data: models } = useAnalyticsModels(from, to)
   const { data: topics } = useAnalyticsTopics(from, to)
   const { data: limitHits } = useAnalyticsLimitHits(from, to)
+  const { data: liaraIssues } = useLiaraProvisioningIssues()
   const { data: users, isLoading: usersLoading } = useAnalyticsUsers(from, to, segmentFilter)
   const { data: segmentBreakdown } = useAnalyticsSegmentBreakdown(from, to)
   const { data: userModels, isLoading: userModelsLoading } = useAnalyticsUserModels(modalUserId ?? undefined, from, to)
@@ -180,6 +182,25 @@ export function AnalyticsPage() {
           {toman(r.marginToman)} ({pct(r.marginPct)})
         </Tag>
       ),
+    },
+  ]
+
+  const liaraIssueColumns: ColumnsType<LiaraProvisioningIssue> = [
+    { title: 'موبایل', dataIndex: 'phone', key: 'phone', render: (v: string | null) => v ?? '—' },
+    { title: 'نام', dataIndex: 'name', key: 'name', render: (v: string | null) => v ?? '—' },
+    { title: fa.analytics.liaraIssueLastError, dataIndex: 'lastError', key: 'lastError' },
+    { title: fa.analytics.liaraIssueAttemptCount, dataIndex: 'attemptCount', key: 'attemptCount' },
+    {
+      title: fa.analytics.liaraIssueFirstFailedAt,
+      dataIndex: 'firstFailedAt',
+      key: 'firstFailedAt',
+      render: (v: string) => dayjs(v).format('YYYY-MM-DD HH:mm'),
+    },
+    {
+      title: fa.analytics.liaraIssueLastAttemptAt,
+      dataIndex: 'lastAttemptAt',
+      key: 'lastAttemptAt',
+      render: (v: string) => dayjs(v).format('YYYY-MM-DD HH:mm'),
     },
   ]
 
@@ -386,6 +407,31 @@ export function AnalyticsPage() {
           <ModelTypeSection title={fa.analytics.textModelsSectionTitle} data={overview.current.text} />
           <ModelTypeSection title={fa.analytics.imageModelsSectionTitle} data={overview.current.image} />
         </>
+      )}
+
+      {liaraIssues && liaraIssues.length > 0 && (
+        <Card
+          style={{ marginTop: 16 }}
+          title={
+            <Space>
+              <WarningOutlined style={{ color: '#faad14' }} />
+              {fa.analytics.liaraIssuesTitle}
+              <Tag color="orange">{liaraIssues.length}</Tag>
+            </Space>
+          }
+        >
+          <Text type="secondary" style={{ fontSize: 12 }}>{fa.analytics.liaraIssuesDescription}</Text>
+          <Table<LiaraProvisioningIssue>
+            style={{ marginTop: 12 }}
+            rowKey="userId"
+            dataSource={liaraIssues}
+            columns={liaraIssueColumns}
+            pagination={false}
+            size="small"
+            scroll={{ x: 'max-content' }}
+            locale={{ emptyText: fa.analytics.liaraIssuesEmpty }}
+          />
+        </Card>
       )}
 
       <Card

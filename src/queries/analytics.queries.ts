@@ -8,6 +8,7 @@ import type {
   AnalyticsTimeseriesPoint,
   AnalyticsTopicBreakdown,
   AnalyticsUserRow,
+  LiaraProvisioningIssue,
   Topic,
   UserSegment,
 } from '@/types/api'
@@ -63,6 +64,17 @@ export function useAnalyticsUsers(from: string, to: string, segment?: string) {
       api
         .get<AnalyticsUserRow[]>('/admin/analytics/users', { params: { from, to, segment } })
         .then((r) => r.data),
+  })
+}
+
+// docs/PRD-liara-usage-reconciliation.md — کاربرانی که الان روی کلید مشترک fallback هستند
+export function useLiaraProvisioningIssues() {
+  return useQuery({
+    queryKey: keys.analytics.liaraProvisioningIssues(),
+    queryFn: () =>
+      api.get<LiaraProvisioningIssue[]>('/admin/liara/provisioning-issues').then((r) => r.data),
+    // این وضعیت ممکن است بین رفرشِ عادی صفحه هم عوض شود (جاب retry هر ۱۵ دقیقه) — رفرش نسبتاً مکرر
+    refetchInterval: 60_000,
   })
 }
 

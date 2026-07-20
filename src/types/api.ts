@@ -428,6 +428,18 @@ export interface AnalyticsUserRow {
   liaraMatchPct: number | null
 }
 
+// docs/PRD-liara-usage-reconciliation.md — کاربرانی که الان به‌خاطر خطا (مثلاً JWT مدیریتی
+// منقضی/نامعتبر) روی کلید مشترک fallback هستند
+export interface LiaraProvisioningIssue {
+  userId: string
+  phone: string | null
+  name: string | null
+  lastError: string
+  attemptCount: number
+  firstFailedAt: string
+  lastAttemptAt: string
+}
+
 export interface AnalyticsSegmentBreakdown {
   label: string
   userCount: number
