@@ -1,13 +1,16 @@
 import { useMemo, useState } from 'react'
 import dayjs, { type Dayjs } from 'dayjs'
 import {
-  Alert, AutoComplete, Button, Card, DatePicker, Empty, Input, InputNumber, Space,
+  Alert, AutoComplete, Button, Card, DatePicker, Empty, Input, InputNumber, Modal, Popconfirm, Space,
   Table, Tabs, Tag, Timeline, Typography,
 } from 'antd'
-import { PlusOutlined, MinusCircleOutlined, SearchOutlined } from '@ant-design/icons'
+import {
+  PlusOutlined, MinusCircleOutlined, SearchOutlined, SaveOutlined, DeleteOutlined, PlayCircleOutlined,
+} from '@ant-design/icons'
 import {
   useBehaviorOverview, useFunnel, useJourney, useTopNextEvents, useEventExplorer, useDimensionValues,
-  type FunnelStep, type EventRecord,
+  useSavedFunnels, useCreateSavedFunnel, useDeleteSavedFunnel, useRunSavedFunnel, useEventProperties,
+  type FunnelStep, type FunnelStepResult, type SavedFunnel, type EventRecord,
 } from '@/queries/behavior.queries'
 import { FunnelCanvasChart } from './FunnelCanvasChart'
 import { FlowCanvasChart } from './FlowCanvasChart'
@@ -69,8 +72,34 @@ function NextEventsCard({ eventNames, from, to }: { eventNames: string[]; from: 
   )
 }
 
+// مدال «پارامترها»‌ی یک ایونت — همه‌ی کلید/مقدارهای properties دیده‌شده براش در همون بازه،
+// گروه‌بندی‌شده بر اساس کلید (چون یک کلید مثل pageName چند مقدار مختلف با تعداد متفاوت دارد)
+function EventParamsModal({
+  eventName, from, to, onClose,
+}: { eventName: string | null; from: string; to: string; onClose: () => void }) {
+  const { data, isLoading } = useEventProperties(eventName ?? '', from, to)
+  return (
+    <Modal title={eventName ? `پارامترهای «${eventName}»` : ''} open={!!eventName} onCancel={onClose} footer={null} width={640}>
+      <Table
+        rowKey={(r) => `${r.key}::${r.value}`}
+        size="small"
+        loading={isLoading}
+        pagination={false}
+        dataSource={data ?? []}
+        locale={{ emptyText: 'این ایونت هیچ پارامتری (properties) نداشته' }}
+        columns={[
+          { title: 'کلید', dataIndex: 'key' },
+          { title: 'مقدار', dataIndex: 'value', ellipsis: true },
+          { title: 'تعداد', dataIndex: 'count', align: 'left' as const },
+        ]}
+      />
+    </Modal>
+  )
+}
+
 function OverviewTab() {
   const [range, setRange] = useState<[Dayjs, Dayjs]>([dayjs().subtract(6, 'day'), dayjs()])
+  const [selectedEvent, setSelectedEvent] = useState<string | null>(null)
   const from = range[0].startOf('day').toISOString()
   const to = range[1].endOf('day').toISOString()
   const { data, isLoading } = useBehaviorOverview(from, to)
@@ -81,11 +110,13 @@ function OverviewTab() {
       <Card title="حجم ایونت‌ها در بازه" loading={isLoading}>
         <VolumeCanvasChart data={data?.daily ?? []} />
       </Card>
-      <Card title="پرتکرارترین ایونت‌ها" loading={isLoading}>
+      <Card title="پرتکرارترین ایونت‌ها">
         <Table
           rowKey="eventName"
+          loading={isLoading}
           pagination={false}
           dataSource={data?.topEvents ?? []}
+          onRow={(record) => ({ onClick: () => setSelectedEvent(record.eventName), style: { cursor: 'pointer' } })}
           columns={[
             { title: 'ایونت', dataIndex: 'eventName' },
             { title: 'تعداد', dataIndex: 'count', align: 'left' as const },
@@ -95,6 +126,7 @@ function OverviewTab() {
       {!!data?.topEvents.length && (
         <NextEventsCard eventNames={data.topEvents.map((e) => e.eventName)} from={from} to={to} />
       )}
+      <EventParamsModal eventName={selectedEvent} from={from} to={to} onClose={() => setSelectedEvent(null)} />
     </Space>
   )
 }
@@ -136,10 +168,18 @@ function FunnelTab() {
   const [range, setRange] = useState<[Dayjs, Dayjs]>([dayjs().subtract(29, 'day'), dayjs()])
   const [windowHours, setWindowHours] = useState(24 * 7)
   const [campaign, setCampaign] = useState('')
+  const [result, setResult] = useState<{ title: string; steps: FunnelStepResult[] } | null>(null)
+  const [saveModalOpen, setSaveModalOpen] = useState(false)
+  const [saveName, setSaveName] = useState('')
   const funnel = useFunnel()
   const from = range[0].startOf('day').toISOString()
   const to = range[1].endOf('day').toISOString()
   const { data: campaignOptions } = useDimensionValues('utm_campaign', from, to)
+
+  const savedFunnels = useSavedFunnels()
+  const createSaved = useCreateSavedFunnel()
+  const deleteSaved = useDeleteSavedFunnel()
+  const runSavedFunnel = useRunSavedFunnel()
 
   function updateStep(i: number, eventName: string) {
     setSteps((prev) => prev.map((s, idx) => (idx === i ? { ...s, eventName } : s)))
@@ -167,10 +207,12 @@ function FunnelTab() {
     )
   }
 
-  function run() {
+  // مراحل تایپ‌شده در builder را به شکل قابل‌ارسال به API تبدیل می‌کند — هم برای اجرای مستقیم
+  // فانل، هم برای سیو کردنش، تا منطق ساخت filters یک‌جا بماند
+  function buildStepsForSubmit(): FunnelStep[] | null {
     const validSteps = steps.filter((s) => s.eventName.trim())
-    if (validSteps.length < 2) return
-    const withFilters: FunnelStep[] = validSteps.map((s) => {
+    if (validSteps.length < 2) return null
+    return validSteps.map((s) => {
       const filters: Record<string, string> = {}
       for (const f of s.filters) {
         if (f.key.trim() && f.value.trim()) filters[f.key.trim()] = f.value.trim()
@@ -180,11 +222,64 @@ function FunnelTab() {
       if (campaign.trim()) filters.utm_campaign = campaign.trim()
       return { eventName: s.eventName, filters: Object.keys(filters).length ? filters : undefined }
     })
-    funnel.mutate({ steps: withFilters, from, to, windowHours })
+  }
+
+  function run() {
+    const withFilters = buildStepsForSubmit()
+    if (!withFilters) return
+    funnel.mutate(
+      { steps: withFilters, from, to, windowHours },
+      {
+        onSuccess: (data) =>
+          setResult({
+            title: campaign.trim() ? `نتیجه — کمپین «${campaign.trim()}»` : 'نتیجه',
+            steps: data.steps,
+          }),
+      },
+    )
+  }
+
+  function confirmSave() {
+    const withFilters = buildStepsForSubmit()
+    if (!withFilters || !saveName.trim()) return
+    createSaved.mutate(
+      { name: saveName.trim(), steps: withFilters, windowHours },
+      { onSuccess: () => { setSaveModalOpen(false); setSaveName('') } },
+    )
+  }
+
+  function runSaved(sf: SavedFunnel) {
+    runSavedFunnel.mutate(
+      { id: sf.id, from, to, windowHours },
+      { onSuccess: (data) => setResult({ title: `نتیجه — فانل ذخیره‌شده «${sf.name}»`, steps: data.steps }) },
+    )
   }
 
   return (
     <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <Card title="فانل‌های ذخیره‌شده" size="small">
+        {savedFunnels.data?.length ? (
+          <Space wrap>
+            {savedFunnels.data.map((sf) => (
+              <Space.Compact key={sf.id}>
+                <Button
+                  icon={<PlayCircleOutlined />}
+                  loading={runSavedFunnel.isPending && runSavedFunnel.variables?.id === sf.id}
+                  onClick={() => runSaved(sf)}
+                >
+                  {sf.name}
+                </Button>
+                <Popconfirm title="این فانل ذخیره‌شده حذف شود؟" onConfirm={() => deleteSaved.mutate(sf.id)}>
+                  <Button danger icon={<DeleteOutlined />} />
+                </Popconfirm>
+              </Space.Compact>
+            ))}
+          </Space>
+        ) : (
+          <Text type="secondary">هنوز فانلی ذخیره نکرده‌اید — پایین مراحل رو بساز و «ذخیره‌ی این فانل» رو بزن</Text>
+        )}
+      </Card>
+
       <Card title="ساخت فانل">
         <Space direction="vertical" style={{ width: '100%' }}>
           {steps.map((step, i) => (
@@ -260,13 +355,33 @@ function FunnelTab() {
             <Button type="primary" onClick={run} loading={funnel.isPending}>
               محاسبه‌ی فانل
             </Button>
+            <Button icon={<SaveOutlined />} onClick={() => setSaveModalOpen(true)}>
+              ذخیره‌ی این فانل
+            </Button>
           </Space>
         </Space>
       </Card>
 
-      {funnel.data && (
-        <Card title={campaign.trim() ? `نتیجه — کمپین «${campaign.trim()}»` : 'نتیجه'}>
-          <FunnelCanvasChart steps={funnel.data.steps} />
+      <Modal
+        title="ذخیره‌ی فانل"
+        open={saveModalOpen}
+        onCancel={() => setSaveModalOpen(false)}
+        onOk={confirmSave}
+        okButtonProps={{ loading: createSaved.isPending, disabled: !saveName.trim() }}
+        okText="ذخیره"
+        cancelText="انصراف"
+      >
+        <Input
+          placeholder="نام فانل — مثلاً ثبت‌نام تا اولین پیام"
+          value={saveName}
+          onChange={(e) => setSaveName(e.target.value)}
+          onPressEnter={confirmSave}
+        />
+      </Modal>
+
+      {result && (
+        <Card title={result.title}>
+          <FunnelCanvasChart steps={result.steps} />
         </Card>
       )}
     </Space>

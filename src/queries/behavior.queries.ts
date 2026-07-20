@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { eventsApi } from '@/lib/eventsApi'
 import { keys } from '@/queries/keys'
 
@@ -99,5 +99,69 @@ export function useDimensionValues(key: string, from: string, to: string) {
         .get<{ value: string; count: number }[]>('/query/dimension-values', { params: { key, from, to } })
         .then((r) => r.data),
     enabled: !!key.trim(),
+  })
+}
+
+export interface SavedFunnel {
+  id: string
+  name: string
+  steps: FunnelStep[]
+  windowHours: number
+  createdAt: string
+}
+
+export function useSavedFunnels() {
+  return useQuery({
+    queryKey: keys.behavior.savedFunnels(),
+    queryFn: () => eventsApi.get<SavedFunnel[]>('/query/saved-funnels').then((r) => r.data),
+  })
+}
+
+export function useCreateSavedFunnel() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (input: { name: string; steps: FunnelStep[]; windowHours?: number }) =>
+      eventsApi.post<SavedFunnel>('/query/saved-funnels', input).then((r) => r.data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.behavior.savedFunnels() }),
+  })
+}
+
+export function useDeleteSavedFunnel() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => eventsApi.delete(`/query/saved-funnels/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.behavior.savedFunnels() }),
+  })
+}
+
+export interface EventPropertyRow {
+  key: string
+  value: string
+  count: number
+}
+
+// برای مدال «پارامترها»‌ی روی جدول «پرتکرارترین ایونت‌ها» — همه‌ی کلید/مقدارهای properties
+// دیده‌شده برای یک eventName خاص در بازه، نه یک کلید مشخص (بر خلاف useDimensionValues)
+export function useEventProperties(eventName: string, from: string, to: string) {
+  return useQuery({
+    queryKey: keys.behavior.eventProperties(eventName, from, to),
+    queryFn: () =>
+      eventsApi
+        .get<EventPropertyRow[]>('/query/event-properties', { params: { eventName, from, to } })
+        .then((r) => r.data),
+    enabled: !!eventName,
+  })
+}
+
+export function useRunSavedFunnel() {
+  return useMutation({
+    mutationFn: (input: { id: string; from: string; to: string; windowHours?: number }) =>
+      eventsApi
+        .post<{ steps: FunnelStepResult[] }>(`/query/saved-funnels/${input.id}/run`, {
+          from: input.from,
+          to: input.to,
+          windowHours: input.windowHours,
+        })
+        .then((r) => r.data),
   })
 }

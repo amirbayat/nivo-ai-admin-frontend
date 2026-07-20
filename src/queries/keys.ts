@@ -93,5 +93,8 @@ export const keys = {
       ['events', 'explorer', page, eventName ?? 'all', userId ?? 'all'] as const,
     dimensionValues: (key: string, from: string, to: string) =>
       ['events', 'dimension-values', key, from, to] as const,
+    savedFunnels: () => ['events', 'saved-funnels'] as const,
+    eventProperties: (eventName: string, from: string, to: string) =>
+      ['events', 'event-properties', eventName, from, to] as const,
   },
 } as const

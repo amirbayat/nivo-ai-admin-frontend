@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Table } from 'antd'
 import type { FunnelStepResult } from '@/queries/behavior.queries'
 
 interface Props {
@@ -24,16 +25,18 @@ function colorForStep(index: number, total: number) {
   return ORDINAL_RAMP[Math.round(t * (ORDINAL_RAMP.length - 1))]
 }
 
-const BAR_H = 24
-const ROW_H = 72
-const PAD_TOP = 28
+const SEG_H = 64
+const PAD_TOP = 10
+const PAD_BOTTOM = 10
+const LABEL_GAP = 20
+const MIN_FUNNEL_W = 60
 
 export function FunnelCanvasChart({ steps }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [hovered, setHovered] = useState<number | null>(null)
   const [mouse, setMouse] = useState<{ x: number; y: number } | null>(null)
-  const chartHeight = Math.max(steps.length * ROW_H + PAD_TOP, 120)
+  const chartHeight = Math.max(steps.length * SEG_H + PAD_TOP + PAD_BOTTOM, 160)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -64,56 +67,63 @@ export function FunnelCanvasChart({ steps }: Props) {
         return
       }
 
-      const trackW = width - 24
+      // بدنه‌ی فانل یک شکل واحد و پیوسته است (بدون فاصله بین مرحله‌ها) که از عرض کامل در
+      // مرحله‌ی اول به‌تدریج باریک می‌شود — سیلوئت کلاسیک «funnel»، نه چند میله‌ی جدا.
+      // عرض هر مرحله متناسب با conversionFromStart همان مرحله است؛ لیبل‌ها کنار بدنه (نه
+      // رویش) قرار می‌گیرند چون مرحله‌های پایانی معمولاً برای جا شدن متن داخلش باریک‌اند.
+      const centerX = width / 2
+      const maxFunnelW = Math.min(width * 0.34, 220)
+      const funnelW = Math.max(maxFunnelW, MIN_FUNNEL_W)
+      const labelX = Math.min(centerX + funnelW / 2 + LABEL_GAP, width - 140)
+      const labelMaxW = Math.max(width - labelX - 12, 80)
 
       steps.forEach((step, i) => {
-        const rowY = PAD_TOP + i * ROW_H
-        const barY = rowY + 18
-        const barW = Math.max(trackW * step.conversionFromStart, 6)
+        const segY = PAD_TOP + i * SEG_H
+        const topW = Math.max(funnelW * step.conversionFromStart, 4)
+        const nextConv = i < steps.length - 1 ? steps[i + 1].conversionFromStart : step.conversionFromStart
+        const bottomW = Math.max(funnelW * nextConv, 4)
         const isHovered = hovered === i
+        const midY = segY + SEG_H / 2
 
-        // برچسب مستقیم بالای میله: نام ایونت + تعداد
-        ctx.fillStyle = PRIMARY_INK
-        ctx.font = '600 12px sans-serif'
-        ctx.textAlign = 'left'
-        ctx.fillText(`${i + 1}. ${step.eventName}`, 12, rowY + 8)
-        ctx.textAlign = 'right'
-        ctx.fillStyle = MUTED_INK
-        ctx.font = '11px sans-serif'
-        ctx.fillText(step.count.toLocaleString('fa-IR'), width - 12, rowY + 8)
-
-        // track (سایه‌ی ۱۰۰٪ پشت میله) — چون تراک با opacity کم رسم می‌شود, هیچ متنی رویش سوار نیست
-        drawRoundedBar(ctx, 12, barY, trackW, BAR_H, TRACK)
-
-        // میله‌ی واقعی
         const color = colorForStep(i, steps.length)
-        drawRoundedBar(ctx, 12, barY, barW, BAR_H, color, isHovered)
+        drawTrapezoid(ctx, centerX, segY, topW, bottomW, SEG_H, color, isHovered)
 
-        // درصد داخل/بیرون میله — فقط اگر جا باشد (مطابق قاعده‌ی «label اگر جا نشد بیرون»)
+        // درصد از ابتدا، سوار روی بدنه — فقط اگر جا باشد
         const pctText = `${Math.round(step.conversionFromStart * 100)}٪`
-        ctx.font = '600 11px sans-serif'
-        const textW = ctx.measureText(pctText).width
-        if (barW > textW + 16) {
+        ctx.font = '700 12px sans-serif'
+        const pctW = ctx.measureText(pctText).width
+        if (Math.min(topW, bottomW) > pctW + 12 && SEG_H > 24) {
           ctx.fillStyle = '#ffffff'
-          ctx.textAlign = 'right'
-          ctx.fillText(pctText, 12 + barW - 8, barY + BAR_H / 2 + 4)
-        } else {
-          ctx.fillStyle = PRIMARY_INK
-          ctx.textAlign = 'left'
-          ctx.fillText(pctText, 12 + barW + 6, barY + BAR_H / 2 + 4)
+          ctx.textAlign = 'center'
+          ctx.fillText(pctText, centerX, midY + 4)
         }
 
-        // رابط ریزش بین این مرحله و مرحله‌ی بعد
-        if (i < steps.length - 1) {
-          const next = steps[i + 1]
-          const dropPct = Math.round((1 - next.conversionFromPrevious) * 100)
-          const severe = dropPct >= 50
-          const y = barY + BAR_H + 6
+        // خط راهنما از لبه‌ی بدنه تا شروع لیبل کناری
+        const edgeX = centerX + Math.max(topW, bottomW) / 2
+        ctx.strokeStyle = TRACK
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        ctx.moveTo(edgeX, midY)
+        ctx.lineTo(labelX, midY)
+        ctx.stroke()
 
+        // لیبل کناری: نام + تعداد، و اگر ریزشی داشته باشد زیرش با رنگ متناسب با شدت
+        ctx.textAlign = 'left'
+        ctx.fillStyle = PRIMARY_INK
+        ctx.font = '600 12px sans-serif'
+        const nameLine = truncateToWidth(ctx, `${i + 1}. ${step.eventName}`, labelMaxW)
+        ctx.fillText(nameLine, labelX, midY - 10)
+
+        ctx.fillStyle = MUTED_INK
+        ctx.font = '11px sans-serif'
+        ctx.fillText(`${step.count.toLocaleString('fa-IR')} کاربر`, labelX, midY + 6)
+
+        if (i > 0) {
+          const dropPct = Math.round((1 - step.conversionFromPrevious) * 100)
+          const severe = dropPct >= 50
           ctx.fillStyle = severe ? CRITICAL : MUTED_INK
-          ctx.font = severe ? '600 11px sans-serif' : '11px sans-serif'
-          ctx.textAlign = 'left'
-          ctx.fillText(`▾ ${dropPct}٪ ریزش`, 12, y + 10)
+          ctx.font = severe ? '600 10px sans-serif' : '10px sans-serif'
+          ctx.fillText(`▾ ${dropPct}٪ ریزش از مرحله‌ی قبل`, labelX, midY + 20)
         }
       })
     }
@@ -128,72 +138,150 @@ export function FunnelCanvasChart({ steps }: Props) {
     const rect = containerRef.current?.getBoundingClientRect()
     if (!rect) return
     const y = e.clientY - rect.top
-    const index = Math.floor((y - PAD_TOP) / ROW_H)
+    const index = Math.floor((y - PAD_TOP) / SEG_H)
     setHovered(index >= 0 && index < steps.length ? index : null)
     setMouse({ x: e.clientX - rect.left, y })
   }
 
   const hoveredStep = hovered !== null ? steps[hovered] : null
 
+  // hero numbers: نرخ تبدیل کل + بدترین ریزش — طبق قاعده‌ی marks-and-anatomy («عدد قهرمان»
+  // برای پرسش اول ذهن بیننده: از هر ۱۰۰ نفر که شروع کردن چند نفر رسیدن به آخر؟ کجا بیشترین‌ ریزش رو داشتیم؟)
+  const overallConversion =
+    steps.length > 1 && steps[0].count > 0 ? steps[steps.length - 1].count / steps[0].count : null
+  const drops = steps.slice(1).map((step, idx) => ({
+    fromStep: steps[idx],
+    toStep: step,
+    dropPct: 1 - step.conversionFromPrevious,
+  }))
+  const worstDrop = drops.length ? drops.reduce((a, b) => (b.dropPct > a.dropPct ? b : a)) : null
+
   return (
-    <div
-      ref={containerRef}
-      style={{ width: '100%', position: 'relative' }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={() => setHovered(null)}
-    >
-      <canvas ref={canvasRef} style={{ height: chartHeight }} />
-      {hoveredStep && mouse && (
-        <div
-          style={{
-            position: 'absolute',
-            left: Math.min(mouse.x + 12, (containerRef.current?.clientWidth ?? 300) - 180),
-            top: Math.max(mouse.y - 8, 0),
-            background: '#0b0b0bdd',
-            color: '#fff',
-            padding: '8px 10px',
-            borderRadius: 6,
-            fontSize: 12,
-            pointerEvents: 'none',
-            whiteSpace: 'nowrap',
-            zIndex: 10,
-          }}
-        >
-          <div style={{ fontWeight: 700 }}>{hoveredStep.count.toLocaleString('fa-IR')} کاربر</div>
-          <div style={{ opacity: 0.8 }}>{hoveredStep.eventName}</div>
-          <div style={{ opacity: 0.8 }}>
-            {Math.round(hoveredStep.conversionFromStart * 100)}٪ از ابتدا ·{' '}
-            {Math.round(hoveredStep.conversionFromPrevious * 100)}٪ از مرحله‌ی قبل
-          </div>
+    <div>
+      {steps.length > 0 && (
+        <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap', marginBottom: 20 }}>
+          {overallConversion !== null && (
+            <div>
+              <div style={{ fontSize: 26, fontWeight: 700, color: PRIMARY_INK, lineHeight: 1.2 }}>
+                {Math.round(overallConversion * 100)}٪
+              </div>
+              <div style={{ fontSize: 12, color: MUTED_INK }}>
+                نرخ تبدیل کل — «{steps[0].eventName}» تا «{steps[steps.length - 1].eventName}»
+              </div>
+            </div>
+          )}
+          {worstDrop && (
+            <div>
+              <div
+                style={{
+                  fontSize: 26,
+                  fontWeight: 700,
+                  lineHeight: 1.2,
+                  color: worstDrop.dropPct >= 0.5 ? CRITICAL : PRIMARY_INK,
+                }}
+              >
+                {Math.round(worstDrop.dropPct * 100)}٪
+              </div>
+              <div style={{ fontSize: 12, color: MUTED_INK }}>
+                بیشترین ریزش — بین «{worstDrop.fromStep.eventName}» و «{worstDrop.toStep.eventName}»
+              </div>
+            </div>
+          )}
         </div>
       )}
+      <div
+        ref={containerRef}
+        style={{ width: '100%', position: 'relative' }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={() => setHovered(null)}
+      >
+        <canvas ref={canvasRef} style={{ height: chartHeight }} />
+        {hoveredStep && mouse && (
+          <div
+            style={{
+              position: 'absolute',
+              left: Math.min(mouse.x + 12, (containerRef.current?.clientWidth ?? 300) - 180),
+              top: Math.max(mouse.y - 8, 0),
+              background: '#0b0b0bdd',
+              color: '#fff',
+              padding: '8px 10px',
+              borderRadius: 6,
+              fontSize: 12,
+              pointerEvents: 'none',
+              whiteSpace: 'nowrap',
+              zIndex: 10,
+            }}
+          >
+            <div style={{ fontWeight: 700 }}>{hoveredStep.count.toLocaleString('fa-IR')} کاربر</div>
+            <div style={{ opacity: 0.8 }}>{hoveredStep.eventName}</div>
+            <div style={{ opacity: 0.8 }}>
+              {Math.round(hoveredStep.conversionFromStart * 100)}٪ از ابتدا ·{' '}
+              {Math.round(hoveredStep.conversionFromPrevious * 100)}٪ از مرحله‌ی قبل
+            </div>
+          </div>
+        )}
+      </div>
+      {/* نمای جدولی همان داده — طبق قاعده‌ی دسترسی‌پذیری dataviz: هر چیزی که نمودار با هاور
+          نشون می‌ده باید بدون هاور هم (برای صفحه‌خوان/کپی‌کردن/چاپ) در دسترس باشه */}
+      <Table
+        rowKey="eventName"
+        size="small"
+        pagination={false}
+        style={{ marginTop: 16 }}
+        dataSource={steps}
+        columns={[
+          { title: '#', render: (_: unknown, __: FunnelStepResult, i: number) => i + 1, width: 40 },
+          { title: 'ایونت', dataIndex: 'eventName' },
+          { title: 'تعداد', dataIndex: 'count', render: (v: number) => v.toLocaleString('fa-IR') },
+          {
+            title: '٪ از ابتدا',
+            dataIndex: 'conversionFromStart',
+            render: (v: number) => `${Math.round(v * 100)}٪`,
+          },
+          {
+            title: '٪ از مرحله‌ی قبل',
+            dataIndex: 'conversionFromPrevious',
+            render: (v: number) => `${Math.round(v * 100)}٪`,
+          },
+        ]}
+      />
     </div>
   )
 }
 
-function drawRoundedBar(
+// یک بخش از بدنه‌ی فانل: ذوزنقه‌ای که از عرض topW در بالا به bottomW در پایین می‌رسد،
+// حول centerX متقارن — پشت‌سرهم چیدن این‌ها (بدون فاصله) سیلوئت پیوسته‌ی «فانل» را می‌سازد
+function drawTrapezoid(
   ctx: CanvasRenderingContext2D,
-  x: number,
+  centerX: number,
   y: number,
-  w: number,
+  topW: number,
+  bottomW: number,
   h: number,
   color: string,
   lifted = false,
 ) {
-  const r = Math.min(4, w / 2, h / 2)
   ctx.save()
   if (lifted) {
     ctx.shadowColor = 'rgba(11,11,11,0.25)'
-    ctx.shadowBlur = 6
+    ctx.shadowBlur = 8
   }
   ctx.fillStyle = color
   ctx.beginPath()
-  ctx.moveTo(x, y)
-  ctx.arcTo(x + w, y, x + w, y + h, r)
-  ctx.arcTo(x + w, y + h, x, y + h, r)
-  ctx.arcTo(x, y + h, x, y, r)
-  ctx.arcTo(x, y, x + w, y, r)
+  ctx.moveTo(centerX - topW / 2, y)
+  ctx.lineTo(centerX + topW / 2, y)
+  ctx.lineTo(centerX + bottomW / 2, y + h)
+  ctx.lineTo(centerX - bottomW / 2, y + h)
   ctx.closePath()
   ctx.fill()
   ctx.restore()
+}
+
+function truncateToWidth(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string {
+  if (ctx.measureText(text).width <= maxWidth) return text
+  let truncated = text
+  while (truncated.length > 1 && ctx.measureText(`${truncated}…`).width > maxWidth) {
+    truncated = truncated.slice(0, -1)
+  }
+  return `${truncated}…`
 }
