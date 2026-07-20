@@ -33,7 +33,7 @@ export function CostCanvasChart({ data, height = 220 }: Props) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       ctx.clearRect(0, 0, width, height)
 
-      const PAD = { top: 36, right: 8, bottom: 24, left: 44 }
+      const PAD = { top: 50, right: 8, bottom: 24, left: 44 }
       const plotW = width - PAD.left - PAD.right
       const plotH = height - PAD.top - PAD.bottom
 
@@ -45,7 +45,10 @@ export function CostCanvasChart({ data, height = 220 }: Props) {
         return
       }
 
-      const maxVal = Math.max(...data.flatMap((d) => [d.aiCostToman, d.revenueToman]), 1)
+      const maxVal = Math.max(
+        ...data.flatMap((d) => [d.aiCostToman, d.revenueToman, d.liaraCostToman ?? 0]),
+        1,
+      )
       const x = (i: number) => PAD.left + (i / Math.max(data.length - 1, 1)) * plotW
       const y = (v: number) => PAD.top + plotH - (v / maxVal) * plotH
 
@@ -90,6 +93,27 @@ export function CostCanvasChart({ data, height = 220 }: Props) {
       ctx.stroke()
       ctx.setLineDash([])
 
+      // خط هزینه‌ی واقعی Liara — فقط بازه‌هایی که رکورد دارند رسم می‌شود (null باعث قطع خط می‌شود، نه افت به صفر)
+      let liaraStarted = false
+      ctx.beginPath()
+      data.forEach((d, i) => {
+        if (d.liaraCostToman == null) {
+          liaraStarted = false
+          return
+        }
+        const px = x(i)
+        const py = y(d.liaraCostToman)
+        if (!liaraStarted) {
+          ctx.moveTo(px, py)
+          liaraStarted = true
+        } else {
+          ctx.lineTo(px, py)
+        }
+      })
+      ctx.strokeStyle = '#3b82f6'
+      ctx.lineWidth = 2
+      ctx.stroke()
+
       // برچسب محور افقی — چند نقطه‌ی پراکنده
       const step = Math.max(1, Math.ceil(data.length / 6))
       ctx.fillStyle = '#64748b'
@@ -101,7 +125,7 @@ export function CostCanvasChart({ data, height = 220 }: Props) {
       })
 
       // legend (بالا-راست)
-      const legendX = width - PAD.right - 130
+      const legendX = width - PAD.right - 150
       ctx.strokeStyle = '#10b981'
       ctx.lineWidth = 2
       ctx.beginPath()
@@ -122,6 +146,14 @@ export function CostCanvasChart({ data, height = 220 }: Props) {
       ctx.setLineDash([])
       ctx.fillStyle = '#f59e0b'
       ctx.fillText('هزینه AI (تومان)', legendX + 24, 27)
+
+      ctx.strokeStyle = '#3b82f6'
+      ctx.beginPath()
+      ctx.moveTo(legendX, 38)
+      ctx.lineTo(legendX + 18, 38)
+      ctx.stroke()
+      ctx.fillStyle = '#3b82f6'
+      ctx.fillText('هزینه واقعی Liara (تومان)', legendX + 24, 41)
     }
 
     draw()

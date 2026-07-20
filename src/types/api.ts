@@ -87,6 +87,8 @@ export interface CostChartPoint {
   aiCostToman: number
   aiCostUsd: number
   revenueToman: number
+  // null یعنی هنوز کلید اختصاصی لیارا برای کاربری در آن روز فعال نبوده — نه هزینه‌ی صفر
+  liaraCostToman: number | null
 }
 
 export interface PricingAlert {
