@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { AutoComplete, Button, Card, Col, Divider, Form, Input, InputNumber, Row, Spin, Switch, Typography, message } from 'antd'
+import { AutoComplete, Button, Card, Col, Divider, Form, Input, InputNumber, Row, Select, Spin, Switch, Typography, message } from 'antd'
 import { useAnonChatConfig, useUpdateAnonChatConfig } from '@/queries/anon-chat-config.queries'
 import { useModels } from '@/queries/admin.queries'
 import type { AnonymousChatConfig } from '@/types/api'
@@ -60,6 +60,23 @@ export function AnonChatConfigPage() {
                 rules={[{ required: true, message: 'مدل را وارد کن' }]}
               >
                 <AutoComplete options={modelOptions} placeholder="مثلاً openai/gpt-4o-mini" />
+              </Form.Item>
+
+              <Form.Item
+                name="reasoningEffort"
+                label="میزان reasoning"
+                extra="چت رایگان فاز فکرکردن مدل را به کاربر نمایش نمی‌دهد؛ برای مدل‌های reasoning بهتر است این پایین نگه داشته شود تا زمان و توکن خروجی صرف استدلال نامرئی نشود. خالی = پیش‌فرض provider."
+              >
+                <Select
+                  allowClear
+                  placeholder="پیش‌فرض provider"
+                  options={[
+                    { value: 'minimal', label: 'حداقل' },
+                    { value: 'low', label: 'کم' },
+                    { value: 'medium', label: 'متوسط' },
+                    { value: 'high', label: 'بالا' },
+                  ]}
+                />
               </Form.Item>
 
               <Divider>محدودیت‌ها</Divider>

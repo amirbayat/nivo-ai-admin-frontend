@@ -811,6 +811,7 @@ export interface AnonymousChatConfig {
   id: string
   enabled: boolean
   defaultModel: string
+  reasoningEffort: string | null
   freeMessageLimit: number
   dailyMessageLimitAfterFree: number
   maxInputTokens: number
