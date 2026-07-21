@@ -50,6 +50,8 @@ interface PlanFormValues {
   rollingWindowHours: number
   contextMd: string | null
   reasoningEffort: string | null
+  fastReasoningEffort: string | null
+  smartReasoningEffort: string | null
   trialMessageThreshold: number | null
   trialDailyMessageLimit: number | null
   trialThrottledMessageCount: number | null
@@ -144,6 +146,8 @@ export function PlansPage() {
       rollingWindowHours: plan.rollingWindowHours ?? 3,
       contextMd: plan.contextMd ?? null,
       reasoningEffort: plan.reasoningEffort ?? null,
+      fastReasoningEffort: plan.fastReasoningEffort ?? null,
+      smartReasoningEffort: plan.smartReasoningEffort ?? null,
       trialMessageThreshold: plan.trialMessageThreshold ?? null,
       trialDailyMessageLimit: plan.trialDailyMessageLimit ?? null,
       trialThrottledMessageCount: plan.trialThrottledMessageCount ?? null,
@@ -186,6 +190,8 @@ export function PlansPage() {
         rollingWindowHours: values.rollingWindowHours ?? 3,
         contextMd: values.contextMd ?? null,
         reasoningEffort: values.reasoningEffort ?? null,
+        fastReasoningEffort: values.fastReasoningEffort ?? null,
+        smartReasoningEffort: values.smartReasoningEffort ?? null,
         trialMessageThreshold: values.trialMessageThreshold ?? null,
         trialDailyMessageLimit: values.trialDailyMessageLimit ?? null,
         trialThrottledMessageCount: values.trialThrottledMessageCount ?? null,
@@ -566,7 +572,7 @@ export function PlansPage() {
           <Form.Item
             name="reasoningEffort"
             label="میزان reasoning effort پیش‌فرض این پلن"
-            extra="فقط روی مدل‌های reasoning (مثل خانواده‌ی gpt-5) اثر دارد. خالی = پیش‌فرض پلتفرم (معمولاً medium). می‌توان به‌ازای هر استپ بودجه‌ای هم در صفحه‌ی «مسیریابی مدل‌ها» override کرد."
+            extra="وقتی کاربر از دراپ‌دون سریع/هوشمند کنار ارسال پیام چیزی انتخاب نکرده باشد استفاده می‌شود. فقط روی مدل‌های reasoning (مثل خانواده‌ی gpt-5) اثر دارد. خالی = پیش‌فرض پلتفرم (معمولاً medium). می‌توان به‌ازای هر استپ بودجه‌ای هم در صفحه‌ی «مسیریابی مدل‌ها» override کرد."
           >
             <Select
               allowClear
@@ -576,6 +582,42 @@ export function PlansPage() {
                 { value: 'low', label: 'کم' },
                 { value: 'medium', label: 'متوسط' },
                 { value: 'high', label: 'بالا (کندتر، دقیق‌تر)' },
+              ]}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="fastReasoningEffort"
+            label="reasoning effort حالت «سریع»"
+            extra="وقتی کاربر در چت گزینه‌ی «سریع» را از دراپ‌دون کنار ارسال پیام انتخاب کند. فقط reasoning را عوض می‌کند، نه مدل. خالی = بدون فکر (none)."
+          >
+            <Select
+              allowClear
+              placeholder="بدون فکر (none)"
+              options={[
+                { value: 'none', label: 'بدون فکر' },
+                { value: 'minimal', label: 'حداقل' },
+                { value: 'low', label: 'کم' },
+                { value: 'medium', label: 'متوسط' },
+                { value: 'high', label: 'بالا' },
+              ]}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="smartReasoningEffort"
+            label="reasoning effort حالت «هوشمند»"
+            extra="وقتی کاربر در چت گزینه‌ی «هوشمند» را انتخاب کند. فقط reasoning را عوض می‌کند، نه مدل. خالی = فکر کم (low)."
+          >
+            <Select
+              allowClear
+              placeholder="فکر کم (low)"
+              options={[
+                { value: 'none', label: 'بدون فکر' },
+                { value: 'minimal', label: 'حداقل' },
+                { value: 'low', label: 'کم' },
+                { value: 'medium', label: 'متوسط' },
+                { value: 'high', label: 'بالا' },
               ]}
             />
           </Form.Item>

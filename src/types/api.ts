@@ -144,6 +144,8 @@ export interface Plan {
   rollingWindowHours: number
   simpleModel: string | null
   reasoningEffort: string | null
+  fastReasoningEffort: string | null
+  smartReasoningEffort: string | null
   contextMd: string | null
   trialMessageThreshold: number | null
   trialDailyMessageLimit: number | null
