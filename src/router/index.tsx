@@ -24,6 +24,8 @@ import { NetworkOutagePage } from '@/pages/network-outage/NetworkOutagePage'
 import { NotificationsPage } from '@/pages/notifications/NotificationsPage'
 import { PushNotificationsPage } from '@/pages/push-notifications/PushNotificationsPage'
 import { BehaviorPage } from '@/pages/behavior/BehaviorPage'
+import { AnonChatConfigPage } from '@/pages/anon-chat-config/AnonChatConfigPage'
+import { AnonAnalyticsPage } from '@/pages/anon-analytics/AnonAnalyticsPage'
 import { ACCESS_KEY } from '@/lib/api'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -79,6 +81,8 @@ export function AppRouter() {
         <Route path="notifications" element={<NotificationsPage />} />
         <Route path="push-notifications" element={<PushNotificationsPage />} />
         <Route path="behavior" element={<BehaviorPage />} />
+        <Route path="anon-chat-config" element={<AnonChatConfigPage />} />
+        <Route path="anon-analytics" element={<AnonAnalyticsPage />} />
       </Route>
       <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />

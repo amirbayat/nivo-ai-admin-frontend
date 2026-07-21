@@ -34,6 +34,8 @@ export const fa = {
     notifications: 'نوتیفیکیشن‌ها',
     pushNotifications: 'ارسال نوتیف به کاربران',
     behavior: 'رفتار کاربران',
+    anonChatConfig: 'چت بدون لاگین — تنظیمات',
+    anonAnalytics: 'چت بدون لاگین — آنالیز',
     logout: 'خروج',
   },
   networkOutage: {

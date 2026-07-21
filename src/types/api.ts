@@ -804,3 +804,110 @@ export interface DailyPeakPoint {
   day: string
   peak: number
 }
+
+// ─── چت anonymous (بدون لاگین) — docs مربوط به کوتای رایگان کاربران ناشناس ─────
+
+export interface AnonymousChatConfig {
+  id: string
+  enabled: boolean
+  defaultModel: string
+  freeMessageLimit: number
+  dailyMessageLimitAfterFree: number
+  maxInputTokens: number
+  maxOutputTokens: number
+  signupBannerMessage: string
+  limitedZoneMessage: string
+  blockedMessage: string
+  hintTitle: string
+  hintSubtitle: string
+  updatedAt: string
+}
+
+export interface AnonAnalyticsOverview {
+  totalIdentities: number
+  totalSessions: number
+  totalMessages: number
+  convertedSessions: number
+  conversionRate: number
+  avgMessagesPerSession: number
+}
+
+export interface AnonAnalyticsTimeseriesPoint {
+  day: string
+  sessions: number
+  messages: number
+}
+
+export interface AnonSessionConversation {
+  id: string
+  title: string | null
+  createdAt: string
+  lastMessageAt: string
+}
+
+export interface AnonAnalyticsSessionRow {
+  id: string
+  clientToken: string
+  createdAt: string
+  lastSeenAt: string
+  migratedToUserId: string | null
+  migratedAt: string | null
+  utmSource: string | null
+  utmMedium: string | null
+  utmCampaign: string | null
+  utmContent: string | null
+  utmTerm: string | null
+  referrer: string | null
+  landingPath: string | null
+  identity: { ip: string; lifetimeMessageCount: number }
+  conversations: AnonSessionConversation[]
+}
+
+export interface AnonAnalyticsSessionsResult {
+  rows: AnonAnalyticsSessionRow[]
+  total: number
+  page: number
+  pageSize: number
+}
+
+export interface AnonSessionMessage {
+  id: string
+  conversationId: string
+  role: 'USER' | 'ASSISTANT' | 'SYSTEM'
+  content: string
+  tokensInput: number
+  tokensOutput: number
+  model: string | null
+  createdAt: string
+}
+
+export interface AnonFunnelStage {
+  key: string
+  label: string
+  count: number
+  dropOffPct: number
+}
+
+export interface AnonAnalyticsCampaignRow {
+  utmSource: string | null
+  utmCampaign: string | null
+  sessions: number
+  messages: number
+  signups: number
+  purchases: number
+  revenue: number
+  conversionRate: number
+}
+
+export interface AnonConversionQualityBucket {
+  bucket: string
+  count: number
+}
+
+export interface AnonConversionQuality {
+  sampleSize: number
+  avgMessagesBeforePurchase: number
+  avgDaysToPurchase: number
+  avgRevenueToman: number
+  histogram: AnonConversionQualityBucket[]
+}

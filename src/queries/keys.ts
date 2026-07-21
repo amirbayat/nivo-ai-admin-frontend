@@ -85,6 +85,19 @@ export const keys = {
   pushNotifications: {
     list: (page: number) => ['admin', 'push-notifications', page] as const,
   },
+  anonChatConfig: {
+    detail: () => ['admin', 'anon-chat-config'] as const,
+  },
+  anonAnalytics: {
+    overview: (from: string, to: string) => ['admin', 'anon-analytics', 'overview', from, to] as const,
+    timeseries: (from: string, to: string) => ['admin', 'anon-analytics', 'timeseries', from, to] as const,
+    sessions: (from: string, to: string, page: number, pageSize: number, utmSource?: string, utmCampaign?: string) =>
+      ['admin', 'anon-analytics', 'sessions', from, to, page, pageSize, utmSource ?? 'all', utmCampaign ?? 'all'] as const,
+    funnel: (from: string, to: string, utmSource?: string, utmCampaign?: string) =>
+      ['admin', 'anon-analytics', 'funnel', from, to, utmSource ?? 'all', utmCampaign ?? 'all'] as const,
+    campaigns: (from: string, to: string) => ['admin', 'anon-analytics', 'campaigns', from, to] as const,
+    conversionQuality: (from: string, to: string) => ['admin', 'anon-analytics', 'conversion-quality', from, to] as const,
+  },
   behavior: {
     overview: (from: string, to: string) => ['events', 'overview', from, to] as const,
     journey: (actorId: string) => ['events', 'journey', actorId] as const,
