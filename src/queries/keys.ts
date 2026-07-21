@@ -95,6 +95,8 @@ export const keys = {
       ['admin', 'anon-analytics', 'sessions', from, to, page, pageSize, utmSource ?? 'all', utmCampaign ?? 'all'] as const,
     funnel: (from: string, to: string, utmSource?: string, utmCampaign?: string) =>
       ['admin', 'anon-analytics', 'funnel', from, to, utmSource ?? 'all', utmCampaign ?? 'all'] as const,
+    conversionPaths: (from: string, to: string, utmSource?: string, utmCampaign?: string) =>
+      ['admin', 'anon-analytics', 'conversion-paths', from, to, utmSource ?? 'all', utmCampaign ?? 'all'] as const,
     campaigns: (from: string, to: string) => ['admin', 'anon-analytics', 'campaigns', from, to] as const,
     conversionQuality: (from: string, to: string) => ['admin', 'anon-analytics', 'conversion-quality', from, to] as const,
   },

@@ -3,6 +3,7 @@ import dayjs, { type Dayjs } from 'dayjs'
 import { DatePicker, Space, Tabs, Typography } from 'antd'
 import { OverviewTab } from './OverviewTab'
 import { FunnelTab } from './FunnelTab'
+import { ConversionPathsTab } from './ConversionPathsTab'
 import { CampaignsTab } from './CampaignsTab'
 import { ConversionQualityTab } from './ConversionQualityTab'
 
@@ -33,6 +34,7 @@ export function AnonAnalyticsPage() {
         items={[
           { key: 'overview', label: 'کلی', children: <OverviewTab from={from} to={to} /> },
           { key: 'funnel', label: 'فانل', children: <FunnelTab from={from} to={to} /> },
+          { key: 'conversion-paths', label: 'مسیرهای تبدیل', children: <ConversionPathsTab from={from} to={to} /> },
           { key: 'campaigns', label: 'کمپین‌ها', children: <CampaignsTab from={from} to={to} /> },
           { key: 'conversion-quality', label: 'کیفیت تبدیل', children: <ConversionQualityTab from={from} to={to} /> },
         ]}

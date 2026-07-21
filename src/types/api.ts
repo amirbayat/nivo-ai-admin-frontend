@@ -911,3 +911,11 @@ export interface AnonConversionQuality {
   avgRevenueToman: number
   histogram: AnonConversionQualityBucket[]
 }
+
+export interface AnonConversionPathSegment {
+  key: string
+  label: string
+  description: string
+  sessionCount: number
+  stages: AnonFunnelStage[]
+}

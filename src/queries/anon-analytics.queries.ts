@@ -5,6 +5,7 @@ import type {
   AnonAnalyticsOverview,
   AnonAnalyticsSessionsResult,
   AnonAnalyticsTimeseriesPoint,
+  AnonConversionPathSegment,
   AnonConversionQuality,
   AnonFunnelStage,
   AnonSessionMessage,
@@ -62,6 +63,21 @@ export function useAnonAnalyticsFunnel(from: string, to: string, utmSource?: str
     queryFn: () =>
       api
         .get<AnonFunnelStage[]>('/admin/anon-analytics/funnel', {
+          params: { from, to, utmSource: utmSource || undefined, utmCampaign: utmCampaign || undefined },
+        })
+        .then((r) => r.data),
+  })
+}
+
+// چهار مسیر محتمل تبدیل (early/limitedZone/forced/blockedLost) — نگاه کن به توضیح کامل در
+// anon-analytics.service.ts سمت بک‌اند؛ فانل ترکیبی (useAnonAnalyticsFunnel) همه را روی هم
+// می‌ریزد، این endpoint نشان می‌دهد کدام مسیر واقعاً کاربران را تبدیل کرده
+export function useAnonAnalyticsConversionPaths(from: string, to: string, utmSource?: string, utmCampaign?: string) {
+  return useQuery({
+    queryKey: keys.anonAnalytics.conversionPaths(from, to, utmSource, utmCampaign),
+    queryFn: () =>
+      api
+        .get<AnonConversionPathSegment[]>('/admin/anon-analytics/conversion-paths', {
           params: { from, to, utmSource: utmSource || undefined, utmCampaign: utmCampaign || undefined },
         })
         .then((r) => r.data),
