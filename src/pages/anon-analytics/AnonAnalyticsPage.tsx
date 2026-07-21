@@ -13,8 +13,8 @@ const { Title } = Typography
 export function AnonAnalyticsPage() {
   const [range, setRange] = useState<[Dayjs, Dayjs]>([dayjs().subtract(29, 'day'), dayjs()])
 
-  const from = range[0].format('YYYY-MM-DD')
-  const to = range[1].format('YYYY-MM-DD')
+  const from = range[0].startOf('day').toISOString()
+  const to = range[1].endOf('day').toISOString()
 
   return (
     <div>
