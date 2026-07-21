@@ -823,6 +823,8 @@ export interface AnonymousChatConfig {
   blockedMessage: string
   hintTitle: string
   hintSubtitle: string
+  signupBannerAfterMessages: number
+  samplePrompts: string[]
   updatedAt: string
 }
 

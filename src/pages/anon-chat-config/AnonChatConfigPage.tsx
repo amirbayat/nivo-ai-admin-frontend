@@ -1,5 +1,8 @@
 import { useEffect } from 'react'
-import { AutoComplete, Button, Card, Col, Divider, Form, Input, InputNumber, Row, Select, Spin, Switch, Typography, message } from 'antd'
+import {
+  AutoComplete, Button, Card, Col, Divider, Form, Input, InputNumber, Row, Select, Space, Spin, Switch, Typography, message,
+} from 'antd'
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import { useAnonChatConfig, useUpdateAnonChatConfig } from '@/queries/anon-chat-config.queries'
 import { useModels } from '@/queries/admin.queries'
 import type { AnonymousChatConfig } from '@/types/api'
@@ -136,6 +139,15 @@ export function AnonChatConfigPage() {
                 <Input.TextArea rows={2} />
               </Form.Item>
 
+              <Form.Item
+                name="signupBannerAfterMessages"
+                label="نمایش بنر همیشگی بعد از چند پیام"
+                extra="بنر تشویق به ثبت‌نام (بالا) تا این تعداد پیام کاربر در مکالمه نمایش داده نمی‌شود — تا کاربر تازه‌وارد قبل از دیدن فشار ثبت‌نام، محصول را تجربه کند. صفر یعنی از همون پیام اول."
+                rules={[{ required: true }]}
+              >
+                <InputNumber min={0} max={50} step={1} style={{ width: '100%' }} />
+              </Form.Item>
+
               <Divider>راهنمای وسط صفحه‌ی خالی چت</Divider>
 
               <Form.Item name="hintTitle" label="عنوان راهنما" rules={[{ required: true }]}>
@@ -144,6 +156,33 @@ export function AnonChatConfigPage() {
 
               <Form.Item name="hintSubtitle" label="زیرعنوان راهنما" rules={[{ required: true }]}>
                 <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="پرامپت‌های نمونه (رونده با انیمیشن)"
+                extra="این‌ها به‌صورت رونده و کلیک‌پذیر زیر راهنما نشان داده می‌شوند — کلیک روی هرکدام همان متن را می‌فرستد."
+              >
+                <Form.List name="samplePrompts">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map((field) => (
+                        <Space key={field.key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                          <Form.Item
+                            {...field}
+                            style={{ flex: 1, marginBottom: 0 }}
+                            rules={[{ required: true, message: 'خالی نگذار' }]}
+                          >
+                            <Input />
+                          </Form.Item>
+                          <Button type="text" danger icon={<MinusCircleOutlined />} onClick={() => remove(field.name)} />
+                        </Space>
+                      ))}
+                      <Button type="dashed" onClick={() => add('')} icon={<PlusOutlined />} block>
+                        افزودن پرامپت نمونه
+                      </Button>
+                    </>
+                  )}
+                </Form.List>
               </Form.Item>
 
               <Button type="primary" htmlType="submit" loading={update.isPending}>

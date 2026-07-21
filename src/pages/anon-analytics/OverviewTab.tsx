@@ -24,6 +24,18 @@ const roleLabel: Record<AnonSessionMessage['role'], string> = {
   SYSTEM: 'سیستم',
 }
 
+// چون فقط منبع/کمپین UTM در جدول اصلی نشست‌ها ستون دارد، بقیه‌ی داده‌ی attribution
+// (که همان لحظه‌ی اول ورود ثبت شده — anon-identity.service.ts) اینجا در مودال دیده می‌شود
+function AttributionRow({ label, value }: { label: string; value: string | null }) {
+  if (!value) return null
+  return (
+    <div style={{ display: 'flex', gap: 8, fontSize: 13 }}>
+      <Text type="secondary" style={{ minWidth: 120 }}>{label}</Text>
+      <Text style={{ wordBreak: 'break-all' }}>{value}</Text>
+    </div>
+  )
+}
+
 interface Props {
   from: string
   to: string
@@ -183,10 +195,30 @@ export function OverviewTab({ from, to }: Props) {
       <Modal
         open={Boolean(selectedSession)}
         onCancel={() => setSelectedSession(null)}
-        title={selectedSession ? `مکالمات این نشست — ${selectedSession.identity.ip}` : 'مکالمات این نشست'}
+        title={selectedSession ? `این کاربر از کجا اومده؟ — ${selectedSession.identity.ip}` : 'این کاربر از کجا اومده؟'}
         footer={null}
         width={640}
       >
+        {selectedSession && (
+          <Space direction="vertical" size={4} style={{ width: '100%', marginBottom: 16 }}>
+            {[
+              selectedSession.referrer, selectedSession.landingPath, selectedSession.utmSource,
+              selectedSession.utmCampaign, selectedSession.utmMedium, selectedSession.utmContent, selectedSession.utmTerm,
+            ].every((v) => !v) ? (
+              <Text type="secondary">بدون ریفرر یا UTM — احتمالاً ورود مستقیم (تایپ آدرس یا بوکمارک)</Text>
+            ) : (
+              <>
+                <AttributionRow label="ریفرر (سایت/لینک قبلی)" value={selectedSession.referrer} />
+                <AttributionRow label="صفحه‌ی ورود" value={selectedSession.landingPath} />
+                <AttributionRow label="منبع UTM" value={selectedSession.utmSource} />
+                <AttributionRow label="کمپین UTM" value={selectedSession.utmCampaign} />
+                <AttributionRow label="مدیوم UTM" value={selectedSession.utmMedium} />
+                <AttributionRow label="محتوای UTM" value={selectedSession.utmContent} />
+                <AttributionRow label="عبارت UTM" value={selectedSession.utmTerm} />
+              </>
+            )}
+          </Space>
+        )}
         {selectedSession && selectedSession.conversations.length === 0 && (
           <Empty description="این نشست هنوز مکالمه‌ای ندارد" />
         )}
