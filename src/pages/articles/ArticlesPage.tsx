@@ -77,6 +77,16 @@ export function ArticlesPage() {
   const columns: ColumnsType<Article> = [
     { title: 'عنوان', dataIndex: 'title', key: 'title' },
     {
+      title: 'لینک داخلی', dataIndex: 'slug', key: 'slug',
+      render: (slug: string) => (
+        <Space>
+          <Typography.Text code copyable={{ text: `/blog/${slug}` }} style={{ direction: 'ltr' }}>
+            /blog/{slug}
+          </Typography.Text>
+        </Space>
+      ),
+    },
+    {
       title: 'دسته', key: 'category',
       render: (_, a) => a.category?.name ?? '—',
     },
@@ -164,11 +174,28 @@ export function ArticlesPage() {
           <Form.Item name="coverImageUrl" label="آدرس تصویر کاور (اختیاری)">
             <Input placeholder="https://..." style={{ direction: 'ltr' }} />
           </Form.Item>
+          <Alert
+            type="info"
+            showIcon
+            style={{ marginBottom: 16 }}
+            message="لینک‌دهی داخلی درست"
+            description={
+              <ul style={{ margin: 0, paddingInlineStart: 18 }}>
+                <li>لینک به مقاله‌ی دیگر: <code>[متن لینک](/blog/اسلاگ-مقاله)</code> — اسلاگ‌ها را از ستون «لینک داخلی» در جدول کپی کن</li>
+                <li>لینک به ثبت‌نام/شروع رایگان: <code>[متن لینک](/login)</code></li>
+                <li>لینک به بخش قیمت‌ها در صفحه‌ی اصلی: <code>[متن لینک](/#pricing)</code></li>
+                <li>
+                  <b>به /pricing یا /models لینک نده</b> — این دو صفحه فقط برای کاربر واردشده کار می‌کنند؛ خواننده‌ی
+                  ناشناس مقاله را مستقیم به صفحه‌ی ورود می‌فرستند
+                </li>
+              </ul>
+            }
+          />
           <Form.Item
             name="contentMd"
             label="محتوا (Markdown)"
             rules={[{ required: true }]}
-            extra="Markdown خام را همین‌جا پیست کن — دقیقاً همون‌طور که در صفحه‌ی مقاله رندر می‌شود."
+            extra="Markdown خام را همین‌جا پیست کن — دقیقاً همون‌طور که در صفحه‌ی مقاله رندر می‌شود. تگ HTML خام (مثل اسکیمای FAQ) هم بدون تغییر رندر می‌شود."
           >
             <TextArea rows={14} style={{ fontFamily: 'monospace', direction: 'ltr', textAlign: 'left' }} />
           </Form.Item>
