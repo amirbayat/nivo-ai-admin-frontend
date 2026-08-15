@@ -281,6 +281,58 @@ export interface AiModel {
   createdAt: string
 }
 
+// docs/PRD-discovery-and-credits.md — «نیوو» یعنی واحد نمایشی روی همان Wallet موجود
+export interface CreditConfig {
+  id: string
+  tomanPerCredit: number
+  purchaseMarkup: number
+  freeSignupCredits: number
+  updatedAt: string
+}
+
+export interface CreditPackage {
+  id: string
+  credits: number
+  discountPercent: number
+  isPopular: boolean
+  isBestValue: boolean
+  isCustomAmount: boolean
+  isActive: boolean
+  sortOrder: number
+  createdAt: string
+}
+
+export interface CreativeCategory {
+  id: string
+  name: string
+  parentId: string | null
+  sortOrder: number
+  isActive: boolean
+  createdAt: string
+}
+
+export interface CreativePrompt {
+  id: string
+  title: string
+  outputType: 'IMAGE' | 'TEXT'
+  segment: 'GENERAL' | 'INSTAGRAM' | 'YOUTUBE' | 'BUSINESS'
+  categoryId: string | null
+  description: string | null
+  contextMd: string
+  userPromptTemplate: string
+  exampleImageUrl: string | null
+  aspectRatio: string | null
+  requiresUserImage: boolean
+  creditCost: number
+  preferredModel: string | null
+  isTrending: boolean
+  isActive: boolean
+  sortOrder: number
+  tags: string[]
+  createdAt: string
+  updatedAt: string
+}
+
 export interface ModelFeedbackItem {
   id: string
   messageId: string

@@ -9,6 +9,9 @@ import { PaymentsPage } from '@/pages/payments/PaymentsPage'
 import { FeedbackPage } from '@/pages/feedback/FeedbackPage'
 import { TicketsPage } from '@/pages/tickets/TicketsPage'
 import { ModelsPage } from '@/pages/models/ModelsPage'
+import { CreditConfigPage } from '@/pages/credit-config/CreditConfigPage'
+import { CreativePromptsPage } from '@/pages/creative-prompts/CreativePromptsPage'
+import { CategoryTreePage } from '@/pages/creative-categories/CategoryTreePage'
 import { ModelRoutingPage } from '@/pages/model-routing/ModelRoutingPage'
 import { ModelFeedbackPage } from '@/pages/model-feedback/ModelFeedbackPage'
 import { ChatConfigPage } from '@/pages/chat-config/ChatConfigPage'
@@ -66,6 +69,9 @@ export function AppRouter() {
         <Route path="feedback" element={<FeedbackPage />} />
         <Route path="tickets" element={<TicketsPage />} />
         <Route path="models" element={<ModelsPage />} />
+        <Route path="credit-config" element={<CreditConfigPage />} />
+        <Route path="creative-prompts" element={<CreativePromptsPage />} />
+        <Route path="creative-categories" element={<CategoryTreePage />} />
         <Route path="model-routing" element={<ModelRoutingPage />} />
         <Route path="model-feedback" element={<ModelFeedbackPage />} />
         <Route path="chat-config" element={<ChatConfigPage />} />

@@ -29,6 +29,8 @@ import {
   RadarChartOutlined,
   EyeInvisibleOutlined,
   FunnelPlotOutlined,
+  WalletOutlined,
+  BulbOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
 import { useUnreadNotificationCount } from '@/queries/admin-notifications.queries'
@@ -43,6 +45,9 @@ const menuItems = [
   { key: '/admin/users', icon: <UserOutlined />, label: fa.nav.users },
   { key: '/admin/plans', icon: <AppstoreOutlined />, label: fa.nav.plans },
   { key: '/admin/models', icon: <RobotOutlined />, label: fa.nav.models },
+  { key: '/admin/credit-config', icon: <WalletOutlined />, label: fa.nav.creditConfig },
+  { key: '/admin/creative-prompts', icon: <BulbOutlined />, label: fa.nav.creativePrompts },
+  { key: '/admin/creative-categories', icon: <ApartmentOutlined />, label: fa.nav.creativeCategories },
   { key: '/admin/model-routing', icon: <ApartmentOutlined />, label: fa.nav.modelRouting },
   { key: '/admin/model-feedback', icon: <LikeOutlined />, label: fa.nav.modelFeedback },
   { key: '/admin/chat-config', icon: <CommentOutlined />, label: fa.nav.chatConfig },

@@ -112,8 +112,6 @@ export function UserDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { data, isLoading, isError } = useAdminUserDetail(id ?? '')
-  const { data: creditConfig } = useCreditConfig()
-  const tomanPerCredit = creditConfig?.tomanPerCredit ?? 1
   const refundPayg = useRefundPayg()
   const [messageApi, contextHolder] = message.useMessage()
 
@@ -175,7 +173,7 @@ export function UserDetailPage() {
       <Row gutter={16} style={{ marginTop: 16 }}>
         <Col span={6}>
           <Card>
-            <Statistic title="موجودی کیف‌پول" value={creditsLabel(walletBalanceToman, tomanPerCredit)} />
+            <Statistic title="موجودی کیف‌پول" value={toman(walletBalanceToman)} suffix="تومان" />
           </Card>
         </Col>
         <Col span={6}>
@@ -206,7 +204,7 @@ export function UserDetailPage() {
         <Table<WalletTransaction>
           rowKey="id"
           dataSource={walletTransactions}
-          columns={getWalletColumns(tomanPerCredit)}
+          columns={walletColumns}
           pagination={false}
           size="small"
           locale={{ emptyText: fa.common.noData }}
@@ -218,7 +216,7 @@ export function UserDetailPage() {
         <Table<UserDetailPayment>
           rowKey="id"
           dataSource={payments}
-          columns={getPaymentColumns(tomanPerCredit)}
+          columns={paymentColumns}
           pagination={false}
           size="small"
           locale={{ emptyText: fa.common.noData }}
@@ -230,7 +228,7 @@ export function UserDetailPage() {
         <Table<UserDailyUsageRow>
           rowKey="id"
           dataSource={dailyUsage}
-          columns={getUsageColumns(tomanPerCredit)}
+          columns={usageColumns}
           pagination={false}
           size="small"
           locale={{ emptyText: fa.common.noData }}
@@ -239,8 +237,8 @@ export function UserDetailPage() {
       </Card>
 
       <Row gutter={16} style={{ marginTop: 16 }}>
-        <Col span={12}><TypeUsageCard title="مصرف مدل‌های تولید متن (۳۰ روز اخیر)" usage={textUsage} tomanPerCredit={tomanPerCredit} /></Col>
-        <Col span={12}><TypeUsageCard title="مصرف مدل‌های تولید عکس (۳۰ روز اخیر)" usage={imageUsage} tomanPerCredit={tomanPerCredit} /></Col>
+        <Col span={12}><TypeUsageCard title="مصرف مدل‌های تولید متن (۳۰ روز اخیر)" usage={textUsage} /></Col>
+        <Col span={12}><TypeUsageCard title="مصرف مدل‌های تولید عکس (۳۰ روز اخیر)" usage={imageUsage} /></Col>
       </Row>
     </div>
   )

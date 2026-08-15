@@ -18,6 +18,12 @@ export const keys = {
     detail: (id: string) => ['admin', 'tickets', id] as const,
   },
   models: { list: () => ['admin', 'models'] as const },
+  creativePrompts: { list: () => ['admin', 'creative-prompts'] as const },
+  creativeCategories: { list: () => ['admin', 'creative-categories'] as const },
+  creditConfig: {
+    config: () => ['admin', 'credit-config'] as const,
+    packages: () => ['admin', 'credit-packages'] as const,
+  },
   modelFeedback: {
     list: (page: number, model?: string, vote?: string) =>
       ['admin', 'model-feedback', page, model ?? 'all', vote ?? 'all'] as const,
