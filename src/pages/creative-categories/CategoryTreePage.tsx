@@ -134,10 +134,11 @@ export function CategoryTreePage() {
           blockNode
           titleRender={(node) => {
             const category = findCategory(String(node.key))
-            if (!category) return node.title
+            const rawTitle = typeof node.title === 'function' ? node.title(node) : node.title
+            if (!category) return rawTitle
             return (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                <span>{node.title}</span>
+                <span>{rawTitle}</span>
                 <Space size={4} onClick={e => e.stopPropagation()}>
                   <Button size="small" type="text" icon={<PlusOutlined />} onClick={() => openAdd(category.id)} title={fa.creativeCategories.addChild} />
                   <Button size="small" type="text" icon={<EditOutlined />} onClick={() => openEdit(category)} />

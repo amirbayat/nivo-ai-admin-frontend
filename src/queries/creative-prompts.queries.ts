@@ -12,10 +12,15 @@ export function useCreativePrompts() {
   })
 }
 
+// segment قدیمی دیگر از ادمین گرفته نمی‌شود — بک‌اند در create آن را خودکار با GENERAL پر می‌کند
+type CreatePromptPayload = Omit<CreativePrompt, 'id' | 'createdAt' | 'updatedAt' | 'segment'> & {
+  segment?: CreativePrompt['segment']
+}
+
 export function useCreateCreativePrompt() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: Omit<CreativePrompt, 'id' | 'createdAt' | 'updatedAt'>) =>
+    mutationFn: (data: CreatePromptPayload) =>
       api.post<CreativePrompt>('/admin/creative/prompts', data).then(r => r.data),
     onSuccess: () => void qc.invalidateQueries({ queryKey: keys.creativePrompts.list() }),
   })

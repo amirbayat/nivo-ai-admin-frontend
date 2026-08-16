@@ -84,11 +84,18 @@ export function CreativePromptsPage() {
     return false
   }
 
-  function buildCategoryOptions(parentId: string | null): { value: string; title: string; children: unknown[] }[] {
+  interface CategoryTreeOption {
+    key: string
+    value: string
+    title: string
+    children: CategoryTreeOption[]
+  }
+
+  function buildCategoryOptions(parentId: string | null): CategoryTreeOption[] {
     return (categories ?? [])
       .filter(c => c.parentId === parentId)
       .sort((a, b) => a.sortOrder - b.sortOrder)
-      .map(c => ({ value: c.id, title: c.name, children: buildCategoryOptions(c.id) }))
+      .map(c => ({ key: c.id, value: c.id, title: c.name, children: buildCategoryOptions(c.id) }))
   }
 
   function openAdd() {
@@ -133,6 +140,11 @@ export function CreativePromptsPage() {
       const { tagsText, ...rest } = values
       const data = {
         ...rest,
+        categoryId: rest.categoryId ?? null,
+        description: rest.description ?? null,
+        exampleImageUrl: rest.exampleImageUrl ?? null,
+        aspectRatio: rest.aspectRatio ?? null,
+        preferredModel: rest.preferredModel ?? null,
         tags: tagsText
           .split(/[،,]/)
           .map(t => t.trim())
