@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { isAxiosError } from 'axios'
 import {
   Table,
   Button,
@@ -14,11 +15,16 @@ import {
   Popconfirm,
   Typography,
   Upload,
+  Tabs,
+  Badge,
+  Card,
+  Empty,
+  Spin,
   message,
 } from 'antd'
-import { PlusOutlined, UploadOutlined } from '@ant-design/icons'
+import { PlusOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
-import type { CreativePrompt } from '@/types/api'
+import type { CreativePrompt, CreativePromptSubmission } from '@/types/api'
 import { useCreativeCategories } from '@/queries/creative-categories.queries'
 import {
   useCreativePrompts,
@@ -26,11 +32,30 @@ import {
   useUpdateCreativePrompt,
   useDeleteCreativePrompt,
   useUploadExampleImage,
+  usePendingCreativePromptSubmissions,
+  usePendingSubmissionsCount,
+  useApproveCreativePromptSubmission,
+  useRejectCreativePromptSubmission,
 } from '@/queries/creative-prompts.queries'
+import { useAuthedImage } from '@/hooks/useAuthedImage'
 import { fa } from '@/locales/fa'
 
-const { Title } = Typography
+const { Title, Text } = Typography
 const { TextArea } = Input
+
+type TabKey = 'catalog' | 'submissions'
+
+// پیام خطای فارسی که سرور موقع تایید (approve) برمی‌گرداند اگر categoryId یا
+// exampleImageUrl هنوز ست نشده باشد — با همان الگوی نمایش پیام‌های antd (messageApi.error)
+function extractErrorMessage(err: unknown, fallback: string): string {
+  if (isAxiosError(err)) {
+    const data = err.response?.data as { message?: string | string[] } | undefined
+    const msg = data?.message
+    if (Array.isArray(msg)) return msg.join('، ')
+    if (typeof msg === 'string') return msg
+  }
+  return fallback
+}
 
 interface PromptFormValues {
   title: string
@@ -54,6 +79,7 @@ export function CreativePromptsPage() {
   const [form] = Form.useForm<PromptFormValues>()
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<CreativePrompt | null>(null)
+  const [activeTab, setActiveTab] = useState<TabKey>('catalog')
   const [messageApi, contextHolder] = message.useMessage()
 
   const { data: prompts, isLoading } = useCreativePrompts()
@@ -62,6 +88,11 @@ export function CreativePromptsPage() {
   const updatePrompt = useUpdateCreativePrompt()
   const deletePrompt = useDeleteCreativePrompt()
   const uploadExampleImage = useUploadExampleImage()
+
+  const { data: submissions, isLoading: submissionsLoading } = usePendingCreativePromptSubmissions()
+  const { data: pendingCount } = usePendingSubmissionsCount()
+  const approveSubmission = useApproveCreativePromptSubmission()
+  const rejectSubmission = useRejectCreativePromptSubmission()
 
   const outputTypeWatched: 'IMAGE' | 'TEXT' | undefined = Form.useWatch('outputType', form)
   const exampleImageUrlWatched: string | undefined = Form.useWatch('exampleImageUrl', form)
@@ -171,6 +202,22 @@ export function CreativePromptsPage() {
     })
   }
 
+  function handleApprove(id: string) {
+    approveSubmission.mutate(id, {
+      onSuccess: () => void messageApi.success(fa.creativePrompts.approveSuccess),
+      // سرور اگر categoryId/exampleImageUrl هنوز ست نشده باشد ۴۰۰ با پیام فارسی برمی‌گرداند —
+      // همان پیام را مستقیم نشان می‌دهیم تا ادمین بداند اول باید ویرایش کند
+      onError: err => void messageApi.error(extractErrorMessage(err, fa.common.error)),
+    })
+  }
+
+  function handleReject(id: string) {
+    rejectSubmission.mutate(id, {
+      onSuccess: () => void messageApi.success(fa.creativePrompts.rejectSuccess),
+      onError: err => void messageApi.error(extractErrorMessage(err, fa.common.error)),
+    })
+  }
+
   const columns: ColumnsType<CreativePrompt> = [
     {
       title: fa.creativePrompts.title,
@@ -252,20 +299,52 @@ export function CreativePromptsPage() {
       {contextHolder}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <Title level={4} style={{ margin: 0 }}>{fa.creativePrompts.title2}</Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>
-          {fa.creativePrompts.addPrompt}
-        </Button>
+        {activeTab === 'catalog' && (
+          <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>
+            {fa.creativePrompts.addPrompt}
+          </Button>
+        )}
       </div>
 
-      <Table<CreativePrompt>
-        rowKey="id"
-        dataSource={prompts ?? []}
-        columns={columns}
-        loading={isLoading}
-        locale={{ emptyText: fa.common.noData }}
-        pagination={false}
-        scroll={{ x: 'max-content' }}
+      <Tabs
+        activeKey={activeTab}
+        onChange={k => setActiveTab(k as TabKey)}
+        items={[
+          { key: 'catalog', label: fa.creativePrompts.tabCatalog },
+          {
+            key: 'submissions',
+            label: (
+              <Badge count={pendingCount ?? 0} size="small" offset={[8, 0]}>
+                <span>{fa.creativePrompts.tabSubmissions}</span>
+              </Badge>
+            ),
+          },
+        ]}
+        style={{ marginBottom: 16 }}
       />
+
+      {activeTab === 'catalog' ? (
+        <Table<CreativePrompt>
+          rowKey="id"
+          dataSource={prompts ?? []}
+          columns={columns}
+          loading={isLoading}
+          locale={{ emptyText: fa.common.noData }}
+          pagination={false}
+          scroll={{ x: 'max-content' }}
+        />
+      ) : (
+        <SubmissionsList
+          submissions={submissions ?? []}
+          isLoading={submissionsLoading}
+          categories={categories}
+          onEdit={openEdit}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          approvingId={approveSubmission.isPending ? approveSubmission.variables : undefined}
+          rejectingId={rejectSubmission.isPending ? rejectSubmission.variables : undefined}
+        />
+      )}
 
       <Modal
         open={open}
@@ -383,5 +462,164 @@ export function CreativePromptsPage() {
         </Form>
       </Modal>
     </div>
+  )
+}
+
+interface SubmissionsListProps {
+  submissions: CreativePromptSubmission[]
+  isLoading: boolean
+  categories: { id: string; name: string }[] | undefined
+  onEdit: (prompt: CreativePrompt) => void
+  onApprove: (id: string) => void
+  onReject: (id: string) => void
+  approvingId: string | undefined
+  rejectingId: string | undefined
+}
+
+// لیست پیشنهادهای در انتظار بررسی (sourceType=USER_EXTRACTED, reviewStatus=PENDING) — به‌جای
+// جدول از کارت استفاده می‌کند چون هر ردیف عکس اصلی کاربر (نیازمند فچ authed جدا) هم دارد
+function SubmissionsList({
+  submissions,
+  isLoading,
+  categories,
+  onEdit,
+  onApprove,
+  onReject,
+  approvingId,
+  rejectingId,
+}: SubmissionsListProps) {
+  if (isLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', padding: 48 }}>
+        <Spin />
+      </div>
+    )
+  }
+
+  if (submissions.length === 0) {
+    return <Empty description={fa.creativePrompts.submissionsEmpty} style={{ padding: 48 }} />
+  }
+
+  return (
+    <Space direction="vertical" size={16} style={{ width: '100%' }}>
+      {submissions.map(submission => (
+        <SubmissionCard
+          key={submission.id}
+          submission={submission}
+          categoryName={categories?.find(c => c.id === submission.categoryId)?.name}
+          onEdit={() => onEdit(submission)}
+          onApprove={() => onApprove(submission.id)}
+          onReject={() => onReject(submission.id)}
+          approving={approvingId === submission.id}
+          rejecting={rejectingId === submission.id}
+        />
+      ))}
+    </Space>
+  )
+}
+
+interface SubmissionCardProps {
+  submission: CreativePromptSubmission
+  categoryName: string | undefined
+  onEdit: () => void
+  onApprove: () => void
+  onReject: () => void
+  approving: boolean
+  rejecting: boolean
+}
+
+function SubmissionCard({
+  submission,
+  categoryName,
+  onEdit,
+  onApprove,
+  onReject,
+  approving,
+  rejecting,
+}: SubmissionCardProps) {
+  // عکس اصلی کاربر پشت گارد ادمین است (نه یک URL عمومی مثل exampleImageUrl) — پس با
+  // useAuthedImage (axios + blob + object URL) گرفته می‌شود، نه با src مستقیم
+  const { objectUrl: sourcePhotoUrl, isLoading: sourcePhotoLoading, isError: sourcePhotoError } = useAuthedImage(
+    `/admin/creative/prompts/${submission.id}/source-image`,
+  )
+
+  const submitterLabel = submission.submittedBy
+    ? submission.submittedBy.name || submission.submittedBy.phone
+    : fa.creativePrompts.submittedByUnknown
+
+  return (
+    <Card size="small">
+      <Space size={16} align="start" style={{ width: '100%' }} wrap>
+        <div
+          style={{
+            width: 96,
+            height: 96,
+            borderRadius: 8,
+            border: '1px solid #eee',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden',
+            flexShrink: 0,
+            background: '#fafafa',
+          }}
+          title={fa.creativePrompts.originalPhoto}
+        >
+          {sourcePhotoLoading && <Spin size="small" />}
+          {!sourcePhotoLoading && sourcePhotoError && (
+            <Text type="secondary" style={{ fontSize: 11, textAlign: 'center', padding: 4 }}>
+              {fa.creativePrompts.originalPhotoLoadError}
+            </Text>
+          )}
+          {!sourcePhotoLoading && !sourcePhotoError && sourcePhotoUrl && (
+            <img
+              src={sourcePhotoUrl}
+              alt={fa.creativePrompts.originalPhoto}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          )}
+        </div>
+
+        <Space direction="vertical" size={4} style={{ flex: 1, minWidth: 200 }}>
+          <Space size={8} wrap>
+            <Text strong>{submission.title}</Text>
+            <Tag color="purple" icon={<UserOutlined />}>
+              {fa.creativePrompts.submittedBy}: {submitterLabel}
+            </Tag>
+          </Space>
+          <Space size={16} wrap>
+            <Text type="secondary">
+              {fa.creativePrompts.category}: {categoryName ?? '—'}
+            </Text>
+            <Text type="secondary">
+              {fa.creativePrompts.creditCost}: {submission.creditCost.toLocaleString('fa-IR')} نیوو
+            </Text>
+          </Space>
+          {submission.exampleImageUrl && (
+            <img
+              src={submission.exampleImageUrl}
+              alt=""
+              style={{ maxWidth: 80, maxHeight: 80, borderRadius: 6, objectFit: 'cover', marginTop: 4 }}
+            />
+          )}
+        </Space>
+
+        <Space direction="vertical" size={8}>
+          <Button size="small" onClick={onEdit}>
+            {fa.creativePrompts.editPrompt}
+          </Button>
+          <Popconfirm title={fa.creativePrompts.approveConfirm} onConfirm={onApprove}>
+            <Button size="small" type="primary" loading={approving} block>
+              {fa.creativePrompts.approve}
+            </Button>
+          </Popconfirm>
+          <Popconfirm title={fa.creativePrompts.rejectConfirm} onConfirm={onReject}>
+            <Button size="small" danger loading={rejecting} block>
+              {fa.creativePrompts.reject}
+            </Button>
+          </Popconfirm>
+        </Space>
+      </Space>
+    </Card>
   )
 }

@@ -18,7 +18,11 @@ export const keys = {
     detail: (id: string) => ['admin', 'tickets', id] as const,
   },
   models: { list: () => ['admin', 'models'] as const },
-  creativePrompts: { list: () => ['admin', 'creative-prompts'] as const },
+  creativePrompts: {
+    list: (sourceType?: string) => ['admin', 'creative-prompts', sourceType ?? 'all'] as const,
+    pendingSubmissions: () => ['admin', 'creative-prompts', 'pending-submissions'] as const,
+    pendingSubmissionsCount: () => ['admin', 'creative-prompts', 'pending-submissions-count'] as const,
+  },
   creativeCategories: { list: () => ['admin', 'creative-categories'] as const },
   creditConfig: {
     config: () => ['admin', 'credit-config'] as const,

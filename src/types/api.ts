@@ -331,6 +331,20 @@ export interface CreativePrompt {
   tags: string[]
   createdAt: string
   updatedAt: string
+  // ── پیشنهاد کاربر از طریق «تبدیل عکس به پرامپت» — روی ردیف‌های CURATED قدیمی هم
+  // ممکن است نباشد (رکوردهای خیلی قدیمی)، پس اختیاری در نظر گرفته می‌شود
+  sourceType?: 'CURATED' | 'USER_EXTRACTED'
+  reviewStatus?: 'PENDING' | 'APPROVED' | 'REJECTED' | null
+  sourceImageKey?: string | null
+  submittedByUserId?: string | null
+}
+
+// ردیف USER_EXTRACTED که از GET /admin/creative/prompts?sourceType=USER_EXTRACTED&reviewStatus=PENDING
+// می‌آید — همان CreativePrompt به‌علاوه‌ی هویت کاربر ارسال‌کننده
+export interface CreativePromptSubmission extends CreativePrompt {
+  sourceType: 'USER_EXTRACTED'
+  reviewStatus: 'PENDING' | 'APPROVED' | 'REJECTED'
+  submittedBy: { phone: string; name: string | null } | null
 }
 
 export interface ModelFeedbackItem {
