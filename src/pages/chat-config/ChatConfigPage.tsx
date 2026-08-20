@@ -15,6 +15,7 @@ const IMAGE_FORMAT_OPTIONS = [
 interface ThresholdFormValues {
   summaryTriggerTokens: number
   summaryMaxTokens: number
+  projectContextMaxChars: number
   maxImagesPerMessage: number
   maxImageSizeMb: number
   allowedImageFormats: string[]
@@ -87,6 +88,15 @@ export function ChatConfigPage() {
             rules={[{ required: true }]}
           >
             <InputNumber min={50} max={4096} step={50} style={{ width: '100%' }} />
+          </Form.Item>
+
+          <Form.Item
+            name="projectContextMaxChars"
+            label="حداکثر طول خلاصه‌ی تجمیعی هر پروژه (کاراکتر)"
+            extra="این خلاصه با پیشرفت چت‌های داخل هر پروژه خودکار به‌روز می‌شود و به همه‌ی چت‌های آن پروژه اضافه می‌شود؛ عدد بالاتر یعنی خلاصه‌ی مفصل‌تر (و هزینه‌ی بیشتر)."
+            rules={[{ required: true }]}
+          >
+            <InputNumber min={500} max={20_000} step={500} style={{ width: '100%' }} />
           </Form.Item>
 
           <Divider>محدودیت عکس در چت</Divider>

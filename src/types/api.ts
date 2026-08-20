@@ -204,6 +204,7 @@ export interface ChatConfig {
   globalContextMd: string
   summaryTriggerTokens: number
   summaryMaxTokens: number
+  projectContextMaxChars: number
   maxImagesPerMessage: number
   maxImageSizeMb: number
   allowedImageFormats: string[]
