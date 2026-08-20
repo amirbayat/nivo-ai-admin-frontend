@@ -13,7 +13,12 @@ export interface AdminUser {
   aiCostTextUsdThisMonth: number
   aiCostImageUsdThisMonth: number
   expectedByNow: number
+  // این دسته‌بندی مبتنی بر priceMonthly/expectedByNow است — فقط برای کاربر با پلن ماهانه‌ی
+  // پولی/PAYG معنادار است؛ برای کاربر فقط‌نیوویی از creditConsumed* زیر استفاده کنید
+  // (docs/PRD-admin-credit-reports.md فاز ۴)
   category: 'heavy' | 'moderate' | 'light' | 'inactive'
+  creditConsumedTomanThisMonth: number
+  creditConsumedCreditsThisMonth: number
 }
 
 export interface WalletTransaction {
@@ -34,6 +39,24 @@ export interface UserDetailPayment {
   provider: string
   createdAt: string
   plan: { name: string } | null
+  // فقط برای kind=WALLET_TOPUP که از خرید بسته‌ی نیوو آمده — null یعنی شارژ دستی PAYG قدیمی
+  // (docs/PRD-admin-credit-reports.md بخش ۲)
+  packageId: string | null
+  credits: number | null
+}
+
+export interface UserCreativeGeneration {
+  id: string
+  promptId: string
+  projectId: string | null
+  outputType: 'IMAGE' | 'TEXT'
+  creditCost: number
+  costToman: number
+  model: string | null
+  status: 'SUCCEEDED' | 'FAILED'
+  failureReason: string | null
+  createdAt: string
+  prompt: { title: string; outputType: 'IMAGE' | 'TEXT' }
 }
 
 export interface UserDailyUsageRow {
@@ -62,6 +85,7 @@ export interface AdminUserDetail {
   walletTransactions: WalletTransaction[]
   payments: UserDetailPayment[]
   dailyUsage: UserDailyUsageRow[]
+  creativeGenerations: UserCreativeGeneration[]
   textUsage: AnalyticsUserTypeUsage
   imageUsage: AnalyticsUserTypeUsage
 }
@@ -76,7 +100,10 @@ export interface DashboardStats {
   totalUsers: number
   activeUsers: number
   totalRevenue: number
+  // بعد از قطع کامل پلن ماهانه (docs/PRD-discovery-and-credits.md بخش ۲.۲)، mrr دیگر
+  // «اشتراک ماهانه» را نمایندگی نمی‌کند — creditRevenueToman زیر معیار معنادار جایگزین است
   mrr: number
+  creditRevenueToman: number
   totalConversations: number
   todayConversations: number
   exchangeRate: ExchangeRateInfo
@@ -84,7 +111,9 @@ export interface DashboardStats {
 
 export interface CostChartPoint {
   date: string
-  aiCostToman: number
+  aiCostToman: number // چت + دیسکاوری/کریتیو
+  chatAiCostToman: number
+  discoveryAiCostToman: number
   aiCostUsd: number
   revenueToman: number
   // null یعنی هنوز کلید اختصاصی لیارا برای کاربری در آن روز فعال نبوده — نه هزینه‌ی صفر
@@ -93,11 +122,48 @@ export interface CostChartPoint {
 
 export interface PricingAlert {
   monthlyRevenueToman: number
-  monthlyAiCostToman: number
+  monthlyAiCostToman: number // چت + دیسکاوری/کریتیو
+  monthlyChatAiCostToman: number
+  monthlyDiscoveryAiCostToman: number
   monthlyAiCostUsd: number
   aiCostRatio: number
   alertLevel: 'safe' | 'warning' | 'critical'
   suggestion: string | null
+}
+
+// docs/PRD-admin-credit-reports.md فاز ۱ — GET /admin/creative/credits-report
+export interface CreditsReportPackageRow {
+  packageId: string
+  isCustomAmount: boolean
+  transactions: number
+  credits: number
+  toman: number
+}
+
+export interface CreditsReportPromptRow {
+  promptId: string
+  title: string
+  generations: number
+  creditCost: number
+  costToman: number
+}
+
+export interface CreditsReport {
+  range: { from: string; to: string }
+  sold: {
+    totalTransactions: number
+    totalCredits: number
+    totalToman: number
+    byPackage: CreditsReportPackageRow[]
+  }
+  consumed: {
+    totalGenerations: number
+    totalCreditCost: number
+    totalCostToman: number
+    byPrompt: CreditsReportPromptRow[]
+  }
+  outstanding: { balanceToman: number; credits: number }
+  margin: { revenueToman: number; costToman: number; marginToman: number }
 }
 
 export interface ManualLimit {

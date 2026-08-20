@@ -131,6 +131,8 @@ export function useDeletePlan() {
   })
 }
 
+// جایگزین شده — PaymentsPage.tsx حالا از useCreditsReport (credits-report.queries.ts) استفاده
+// می‌کند. این هوک عمداً حذف نشده، شاید بعداً دوباره لازم شود (docs/PRD-admin-credit-reports.md فاز ۵).
 export function useAdminPayments() {
   return useQuery({
     queryKey: keys.dashboard.stats(),

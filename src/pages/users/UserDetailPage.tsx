@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Typography, Card, Row, Col, Statistic, Tag, Table, Spin, Alert, Button, Space, Popconfirm, message } from 'antd'
 import { ArrowRightOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
-import type { WalletTransaction, UserDetailPayment, UserDailyUsageRow, AnalyticsUserTypeUsage } from '@/types/api'
+import type { WalletTransaction, UserDetailPayment, UserDailyUsageRow, UserCreativeGeneration, AnalyticsUserTypeUsage } from '@/types/api'
 import { useAdminUserDetail, useRefundPayg } from '@/queries/admin.queries'
 import { useCreditConfig } from '@/queries/credit-config.queries'
 import { fa } from '@/locales/fa'
@@ -77,6 +77,38 @@ function getPaymentColumns(tomanPerCredit: number): ColumnsType<UserDetailPaymen
   ]
 }
 
+// docs/PRD-admin-credit-reports.md فاز ۷ — قبلاً این صفحه هیچ ردی از مصرف دیسکاوری/کریتیو
+// (تولید عکس/متن با نیوو) کاربر را نشان نمی‌داد، فقط چت و کیف‌پول
+function getCreativeGenerationColumns(tomanPerCredit: number): ColumnsType<UserCreativeGeneration> {
+  return [
+    {
+      title: 'زمان',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (v: string) => new Date(v).toLocaleString('fa-IR'),
+    },
+    { title: 'سبک', key: 'prompt', render: (_, r) => r.prompt.title },
+    {
+      title: 'نوع',
+      dataIndex: 'outputType',
+      key: 'outputType',
+      render: (v: UserCreativeGeneration['outputType']) => <Tag>{v === 'IMAGE' ? 'عکس' : 'متن'}</Tag>,
+    },
+    { title: 'نیوو', dataIndex: 'creditCost', key: 'creditCost', render: (v: number) => v.toLocaleString('fa-IR') },
+    { title: 'هزینه‌ی واقعی AI', dataIndex: 'costToman', key: 'costToman', render: (v: number) => creditsLabel(v, tomanPerCredit) },
+    {
+      title: 'وضعیت',
+      dataIndex: 'status',
+      key: 'status',
+      render: (v: UserCreativeGeneration['status'], r) => (
+        <Tag color={v === 'SUCCEEDED' ? 'green' : 'red'} title={r.failureReason ?? undefined}>
+          {v === 'SUCCEEDED' ? 'موفق' : 'ناموفق'}
+        </Tag>
+      ),
+    },
+  ]
+}
+
 function getUsageColumns(tomanPerCredit: number): ColumnsType<UserDailyUsageRow> {
   return [
     { title: 'تاریخ', dataIndex: 'date', key: 'date', render: (v: string) => new Date(v).toLocaleDateString('fa-IR') },
@@ -120,7 +152,7 @@ export function UserDetailPage() {
   if (isLoading) return <Spin />
   if (isError || !data) return <Alert type="error" message={fa.common.error} />
 
-  const { user, walletBalanceToman, walletTransactions, payments, dailyUsage, textUsage, imageUsage } = data
+  const { user, walletBalanceToman, walletTransactions, payments, dailyUsage, creativeGenerations, textUsage, imageUsage } = data
   const isPayg = Boolean(user.subscription?.plan.isPayAsYouGo)
 
   function handleRefund() {
@@ -242,6 +274,18 @@ export function UserDetailPage() {
         <Col span={12}><TypeUsageCard title="مصرف مدل‌های تولید متن (۳۰ روز اخیر)" usage={textUsage} tomanPerCredit={tomanPerCredit} /></Col>
         <Col span={12}><TypeUsageCard title="مصرف مدل‌های تولید عکس (۳۰ روز اخیر)" usage={imageUsage} tomanPerCredit={tomanPerCredit} /></Col>
       </Row>
+
+      <Card style={{ marginTop: 16 }} title="تاریخچه‌ی تولید محتوا (دیسکاوری/کریتیو)">
+        <Table<UserCreativeGeneration>
+          rowKey="id"
+          dataSource={creativeGenerations}
+          columns={getCreativeGenerationColumns(tomanPerCredit)}
+          pagination={false}
+          size="small"
+          locale={{ emptyText: fa.common.noData }}
+          scroll={{ x: 'max-content' }}
+        />
+      </Card>
     </div>
   )
 }

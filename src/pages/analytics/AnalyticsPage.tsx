@@ -14,9 +14,10 @@ import {
   useAnalyticsLimitHits, useAnalyticsUsers, useAnalyticsUserModels, useAnalyticsSegmentBreakdown,
   useLiaraProvisioningIssues, downloadAnalyticsUsersCsv,
 } from '@/queries/analytics.queries'
+import { useCreditsReport } from '@/queries/credits-report.queries'
 import type {
   AnalyticsModelBreakdown, AnalyticsModelTypeBreakdown, AnalyticsSegmentBreakdown, AnalyticsUserRow,
-  LiaraProvisioningIssue,
+  CreditsReportPromptRow, LiaraProvisioningIssue,
 } from '@/types/api'
 import { fa } from '@/locales/fa'
 import { SegmentsManager } from './SegmentsManager'
@@ -108,6 +109,8 @@ export function AnalyticsPage() {
   const { data: topics } = useAnalyticsTopics(from, to)
   const { data: limitHits } = useAnalyticsLimitHits(from, to)
   const { data: liaraIssues } = useLiaraProvisioningIssues()
+  // docs/PRD-admin-credit-reports.md فاز ۶ — قبلاً این صفحه فقط چت (توکن/تومان) را می‌دید
+  const { data: creditsReport } = useCreditsReport(from, to)
   const { data: users, isLoading: usersLoading } = useAnalyticsUsers(from, to, segmentFilter)
   const { data: segmentBreakdown } = useAnalyticsSegmentBreakdown(from, to)
   const { data: userModels, isLoading: userModelsLoading } = useAnalyticsUserModels(modalUserId ?? undefined, from, to)
@@ -202,6 +205,13 @@ export function AnalyticsPage() {
       key: 'lastAttemptAt',
       render: (v: string) => dayjs(v).format('YYYY-MM-DD HH:mm'),
     },
+  ]
+
+  const discoveryPromptColumns: ColumnsType<CreditsReportPromptRow> = [
+    { title: 'سبک', dataIndex: 'title', key: 'title' },
+    { title: 'تعداد تولید', dataIndex: 'generations', key: 'generations' },
+    { title: 'نیوو مصرف‌شده', dataIndex: 'creditCost', key: 'creditCost', render: (v: number) => v.toLocaleString('fa-IR') },
+    { title: 'هزینه‌ی واقعی AI (ت)', dataIndex: 'costToman', key: 'costToman', render: (v: number) => toman(v) },
   ]
 
   const userColumns: ColumnsType<AnalyticsUserRow> = [
@@ -408,6 +418,61 @@ export function AnalyticsPage() {
           <ModelTypeSection title={fa.analytics.imageModelsSectionTitle} data={overview.current.image} />
         </>
       )}
+
+      {/* docs/PRD-admin-credit-reports.md فاز ۶ — قبلاً این صفحه هیچ ردی از مصرف دیسکاوری/کریتیو
+          (نیوو) نداشت؛ کارت‌های بالا فقط چت را نشان می‌دهند */}
+      <Card style={{ marginTop: 16 }} title={fa.analytics.discoveryTitle}>
+        {!creditsReport ? (
+          <Spin />
+        ) : (
+          <>
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={12} lg={6}>
+                <Statistic
+                  title={fa.analytics.discoverySold}
+                  value={creditsReport.sold.totalCredits}
+                  suffix="نیوو"
+                  valueStyle={{ color: '#22c55e' }}
+                />
+              </Col>
+              <Col xs={24} sm={12} lg={6}>
+                <Statistic
+                  title={fa.analytics.discoveryConsumed}
+                  value={creditsReport.consumed.totalCreditCost}
+                  suffix="نیوو"
+                  valueStyle={{ color: '#ef4444' }}
+                />
+              </Col>
+              <Col xs={24} sm={12} lg={6}>
+                <Statistic
+                  title={fa.analytics.discoveryOutstanding}
+                  value={creditsReport.outstanding.credits}
+                  suffix="نیوو"
+                />
+              </Col>
+              <Col xs={24} sm={12} lg={6}>
+                <Statistic
+                  title={fa.analytics.discoveryMargin}
+                  value={toman(creditsReport.margin.marginToman)}
+                  suffix={fa.common.toman}
+                  valueStyle={{ color: creditsReport.margin.marginToman < 0 ? '#ef4444' : '#10b981' }}
+                />
+              </Col>
+            </Row>
+            <Table<CreditsReportPromptRow>
+              style={{ marginTop: 16 }}
+              rowKey="promptId"
+              dataSource={creditsReport.consumed.byPrompt}
+              columns={discoveryPromptColumns}
+              title={() => fa.analytics.discoveryByPrompt}
+              pagination={false}
+              size="small"
+              scroll={{ x: 'max-content' }}
+              locale={{ emptyText: fa.common.noData }}
+            />
+          </>
+        )}
+      </Card>
 
       {liaraIssues && liaraIssues.length > 0 && (
         <Card

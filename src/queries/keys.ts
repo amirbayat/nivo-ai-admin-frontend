@@ -28,6 +28,9 @@ export const keys = {
     config: () => ['admin', 'credit-config'] as const,
     packages: () => ['admin', 'credit-packages'] as const,
   },
+  creditsReport: {
+    report: (from?: string, to?: string) => ['admin', 'credits-report', from ?? '', to ?? ''] as const,
+  },
   modelFeedback: {
     list: (page: number, model?: string, vote?: string) =>
       ['admin', 'model-feedback', page, model ?? 'all', vote ?? 'all'] as const,

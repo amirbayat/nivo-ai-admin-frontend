@@ -4,6 +4,7 @@ import {
   Table, Input, Button, Tag, Space, Typography, Popconfirm,
   message, Modal, Select, Form, Tooltip,
 } from 'antd'
+import { QuestionCircleOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { AdminUser } from '@/types/api'
 import {
@@ -139,6 +140,21 @@ export function UsersPage() {
       key: 'category',
       width: 90,
       render: (_, r) => <Tag color={CATEGORY_COLOR[r.category]}>{CATEGORY_LABEL[r.category]}</Tag>,
+    },
+    {
+      // docs/PRD-admin-credit-reports.md فاز ۹ — دسته‌بندی ستون بالا فقط برای پلن ماهانه/PAYG
+      // معنادار است؛ این ستون معیار موازی و واقعی برای کاربر فقط‌نیوویی است
+      title: (
+        <Space size={4}>
+          {fa.users.creditConsumed}
+          <Tooltip title={fa.users.creditConsumedHint}>
+            <QuestionCircleOutlined style={{ color: '#888' }} />
+          </Tooltip>
+        </Space>
+      ),
+      key: 'creditConsumed',
+      width: 110,
+      render: (_, r) => <span style={{ fontSize: 12 }}>{r.creditConsumedCreditsThisMonth.toLocaleString('fa-IR')} نیوو</span>,
     },
     {
       title: 'شارژ ماه (ت)',

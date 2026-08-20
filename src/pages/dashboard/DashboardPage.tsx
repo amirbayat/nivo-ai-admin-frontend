@@ -76,6 +76,9 @@ export function DashboardPage() {
         <Col xs={24} sm={12} lg={8}><StatCard title={fa.dashboard.activeUsers} value={data.activeUsers} icon={<TeamOutlined />} color="#10b981" /></Col>
         <Col xs={24} sm={12} lg={8}><StatCard title={fa.dashboard.totalRevenue} value={data.totalRevenue} suffix={fa.dashboard.toman} icon={<DollarOutlined />} color="#f59e0b" /></Col>
         <Col xs={24} sm={12} lg={8}><StatCard title={fa.dashboard.mrr} value={data.mrr} suffix={fa.dashboard.toman} icon={<RiseOutlined />} color="#8b5cf6" /></Col>
+        {/* docs/PRD-admin-credit-reports.md فاز ۸ — کارت mrr بالا کنارش می‌ماند (حذف نشده)، ولی بعد
+            از قطع کامل پلن ماهانه دیگر مفهوم «اشتراک ماهانه» را نمایندگی نمی‌کند؛ این کارت معیار معنادار جایگزین است */}
+        <Col xs={24} sm={12} lg={8}><StatCard title={fa.dashboard.creditRevenue} value={data.creditRevenueToman} suffix={fa.dashboard.toman} icon={<RiseOutlined />} color="#22c55e" /></Col>
         <Col xs={24} sm={12} lg={8}><StatCard title={fa.dashboard.totalConversations} value={data.totalConversations} icon={<MessageOutlined />} color="#06b6d4" /></Col>
         <Col xs={24} sm={12} lg={8}><StatCard title={fa.dashboard.todayConversations} value={data.todayConversations} icon={<CalendarOutlined />} color="#ef4444" /></Col>
       </Row>
@@ -98,7 +101,9 @@ export function DashboardPage() {
               هزینه AI: {alert.aiCostRatio}٪ درآمد
             </Tag>
             <Tag>درآمد این ماه: {alert.monthlyRevenueToman.toLocaleString('fa-IR')} تومان</Tag>
-            <Tag>هزینه AI: {alert.monthlyAiCostToman.toLocaleString('fa-IR')} تومان (${alert.monthlyAiCostUsd.toFixed(2)})</Tag>
+            <Tag>هزینه AI (چت + دیسکاوری): {alert.monthlyAiCostToman.toLocaleString('fa-IR')} تومان (${alert.monthlyAiCostUsd.toFixed(2)})</Tag>
+            <Tag>— چت: {alert.monthlyChatAiCostToman.toLocaleString('fa-IR')} ت</Tag>
+            <Tag>— دیسکاوری: {alert.monthlyDiscoveryAiCostToman.toLocaleString('fa-IR')} ت</Tag>
           </div>
         )}
       </Card>
