@@ -336,6 +336,14 @@ export const fa = {
     sortOrder: 'ترتیب',
     priceToman: 'قیمت (تومان)',
     priceFrom: (price: number) => `از ${price.toLocaleString('fa-IR')} تومان`,
+    extractionSection: 'تبدیل عکس به پرامپت — دو حالت خودکار',
+    extractionSectionHint:
+      'حالت «بهینه» پیش‌فرض کاربر است. برای هر حالت یک مدل ثابت + قیمت ثابت (به نیوو) تعیین کن — تا وقتی مدلی انتخاب نشده، سیستم به‌صورت خودکار ارزان‌ترین/بهترین مدل موجود را انتخاب می‌کند.',
+    extractionEconomicalModel: 'مدل حالت «بهینه»',
+    extractionEconomicalCreditCost: 'قیمت حالت «بهینه» (نیوو)',
+    extractionPremiumModel: 'مدل حالت «بهترین»',
+    extractionPremiumCreditCost: 'قیمت حالت «بهترین» (نیوو)',
+    extractionModelPlaceholder: 'انتخاب خودکار (تنظیم‌نشده)',
   },
   creativePrompts: {
     title2: 'سبک‌های دیسکاوری',

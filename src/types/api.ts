@@ -354,6 +354,10 @@ export interface CreditConfig {
   tomanPerCredit: number
   purchaseMarkup: number
   freeSignupCredits: number
+  extractionEconomicalModel: string | null
+  extractionEconomicalCreditCost: number
+  extractionPremiumModel: string | null
+  extractionPremiumCreditCost: number
   updatedAt: string
 }
 

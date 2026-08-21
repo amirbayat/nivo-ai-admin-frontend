@@ -5,6 +5,7 @@ import {
   Modal,
   Form,
   InputNumber,
+  Select,
   Switch,
   Space,
   Tag,
@@ -24,6 +25,7 @@ import {
   useUpdateCreditPackage,
   useDeleteCreditPackage,
 } from '@/queries/credit-config.queries'
+import { useModels } from '@/queries/admin.queries'
 import { fa } from '@/locales/fa'
 
 const { Title } = Typography
@@ -32,6 +34,10 @@ interface ConfigFormValues {
   tomanPerCredit: number
   purchaseMarkup: number
   freeSignupCredits: number
+  extractionEconomicalModel?: string
+  extractionEconomicalCreditCost: number
+  extractionPremiumModel?: string
+  extractionPremiumCreditCost: number
 }
 
 interface PackageFormValues {
@@ -57,6 +63,9 @@ export function CreditConfigPage() {
   const createPackage = useCreateCreditPackage()
   const updatePackage = useUpdateCreditPackage()
   const deletePackage = useDeleteCreditPackage()
+  const { data: models } = useModels()
+  // فقط مدل‌های CHAT با supportsVision — همان استخری که تبدیل عکس‌به‌پرامپت واقعاً از آن انتخاب می‌کند
+  const visionModels = (models ?? []).filter((m) => m.modelType === 'CHAT' && m.supportsVision)
 
   useEffect(() => {
     if (config) {
@@ -64,16 +73,30 @@ export function CreditConfigPage() {
         tomanPerCredit: config.tomanPerCredit,
         purchaseMarkup: config.purchaseMarkup,
         freeSignupCredits: config.freeSignupCredits,
+        extractionEconomicalModel: config.extractionEconomicalModel ?? undefined,
+        extractionEconomicalCreditCost: config.extractionEconomicalCreditCost,
+        extractionPremiumModel: config.extractionPremiumModel ?? undefined,
+        extractionPremiumCreditCost: config.extractionPremiumCreditCost,
       })
     }
   }, [config, configForm])
 
   function handleSaveConfig() {
     configForm.validateFields().then(values => {
-      updateConfig.mutate(values, {
-        onSuccess: () => void messageApi.success(fa.creditConfig.configSaved),
-        onError: () => void messageApi.error(fa.common.error),
-      })
+      // Select با allowClear خالی‌شده مقدار undefined می‌دهد که axios از JSON حذفش می‌کند
+      // (یعنی «بدون تغییر»، نه «پاک کن») — برای این‌که پاک‌کردن واقعاً به حالت خودکار برگردد،
+      // صریحاً null می‌فرستیم
+      updateConfig.mutate(
+        {
+          ...values,
+          extractionEconomicalModel: values.extractionEconomicalModel ?? null,
+          extractionPremiumModel: values.extractionPremiumModel ?? null,
+        },
+        {
+          onSuccess: () => void messageApi.success(fa.creditConfig.configSaved),
+          onError: () => void messageApi.error(fa.common.error),
+        },
+      )
     })
   }
 
@@ -225,9 +248,49 @@ export function CreditConfigPage() {
               <InputNumber style={{ width: 260 }} min={0} step={5} />
             </Form.Item>
           </Space>
-          <Button type="primary" icon={<SaveOutlined />} htmlType="submit" loading={updateConfig.isPending}>
-            {fa.creditConfig.saveConfig}
-          </Button>
+
+          <Typography.Text type="secondary" style={{ display: 'block', margin: '8px 0 12px' }}>
+            {fa.creditConfig.extractionSectionHint}
+          </Typography.Text>
+          <Title level={5} style={{ margin: '0 0 12px' }}>{fa.creditConfig.extractionSection}</Title>
+          <Space size="large" wrap align="start">
+            <Form.Item name="extractionEconomicalModel" label={fa.creditConfig.extractionEconomicalModel}>
+              <Select
+                style={{ width: 260 }}
+                allowClear
+                placeholder={fa.creditConfig.extractionModelPlaceholder}
+                options={visionModels.map((m) => ({ value: m.name, label: m.displayName }))}
+              />
+            </Form.Item>
+            <Form.Item
+              name="extractionEconomicalCreditCost"
+              label={fa.creditConfig.extractionEconomicalCreditCost}
+              rules={[{ required: true }]}
+            >
+              <InputNumber style={{ width: 220 }} min={0} step={1} />
+            </Form.Item>
+            <Form.Item name="extractionPremiumModel" label={fa.creditConfig.extractionPremiumModel}>
+              <Select
+                style={{ width: 260 }}
+                allowClear
+                placeholder={fa.creditConfig.extractionModelPlaceholder}
+                options={visionModels.map((m) => ({ value: m.name, label: m.displayName }))}
+              />
+            </Form.Item>
+            <Form.Item
+              name="extractionPremiumCreditCost"
+              label={fa.creditConfig.extractionPremiumCreditCost}
+              rules={[{ required: true }]}
+            >
+              <InputNumber style={{ width: 220 }} min={0} step={1} />
+            </Form.Item>
+          </Space>
+
+          <div>
+            <Button type="primary" icon={<SaveOutlined />} htmlType="submit" loading={updateConfig.isPending}>
+              {fa.creditConfig.saveConfig}
+            </Button>
+          </div>
         </Form>
       </Card>
 

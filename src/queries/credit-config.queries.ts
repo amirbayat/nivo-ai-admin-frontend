@@ -15,8 +15,20 @@ export function useCreditConfig() {
 export function useUpdateCreditConfig() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: Partial<Pick<CreditConfig, 'tomanPerCredit' | 'purchaseMarkup' | 'freeSignupCredits'>>) =>
-      api.patch<CreditConfig>('/admin/creative/credit-config', data).then(r => r.data),
+    mutationFn: (
+      data: Partial<
+        Pick<
+          CreditConfig,
+          | 'tomanPerCredit'
+          | 'purchaseMarkup'
+          | 'freeSignupCredits'
+          | 'extractionEconomicalModel'
+          | 'extractionEconomicalCreditCost'
+          | 'extractionPremiumModel'
+          | 'extractionPremiumCreditCost'
+        >
+      >,
+    ) => api.patch<CreditConfig>('/admin/creative/credit-config', data).then(r => r.data),
     onSuccess: () => void qc.invalidateQueries({ queryKey: keys.creditConfig.config() }),
   })
 }
