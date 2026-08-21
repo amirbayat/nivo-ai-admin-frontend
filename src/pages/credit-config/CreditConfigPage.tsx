@@ -38,6 +38,7 @@ interface ConfigFormValues {
   extractionEconomicalCreditCost: number
   extractionPremiumModel?: string
   extractionPremiumCreditCost: number
+  sourceImageAccuracyCreditCost: number
 }
 
 interface PackageFormValues {
@@ -77,6 +78,7 @@ export function CreditConfigPage() {
         extractionEconomicalCreditCost: config.extractionEconomicalCreditCost,
         extractionPremiumModel: config.extractionPremiumModel ?? undefined,
         extractionPremiumCreditCost: config.extractionPremiumCreditCost,
+        sourceImageAccuracyCreditCost: config.sourceImageAccuracyCreditCost,
       })
     }
   }, [config, configForm])
@@ -281,6 +283,14 @@ export function CreditConfigPage() {
               name="extractionPremiumCreditCost"
               label={fa.creditConfig.extractionPremiumCreditCost}
               rules={[{ required: true }]}
+            >
+              <InputNumber style={{ width: 220 }} min={0} step={1} />
+            </Form.Item>
+            <Form.Item
+              name="sourceImageAccuracyCreditCost"
+              label={fa.creditConfig.sourceImageAccuracyCreditCost}
+              rules={[{ required: true }]}
+              extra={fa.creditConfig.sourceImageAccuracyCreditCostHint}
             >
               <InputNumber style={{ width: 220 }} min={0} step={1} />
             </Form.Item>

@@ -344,6 +344,9 @@ export const fa = {
     extractionPremiumModel: 'مدل حالت «بهترین»',
     extractionPremiumCreditCost: 'قیمت حالت «بهترین» (نیوو)',
     extractionModelPlaceholder: 'انتخاب خودکار (تنظیم‌نشده)',
+    sourceImageAccuracyCreditCost: 'نیوو اضافه‌ی سوییچ «استفاده از عکس اصلی»',
+    sourceImageAccuracyCreditCostHint:
+      'وقتی کاربر موقع تولید از یک سبک استخراج‌شده سوییچ «استفاده از عکس اصلی» را روشن کند، این مقدار به قیمت آن سبک اضافه می‌شود.',
   },
   creativePrompts: {
     title2: 'سبک‌های دیسکاوری',

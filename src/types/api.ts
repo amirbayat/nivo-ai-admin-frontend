@@ -358,6 +358,7 @@ export interface CreditConfig {
   extractionEconomicalCreditCost: number
   extractionPremiumModel: string | null
   extractionPremiumCreditCost: number
+  sourceImageAccuracyCreditCost: number
   updatedAt: string
 }
 
