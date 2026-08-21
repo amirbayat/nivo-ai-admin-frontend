@@ -1,9 +1,10 @@
+import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Typography, Card, Row, Col, Statistic, Tag, Table, Spin, Alert, Button, Space, Popconfirm, message } from 'antd'
+import { Typography, Card, Row, Col, Statistic, Tag, Table, Spin, Alert, Button, Space, Select, Popconfirm, message } from 'antd'
 import { ArrowRightOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { WalletTransaction, UserDetailPayment, UserDailyUsageRow, UserCreativeGeneration, AnalyticsUserTypeUsage } from '@/types/api'
-import { useAdminUserDetail, useRefundPayg } from '@/queries/admin.queries'
+import { useAdminUserDetail, useRefundPayg, usePlans, useChangeUserPlan } from '@/queries/admin.queries'
 import { useCreditConfig } from '@/queries/credit-config.queries'
 import { fa } from '@/locales/fa'
 
@@ -145,15 +146,31 @@ export function UserDetailPage() {
   const navigate = useNavigate()
   const { data, isLoading, isError } = useAdminUserDetail(id ?? '')
   const { data: creditConfig } = useCreditConfig()
+  const { data: plans } = usePlans()
   const tomanPerCredit = creditConfig?.tomanPerCredit ?? 1
   const refundPayg = useRefundPayg()
+  const changeUserPlan = useChangeUserPlan()
   const [messageApi, contextHolder] = message.useMessage()
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null)
 
   if (isLoading) return <Spin />
   if (isError || !data) return <Alert type="error" message={fa.common.error} />
 
   const { user, walletBalanceToman, walletTransactions, payments, dailyUsage, creativeGenerations, textUsage, imageUsage } = data
   const isPayg = Boolean(user.subscription?.plan.isPayAsYouGo)
+
+  // بدون پرداخت واقعی، وصل‌کردن دستی subscription کاربر به یک پلن — مخصوصاً برای پلن‌های
+  // PAYG که معمولاً فقط بعد از یک شارژ کیف‌پول موفق خودکار وصل می‌شوند (payments.service.ts)
+  function handleChangePlan() {
+    if (!id || !selectedPlanId) return
+    changeUserPlan.mutate(
+      { userId: id, planId: selectedPlanId },
+      {
+        onSuccess: () => void messageApi.success('پلن کاربر تغییر کرد'),
+        onError: () => void messageApi.error(fa.common.error),
+      },
+    )
+  }
 
   function handleRefund() {
     if (!id) return
@@ -177,6 +194,27 @@ export function UserDetailPage() {
         <Button icon={<ArrowRightOutlined />} onClick={() => navigate('/admin/users')}>
           بازگشت به لیست کاربران
         </Button>
+
+        <Space>
+          <Select
+            style={{ width: 240 }}
+            placeholder="تغییر پلن کاربر..."
+            value={selectedPlanId}
+            onChange={setSelectedPlanId}
+            options={(plans ?? []).map(p => ({
+              value: p.id,
+              label: p.isPayAsYouGo ? `${p.name} (PAYG)` : p.name,
+            }))}
+          />
+          <Button
+            type="primary"
+            disabled={!selectedPlanId}
+            loading={changeUserPlan.isPending}
+            onClick={handleChangePlan}
+          >
+            اعمال پلن
+          </Button>
+        </Space>
 
         {isPayg && (
           <Popconfirm
