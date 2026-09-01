@@ -16,7 +16,7 @@ import {
 } from 'antd'
 import { PlusOutlined, SaveOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
-import type { CreditPackage } from '@/types/api'
+import type { CreditPackage, CreditPackageScope } from '@/types/api'
 import {
   useCreditConfig,
   useUpdateCreditConfig,
@@ -49,6 +49,7 @@ interface PackageFormValues {
   isCustomAmount: boolean
   isActive: boolean
   sortOrder: number
+  scope: CreditPackageScope
 }
 
 export function CreditConfigPage() {
@@ -112,6 +113,7 @@ export function CreditConfigPage() {
       isCustomAmount: false,
       isActive: true,
       sortOrder: packages?.length ?? 0,
+      scope: 'GENERAL',
     })
     setOpen(true)
   }
@@ -126,6 +128,7 @@ export function CreditConfigPage() {
       isCustomAmount: pkg.isCustomAmount,
       isActive: pkg.isActive,
       sortOrder: pkg.sortOrder,
+      scope: pkg.scope,
     })
     setOpen(true)
   }
@@ -207,6 +210,22 @@ export function CreditConfigPage() {
       dataIndex: 'sortOrder',
       key: 'sortOrder',
       width: 80,
+    },
+    {
+      title: fa.creditConfig.scope,
+      dataIndex: 'scope',
+      key: 'scope',
+      width: 150,
+      filters: [
+        { text: fa.creditConfig.scopeGeneral, value: 'GENERAL' },
+        { text: fa.creditConfig.scopeNivoCal, value: 'NIVO_CAL' },
+      ],
+      onFilter: (value, record) => record.scope === value,
+      render: (v: CreditPackageScope) => (
+        <Tag color={v === 'NIVO_CAL' ? 'cyan' : 'default'}>
+          {v === 'NIVO_CAL' ? fa.creditConfig.scopeNivoCal : fa.creditConfig.scopeGeneral}
+        </Tag>
+      ),
     },
     {
       title: fa.creditConfig.active,
@@ -345,6 +364,14 @@ export function CreditConfigPage() {
           </Form.Item>
           <Form.Item name="sortOrder" label={fa.creditConfig.sortOrder}>
             <InputNumber style={{ width: '100%' }} min={0} />
+          </Form.Item>
+          <Form.Item name="scope" label={fa.creditConfig.scope} rules={[{ required: true }]}>
+            <Select
+              options={[
+                { value: 'GENERAL', label: fa.creditConfig.scopeGeneral },
+                { value: 'NIVO_CAL', label: fa.creditConfig.scopeNivoCal },
+              ]}
+            />
           </Form.Item>
           <Space size="large" wrap>
             <Form.Item name="isPopular" label={fa.creditConfig.isPopular} valuePropName="checked">

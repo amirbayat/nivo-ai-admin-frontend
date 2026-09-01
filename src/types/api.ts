@@ -362,6 +362,8 @@ export interface CreditConfig {
   updatedAt: string
 }
 
+export type CreditPackageScope = 'GENERAL' | 'NIVO_CAL'
+
 export interface CreditPackage {
   id: string
   credits: number
@@ -371,6 +373,7 @@ export interface CreditPackage {
   isCustomAmount: boolean
   isActive: boolean
   sortOrder: number
+  scope: CreditPackageScope
   createdAt: string
 }
 
