@@ -362,7 +362,7 @@ export interface CreditConfig {
   updatedAt: string
 }
 
-export type CreditPackageScope = 'GENERAL' | 'NIVO_CAL'
+export type CreditPackageScope = 'GENERAL' | 'NIVO_CAL' | 'NIVO_CAL_BAZAAR'
 
 export interface CreditPackage {
   id: string

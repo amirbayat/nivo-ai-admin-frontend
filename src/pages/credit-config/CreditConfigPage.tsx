@@ -31,6 +31,17 @@ import { fa } from '@/locales/fa'
 
 const { Title } = Typography
 
+const SCOPE_LABEL: Record<CreditPackageScope, string> = {
+  GENERAL: fa.creditConfig.scopeGeneral,
+  NIVO_CAL: fa.creditConfig.scopeNivoCal,
+  NIVO_CAL_BAZAAR: fa.creditConfig.scopeNivoCalBazaar,
+}
+const SCOPE_TAG_COLOR: Record<CreditPackageScope, string> = {
+  GENERAL: 'default',
+  NIVO_CAL: 'cyan',
+  NIVO_CAL_BAZAAR: 'purple',
+}
+
 interface ConfigFormValues {
   tomanPerCredit: number
   purchaseMarkup: number
@@ -161,6 +172,7 @@ export function CreditConfigPage() {
   }
 
   const isCustomAmountWatched: boolean = Form.useWatch('isCustomAmount', packageForm) ?? false
+  const scopeWatched: CreditPackageScope = Form.useWatch('scope', packageForm) ?? 'GENERAL'
 
   function computePrice(pkg: CreditPackage): number {
     if (!config) return 0
@@ -223,12 +235,11 @@ export function CreditConfigPage() {
       filters: [
         { text: fa.creditConfig.scopeGeneral, value: 'GENERAL' },
         { text: fa.creditConfig.scopeNivoCal, value: 'NIVO_CAL' },
+        { text: fa.creditConfig.scopeNivoCalBazaar, value: 'NIVO_CAL_BAZAAR' },
       ],
       onFilter: (value, record) => record.scope === value,
       render: (v: CreditPackageScope) => (
-        <Tag color={v === 'NIVO_CAL' ? 'cyan' : 'default'}>
-          {v === 'NIVO_CAL' ? fa.creditConfig.scopeNivoCal : fa.creditConfig.scopeGeneral}
-        </Tag>
+        <Tag color={SCOPE_TAG_COLOR[v]}>{SCOPE_LABEL[v]}</Tag>
       ),
     },
     {
@@ -381,16 +392,19 @@ export function CreditConfigPage() {
               options={[
                 { value: 'GENERAL', label: fa.creditConfig.scopeGeneral },
                 { value: 'NIVO_CAL', label: fa.creditConfig.scopeNivoCal },
+                { value: 'NIVO_CAL_BAZAAR', label: fa.creditConfig.scopeNivoCalBazaar },
               ]}
             />
           </Form.Item>
-          <Form.Item
-            name="bazaarSku"
-            label={fa.creditConfig.bazaarSku}
-            extra={fa.creditConfig.bazaarSkuHint}
-          >
-            <Input style={{ width: '100%' }} disabled={isCustomAmountWatched} allowClear />
-          </Form.Item>
+          {scopeWatched === 'NIVO_CAL_BAZAAR' && (
+            <Form.Item
+              name="bazaarSku"
+              label={fa.creditConfig.bazaarSku}
+              extra={fa.creditConfig.bazaarSkuHint}
+            >
+              <Input style={{ width: '100%' }} disabled={isCustomAmountWatched} allowClear />
+            </Form.Item>
+          )}
           <Space size="large" wrap>
             <Form.Item name="isPopular" label={fa.creditConfig.isPopular} valuePropName="checked">
               <Switch />
