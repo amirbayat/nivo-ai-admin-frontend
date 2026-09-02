@@ -346,6 +346,9 @@ export interface AiModel {
   sortOrder: number
   tier: 'SIMPLE' | 'MEDIUM' | 'COMPLEX'
   createdAt: string
+  // docs/PRD-openrouter-migration.md §۱۳.۴/۱۴.۴ — صفحه‌ی انتخاب مدل بازطراحی‌شده (فرانت مصرف‌کننده)
+  description: string | null
+  badges: string[]
 }
 
 // docs/PRD-discovery-and-credits.md — «نیوو» یعنی واحد نمایشی روی همان Wallet موجود

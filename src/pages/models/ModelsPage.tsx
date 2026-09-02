@@ -45,6 +45,8 @@ interface ModelFormValues {
   isActive: boolean
   sortOrder: number
   tier: AiModel['tier']
+  description: string | null
+  badges: string[]
 }
 
 const TIER_COLORS: Record<AiModel['tier'], string> = {
@@ -135,6 +137,8 @@ export function ModelsPage() {
       isActive: model.isActive,
       sortOrder: model.sortOrder,
       tier: model.tier,
+      description: model.description,
+      badges: model.badges,
     })
     setOpen(true)
   }
@@ -251,6 +255,15 @@ export function ModelsPage() {
       key: 'tier',
       width: 100,
       render: (v: AiModel['tier']) => <Tag color={TIER_COLORS[v]}>{fa.models.tiers[v]}</Tag>,
+    },
+    {
+      title: 'برچسب‌ها',
+      dataIndex: 'badges',
+      key: 'badges',
+      width: 140,
+      render: (v: string[]) => v?.length
+        ? <Space size={4} wrap>{v.map(b => <Tag key={b} color="cyan">{b}</Tag>)}</Space>
+        : <Tag>—</Tag>,
     },
     {
       title: fa.models.sortOrder,
@@ -405,6 +418,22 @@ export function ModelsPage() {
           </Form.Item>
           <Form.Item name="sortOrder" label={fa.models.sortOrder}>
             <InputNumber style={{ width: '100%' }} min={0} />
+          </Form.Item>
+          {/* docs/PRD-openrouter-migration.md §۱۳.۴/۱۴.۴ — صفحه‌ی انتخاب مدل بازطراحی‌شده در
+              فرانت مصرف‌کننده: توضیح کوتاه کاربرد مدل + برچسب‌های فیلتر (ترند/محبوب/...) */}
+          <Form.Item
+            name="description"
+            label="توضیح کوتاه (برای کاربر نهایی)"
+            extra="یک جمله‌ی کوتاه درباره‌ی اینکه این مدل به چه دردی می‌خورد — توی صفحه‌ی انتخاب مدل کاربر نشون داده می‌شود"
+          >
+            <Input.TextArea rows={2} maxLength={200} showCount placeholder="مثلاً: بهترین انتخاب پیش‌فرض برای اکثر عکس‌ها — سریع و باکیفیت" />
+          </Form.Item>
+          <Form.Item
+            name="badges"
+            label="برچسب‌ها"
+            extra="برای فیلتر «ترند»/«محبوب» در صفحه‌ی انتخاب مدل — دقیقاً همین رشته‌ها را تایپ کن: ترند، محبوب"
+          >
+            <Select mode="tags" style={{ width: '100%' }} placeholder="ترند، محبوب، ..." tokenSeparators={[',']} />
           </Form.Item>
           <Space size="large">
             {!isImageGenType && (
