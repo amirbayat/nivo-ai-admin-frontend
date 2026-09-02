@@ -17,7 +17,7 @@ import {
 } from 'antd'
 import { PlusOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
-import type { AiModel } from '@/types/api'
+import type { AiModel, AiPlatform } from '@/types/api'
 import {
   useModels,
   useCreateModel,
@@ -47,6 +47,17 @@ interface ModelFormValues {
   tier: AiModel['tier']
   description: string | null
   badges: string[]
+  platform: AiPlatform[]
+}
+
+const PLATFORM_LABELS: Record<AiPlatform, string> = {
+  LIARA: 'لیارا',
+  OPENROUTER: 'OpenRouter',
+}
+
+const PLATFORM_COLORS: Record<AiPlatform, string> = {
+  LIARA: 'gold',
+  OPENROUTER: 'geekblue',
 }
 
 const TIER_COLORS: Record<AiModel['tier'], string> = {
@@ -115,6 +126,7 @@ export function ModelsPage() {
       provider: 'openai',
       tier: 'MEDIUM',
       modelType: 'CHAT',
+      platform: ['LIARA', 'OPENROUTER'],
     })
     setOpen(true)
   }
@@ -139,6 +151,7 @@ export function ModelsPage() {
       tier: model.tier,
       description: model.description,
       badges: model.badges,
+      platform: model.platform,
     })
     setOpen(true)
   }
@@ -211,6 +224,15 @@ export function ModelsPage() {
       key: 'provider',
       width: 100,
       render: (v: string) => <Tag color={PROVIDER_COLORS[v] ?? 'default'}>{v}</Tag>,
+    },
+    {
+      title: 'پلتفرم',
+      dataIndex: 'platform',
+      key: 'platform',
+      width: 140,
+      render: (v: AiPlatform[]) => v?.length
+        ? <Space size={4} wrap>{v.map(p => <Tag key={p} color={PLATFORM_COLORS[p]}>{PLATFORM_LABELS[p]}</Tag>)}</Space>
+        : <Tag>—</Tag>,
     },
     {
       title: 'نوع',
@@ -366,6 +388,21 @@ export function ModelsPage() {
           </Form.Item>
           <Form.Item name="provider" label={fa.models.provider} rules={[{ required: true }]}>
             <Input placeholder="openai" />
+          </Form.Item>
+          <Form.Item
+            name="platform"
+            label="پلتفرم"
+            rules={[{ required: true, message: 'حداقل یک پلتفرم را انتخاب کنید' }]}
+            extra="این name دقیقاً روی کدام پلتفرم(های) inference معتبر است — اگر شناسه‌ی مدل بین لیارا و OpenRouter فرق دارد، فقط همان یکی را انتخاب کنید تا روی پلتفرم دیگر (که ۴۰۴ می‌شود) به کاربر نشان داده نشود"
+          >
+            <Select
+              mode="multiple"
+              style={{ width: '100%' }}
+              options={[
+                { value: 'LIARA', label: 'لیارا' },
+                { value: 'OPENROUTER', label: 'OpenRouter' },
+              ]}
+            />
           </Form.Item>
           <Form.Item
             name="modelType"

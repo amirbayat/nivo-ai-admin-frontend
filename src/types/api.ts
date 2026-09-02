@@ -327,6 +327,8 @@ export interface AdminTicket {
 }
 
 export type AiModelType = 'CHAT' | 'EMBEDDING' | 'IMAGE_GEN'
+// docs/PRD-openrouter-migration.md §۶.۳ — کدام پلتفرم(های) inference این name را می‌شناسد
+export type AiPlatform = 'LIARA' | 'OPENROUTER'
 
 export interface AiModel {
   id: string
@@ -349,6 +351,7 @@ export interface AiModel {
   // docs/PRD-openrouter-migration.md §۱۳.۴/۱۴.۴ — صفحه‌ی انتخاب مدل بازطراحی‌شده (فرانت مصرف‌کننده)
   description: string | null
   badges: string[]
+  platform: AiPlatform[]
 }
 
 // docs/PRD-discovery-and-credits.md — «نیوو» یعنی واحد نمایشی روی همان Wallet موجود
