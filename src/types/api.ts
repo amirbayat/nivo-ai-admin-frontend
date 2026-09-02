@@ -29,6 +29,15 @@ export interface WalletTransaction {
   description: string | null
   metadata: Record<string, unknown> | null
   createdAt: string
+  // فقط برای تراکنش‌های DEBIT ناشی از پیام چت (metadata.messageId) پر می‌شود — بقیه‌ی
+  // تراکنش‌ها (شارژ، بازگشت وجه، دیسکاوری/کریتیو) پیوند پیامی ندارند
+  message: {
+    model: string | null
+    costToman: number
+    costUsdMicros: number
+    openrouterRealCostUsdMicros: number | null
+    openrouterRealCostToman: number | null
+  } | null
 }
 
 export interface UserDetailPayment {
@@ -69,6 +78,17 @@ export interface UserDailyUsageRow {
   costUsdMicros: number
 }
 
+export interface UserDetailMessage {
+  id: string
+  createdAt: string
+  model: string | null
+  costToman: number
+  costUsdMicros: number
+  // فقط وقتی provider=OPENROUTER بوده پر می‌شود؛ null یعنی روی لیارا بوده
+  openrouterRealCostUsdMicros: number | null
+  openrouterRealCostToman: number | null
+}
+
 export interface AdminUserDetail {
   user: {
     id: string
@@ -86,6 +106,7 @@ export interface AdminUserDetail {
   payments: UserDetailPayment[]
   dailyUsage: UserDailyUsageRow[]
   creativeGenerations: UserCreativeGeneration[]
+  messages: UserDetailMessage[]
   textUsage: AnalyticsUserTypeUsage
   imageUsage: AnalyticsUserTypeUsage
 }

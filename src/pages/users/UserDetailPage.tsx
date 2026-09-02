@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Typography, Card, Row, Col, Statistic, Tag, Table, Spin, Alert, Button, Space, Select, Popconfirm, message } from 'antd'
 import { ArrowRightOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
-import type { WalletTransaction, UserDetailPayment, UserDailyUsageRow, UserCreativeGeneration, AnalyticsUserTypeUsage } from '@/types/api'
+import type { WalletTransaction, UserDetailPayment, UserDailyUsageRow, UserCreativeGeneration, AnalyticsUserTypeUsage, UserDetailMessage } from '@/types/api'
 import { useAdminUserDetail, useRefundPayg, usePlans, useChangeUserPlan } from '@/queries/admin.queries'
 import { useCreditConfig } from '@/queries/credit-config.queries'
 import { fa } from '@/locales/fa'
@@ -42,6 +42,22 @@ function getWalletColumns(tomanPerCredit: number): ColumnsType<WalletTransaction
       dataIndex: 'amountToman',
       key: 'amountToman',
       render: (v: number) => creditsLabel(v, tomanPerCredit),
+    },
+    {
+      title: 'هزینه‌ی واقعی OpenRouter ($)',
+      key: 'openrouterRealCostUsdMicros',
+      render: (_, r) =>
+        r.message?.openrouterRealCostUsdMicros == null
+          ? '—'
+          : `$${(r.message.openrouterRealCostUsdMicros / 1_000_000).toFixed(4)}`,
+    },
+    {
+      title: 'نرخ دلار آن لحظه',
+      key: 'exchangeRate',
+      render: (_, r) =>
+        r.message && r.message.costUsdMicros > 0
+          ? `${Math.round(r.message.costToman / (r.message.costUsdMicros / 1_000_000)).toLocaleString('fa-IR')} ت`
+          : '—',
     },
     { title: 'توضیح', dataIndex: 'description', key: 'description' },
   ]
@@ -110,6 +126,42 @@ function getCreativeGenerationColumns(tomanPerCredit: number): ColumnsType<UserC
   ]
 }
 
+// جزئیات per-message هزینه — هزینه‌ی واقعی گزارش‌شده توسط OpenRouter (openrouterRealCost*،
+// فقط وقتی provider=OPENROUTER بوده پر می‌شود)، نرخ دلاری که در همون لحظه اعمال شده
+// (از costToman/costUsdMicros استخراج می‌شود، چون هر دو با یک نرخ محاسبه شده‌اند)، هزینه‌ی
+// ریالی واقعاً از کیف‌پول کسرشده، و معادل نیوویش
+function getMessageColumns(tomanPerCredit: number): ColumnsType<UserDetailMessage> {
+  return [
+    {
+      title: 'زمان',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (v: string) => new Date(v).toLocaleString('fa-IR'),
+    },
+    { title: 'مدل', dataIndex: 'model', key: 'model', render: (v: string | null) => v ?? '—' },
+    {
+      title: 'هزینه‌ی واقعی OpenRouter ($)',
+      dataIndex: 'openrouterRealCostUsdMicros',
+      key: 'openrouterRealCostUsdMicros',
+      render: (v: number | null) => (v == null ? '—' : `$${(v / 1_000_000).toFixed(4)}`),
+    },
+    {
+      title: 'نرخ دلار آن لحظه',
+      key: 'exchangeRate',
+      render: (_, r) =>
+        r.costUsdMicros > 0
+          ? `${Math.round(r.costToman / (r.costUsdMicros / 1_000_000)).toLocaleString('fa-IR')} ت`
+          : '—',
+    },
+    { title: 'هزینه‌ی ریالی', dataIndex: 'costToman', key: 'costToman', render: (v: number) => `${toman(v)} ت` },
+    {
+      title: 'نیوو',
+      key: 'credits',
+      render: (_, r) => Math.round(r.costToman / tomanPerCredit).toLocaleString('fa-IR'),
+    },
+  ]
+}
+
 function getUsageColumns(tomanPerCredit: number): ColumnsType<UserDailyUsageRow> {
   return [
     { title: 'تاریخ', dataIndex: 'date', key: 'date', render: (v: string) => new Date(v).toLocaleDateString('fa-IR') },
@@ -156,7 +208,7 @@ export function UserDetailPage() {
   if (isLoading) return <Spin />
   if (isError || !data) return <Alert type="error" message={fa.common.error} />
 
-  const { user, walletBalanceToman, walletTransactions, payments, dailyUsage, creativeGenerations, textUsage, imageUsage } = data
+  const { user, walletBalanceToman, walletTransactions, payments, dailyUsage, creativeGenerations, messages, textUsage, imageUsage } = data
   const isPayg = Boolean(user.subscription?.plan.isPayAsYouGo)
 
   // بدون پرداخت واقعی، وصل‌کردن دستی subscription کاربر به یک پلن — مخصوصاً برای پلن‌های
@@ -312,6 +364,18 @@ export function UserDetailPage() {
         <Col span={12}><TypeUsageCard title="مصرف مدل‌های تولید متن (۳۰ روز اخیر)" usage={textUsage} tomanPerCredit={tomanPerCredit} /></Col>
         <Col span={12}><TypeUsageCard title="مصرف مدل‌های تولید عکس (۳۰ روز اخیر)" usage={imageUsage} tomanPerCredit={tomanPerCredit} /></Col>
       </Row>
+
+      <Card style={{ marginTop: 16 }} title="جزئیات هزینه‌ی پیام‌ها (۵۰ پیام اخیر)">
+        <Table<UserDetailMessage>
+          rowKey="id"
+          dataSource={messages}
+          columns={getMessageColumns(tomanPerCredit)}
+          pagination={false}
+          size="small"
+          locale={{ emptyText: fa.common.noData }}
+          scroll={{ x: 'max-content' }}
+        />
+      </Card>
 
       <Card style={{ marginTop: 16 }} title="تاریخچه‌ی تولید محتوا (دیسکاوری/کریتیو)">
         <Table<UserCreativeGeneration>
