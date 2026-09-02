@@ -208,6 +208,13 @@ export const fa = {
     liaraIssueAttemptCount: 'تعداد تلاش',
     liaraIssueFirstFailedAt: 'اولین شکست',
     liaraIssueLastAttemptAt: 'آخرین تلاش',
+    // docs/EXECUTION-PLAN.md قدم ۶ — معادل بالا برای OpenRouter؛ per-request دقیق (نه رول‌آپ
+    // روزانه‌ی لیارا) چون از خودِ Message.openrouterRealCostToman می‌آید
+    openrouterRealCost: 'هزینه‌ی واقعی OpenRouter (تومان)',
+    openrouterMatchPct: 'درصد تطابق با OpenRouter',
+    openrouterMatchPctHint: 'عدد داخلی ما (محاسبه‌شده از تعداد توکن × قیمت مدل) چند درصد usage.cost واقعیِ OpenRouter برای همین پیام‌هاست. «—» یعنی این کاربر/بازه هنوز پیام OpenRouter با cost واقعی نداشته — نه ۰٪.',
+    openrouterRequestCount: 'تعداد درخواست OpenRouter',
+    openrouterNoData: '—',
     // docs/PRD-admin-credit-reports.md فاز ۶ — قبلاً این صفحه فقط چت را می‌دید
     discoveryTitle: 'مصرف دیسکاوری/کریتیو (نیوو)',
     discoverySold: 'نیوو فروخته‌شده',
@@ -230,6 +237,9 @@ export const fa = {
     exchangeRateLive: 'زنده',
     exchangeRateFallback: 'مقدار ثابت (fallback) — بروزرسانی زنده انجام نشده',
     exchangeRateUpdatedAt: 'آخرین بروزرسانی',
+    aiProviderTitle: 'provider فعلی AI',
+    aiProviderLiara: 'لیارا',
+    aiProviderOpenRouter: 'OpenRouter',
   },
   users: {
     title: 'مدیریت کاربران',

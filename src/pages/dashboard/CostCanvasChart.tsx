@@ -33,7 +33,7 @@ export function CostCanvasChart({ data, height = 220 }: Props) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       ctx.clearRect(0, 0, width, height)
 
-      const PAD = { top: 50, right: 8, bottom: 24, left: 44 }
+      const PAD = { top: 64, right: 8, bottom: 24, left: 44 }
       const plotW = width - PAD.left - PAD.right
       const plotH = height - PAD.top - PAD.bottom
 
@@ -46,7 +46,12 @@ export function CostCanvasChart({ data, height = 220 }: Props) {
       }
 
       const maxVal = Math.max(
-        ...data.flatMap((d) => [d.aiCostToman, d.revenueToman, d.liaraCostToman ?? 0]),
+        ...data.flatMap((d) => [
+          d.aiCostToman,
+          d.revenueToman,
+          d.liaraCostToman ?? 0,
+          d.openrouterCostToman ?? 0,
+        ]),
         1,
       )
       const x = (i: number) => PAD.left + (i / Math.max(data.length - 1, 1)) * plotW
@@ -114,6 +119,27 @@ export function CostCanvasChart({ data, height = 220 }: Props) {
       ctx.lineWidth = 2
       ctx.stroke()
 
+      // خط هزینه‌ی واقعی OpenRouter — همون الگوی خط لیارای بالا (null = قطع خط، نه افت به صفر)
+      let openrouterStarted = false
+      ctx.beginPath()
+      data.forEach((d, i) => {
+        if (d.openrouterCostToman == null) {
+          openrouterStarted = false
+          return
+        }
+        const px = x(i)
+        const py = y(d.openrouterCostToman)
+        if (!openrouterStarted) {
+          ctx.moveTo(px, py)
+          openrouterStarted = true
+        } else {
+          ctx.lineTo(px, py)
+        }
+      })
+      ctx.strokeStyle = '#8b5cf6'
+      ctx.lineWidth = 2
+      ctx.stroke()
+
       // برچسب محور افقی — چند نقطه‌ی پراکنده
       const step = Math.max(1, Math.ceil(data.length / 6))
       ctx.fillStyle = '#64748b'
@@ -154,6 +180,14 @@ export function CostCanvasChart({ data, height = 220 }: Props) {
       ctx.stroke()
       ctx.fillStyle = '#3b82f6'
       ctx.fillText('هزینه واقعی Liara (تومان)', legendX + 24, 41)
+
+      ctx.strokeStyle = '#8b5cf6'
+      ctx.beginPath()
+      ctx.moveTo(legendX, 52)
+      ctx.lineTo(legendX + 18, 52)
+      ctx.stroke()
+      ctx.fillStyle = '#8b5cf6'
+      ctx.fillText('هزینه واقعی OpenRouter (تومان)', legendX + 24, 55)
     }
 
     draw()

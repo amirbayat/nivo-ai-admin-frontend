@@ -49,6 +49,13 @@ export function DashboardPage() {
           <Tag color={data.exchangeRate.source === 'live' ? 'green' : 'red'}>
             {data.exchangeRate.source === 'live' ? fa.dashboard.exchangeRateLive : fa.dashboard.exchangeRateFallback}
           </Tag>
+          {/* docs/EXECUTION-PLAN.md قدم ۷ — قبلاً هیچ نشانگری از provider فعلی در ادمین نبود */}
+          <Space size={6}>
+            <Text strong>{fa.dashboard.aiProviderTitle}:</Text>
+            <Tag color={data.aiProvider === 'openrouter' ? 'blue' : 'default'}>
+              {data.aiProvider === 'openrouter' ? fa.dashboard.aiProviderOpenRouter : fa.dashboard.aiProviderLiara}
+            </Tag>
+          </Space>
           {data.exchangeRate.updatedAt && (
             <Space size={6}>
               <ClockCircleOutlined style={{ color: '#888' }} />

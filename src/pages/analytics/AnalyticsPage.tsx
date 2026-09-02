@@ -83,9 +83,10 @@ function GrowthTag({ value }: { value: number | null }) {
   )
 }
 
-// docs/PRD-liara-usage-reconciliation.md — null یعنی هنوز داده‌ی واقعی لیارا نداریم (نه ۰٪،
-// که با رنگ قرمز اشتباه‌گرفته می‌شد)
-function LiaraMatchTag({ matchPct }: { matchPct: number | null }) {
+// docs/EXECUTION-PLAN.md قدم ۶ — از LiaraMatchTag تعمیم داده شده تا هم لیارا هم OpenRouter از
+// همین کامپوننت استفاده کنند. null یعنی هنوز داده‌ی واقعی نداریم (نه ۰٪، که با رنگ قرمز
+// اشتباه‌گرفته می‌شد)
+function ProviderMatchTag({ matchPct }: { matchPct: number | null }) {
   if (matchPct === null) return <Text type="secondary">{fa.analytics.liaraNoData}</Text>
   const color = matchPct >= 95 ? 'green' : matchPct >= 80 ? 'orange' : 'red'
   return <Tag color={color}>{matchPct.toFixed(1)}٪</Tag>
@@ -275,7 +276,26 @@ export function AnalyticsPage() {
         </Space>
       ),
       key: 'liaraMatchPct',
-      render: (_, r) => <LiaraMatchTag matchPct={r.liaraMatchPct} />,
+      render: (_, r) => <ProviderMatchTag matchPct={r.liaraMatchPct} />,
+    },
+    {
+      title: fa.analytics.openrouterRealCost,
+      dataIndex: 'openrouterRealCostToman',
+      key: 'openrouterRealCostToman',
+      render: (v: number | null) => (v === null ? fa.analytics.openrouterNoData : toman(v)),
+    },
+    { title: fa.analytics.openrouterRequestCount, dataIndex: 'openrouterRequestCount', key: 'openrouterRequestCount' },
+    {
+      title: (
+        <Space size={4}>
+          {fa.analytics.openrouterMatchPct}
+          <Tooltip title={fa.analytics.openrouterMatchPctHint}>
+            <QuestionCircleOutlined style={{ color: '#888' }} />
+          </Tooltip>
+        </Space>
+      ),
+      key: 'openrouterMatchPct',
+      render: (_, r) => <ProviderMatchTag matchPct={r.openrouterMatchPct} />,
     },
   ]
 
@@ -405,7 +425,27 @@ export function AnalyticsPage() {
                     </Tooltip>
                   </Space>
                 }
-                valueRender={() => <LiaraMatchTag matchPct={overview.current.liaraMatchPct} />}
+                valueRender={() => <ProviderMatchTag matchPct={overview.current.liaraMatchPct} />}
+              />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <Card>
+              <Statistic title={fa.analytics.openrouterRealCost} value={toman(overview.current.openrouterRealCostToman)} />
+            </Card>
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <Card>
+              <Statistic
+                title={
+                  <Space size={4}>
+                    {fa.analytics.openrouterMatchPct}
+                    <Tooltip title={fa.analytics.openrouterMatchPctHint}>
+                      <QuestionCircleOutlined style={{ color: '#888' }} />
+                    </Tooltip>
+                  </Space>
+                }
+                valueRender={() => <ProviderMatchTag matchPct={overview.current.openrouterMatchPct} />}
               />
             </Card>
           </Col>

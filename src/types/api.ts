@@ -107,6 +107,8 @@ export interface DashboardStats {
   totalConversations: number
   todayConversations: number
   exchangeRate: ExchangeRateInfo
+  // docs/EXECUTION-PLAN.md قدم ۷ — provider فعلی AI (env AI_PROVIDER)، برای نشانگر ادمین
+  aiProvider: 'liara' | 'openrouter'
 }
 
 export interface CostChartPoint {
@@ -118,6 +120,8 @@ export interface CostChartPoint {
   revenueToman: number
   // null یعنی هنوز کلید اختصاصی لیارا برای کاربری در آن روز فعال نبوده — نه هزینه‌ی صفر
   liaraCostToman: number | null
+  // معادل بالا برای OpenRouter — null یعنی آن روز پیام OpenRouter با cost واقعی نداشتیم
+  openrouterCostToman: number | null
 }
 
 export interface PricingAlert {
@@ -496,6 +500,10 @@ export interface AnalyticsOverviewData {
   // برای این بازه نداریم، نه ۰٪.
   liaraRealCostToman: number
   liaraMatchPct: number | null
+  // معادل بالا برای OpenRouter — از Message.openrouterRealCostToman (per-request)
+  openrouterRealCostToman: number
+  openrouterRequestCount: number
+  openrouterMatchPct: number | null
 }
 
 export interface AnalyticsOverview {
@@ -578,6 +586,10 @@ export interface AnalyticsUserRow {
   liaraRealCostToman: number | null
   liaraRequestCount: number
   liaraMatchPct: number | null
+  // معادل بالا برای OpenRouter — null یعنی این کاربر پیام OpenRouter با cost واقعی نداشته
+  openrouterRealCostToman: number | null
+  openrouterRequestCount: number
+  openrouterMatchPct: number | null
 }
 
 // docs/PRD-liara-usage-reconciliation.md — کاربرانی که الان به‌خاطر خطا (مثلاً JWT مدیریتی
