@@ -689,14 +689,19 @@ export function PlansPage() {
           <Form.Item
             name="defaultImageGenModel"
             label="مدل پیش‌فرض تولید عکس این پلن"
-            extra="اگر ست شود، به‌جای تشخیص خودکار کیفیت/ابعاد از روی متن پیام، اول همین مدل امتحان می‌شود (اگر fail کند، به بقیه‌ی مدل‌های تولید عکس مجاز این پلن fallback می‌شود) — خالی = کاملاً خودکار"
+            extra="اگر ست شود، به‌جای تشخیص خودکار کیفیت/ابعاد از روی متن پیام، اول همین مدل امتحان می‌شود (اگر fail کند، به بقیه‌ی مدل‌های تولید عکس فعال fallback می‌شود) — خالی = کاملاً خودکار"
           >
             <Select
               allowClear
               placeholder="خودکار (بر اساس پیچیدگی درخواست)"
               loading={modelsLoading}
+              showSearch
+              optionFilterProp="label"
+              // «مدل‌های مجاز این پلن» دیگر واقعاً چک نمی‌شود (chat.service.ts — انتخاب مدل فقط
+              // بر اساس isActive سراسری است)، پس گیت‌کردن دیفالت با آن لیست فقط باعث می‌شد
+              // مدل‌های جدید/فعال قابل‌انتخاب نباشند
               options={(availableModels ?? [])
-                .filter(m => m.supportsImageGen && watchedAllowedModels.includes(m.name))
+                .filter(m => m.supportsImageGen && m.isActive)
                 .map(m => ({ value: m.name, label: `🎨 ${m.displayName} (${m.name})` }))}
             />
           </Form.Item>

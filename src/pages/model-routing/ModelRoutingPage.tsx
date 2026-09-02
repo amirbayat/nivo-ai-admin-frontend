@@ -128,8 +128,12 @@ export function ModelRoutingPage() {
 
   if (plansLoading) return <div style={{ textAlign: 'center', padding: 60 }}><Spin size="large" /></div>
 
+  // «مدل مجاز پلن» دیگر هیچ‌جای runtime واقعاً چک نمی‌شود (chat.service.ts — انتخاب مدل فقط بر
+  // اساس isActive سراسری و موجودی کیف‌پول است)، پس اینجا گیت‌کردن گزینه‌های دیفالت با آن فقط
+  // باعث می‌شد مدل‌های جدید/فعالِ خارج از آن لیست اصلاً قابل‌انتخاب نباشند — همه‌ی مدل‌های چتِ
+  // فعال را نشان می‌دهیم
   const modelOptions = (allModels ?? [])
-    .filter((m) => selectedPlan?.allowedModels.includes(m.name))
+    .filter((m) => m.modelType === 'CHAT' && m.isActive)
     .map((m) => ({ value: m.name, label: `${m.displayName} (${m.name})` }))
 
   function updateStep(index: number, patch: Partial<RoutingStep>) {
