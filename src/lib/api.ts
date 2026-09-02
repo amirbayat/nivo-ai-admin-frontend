@@ -29,12 +29,17 @@ api.interceptors.response.use(
     try {
       if (!refreshing) {
         refreshing = axios
-          .post<{ accessToken: string }>(
+          .post<{ accessToken: string; refreshToken: string }>(
             `${env.VITE_API_URL}/auth/refresh`,
             { refreshToken: localStorage.getItem(REFRESH_KEY) },
           )
           .then((r) => {
+            // بک‌اند رفرش‌توکن قدیمی را همون لحظه revoke می‌کند و یکی جدید صادر می‌کند
+            // (auth.service.ts:471-474) — اگر همینجا ذخیره نشود، دفعه‌ی بعد که access token
+            // منقضی شد، همین refresh_token قدیمی/revoke‌شده دوباره فرستاده می‌شود و رد
+            // می‌شود؛ یعنی رفرش فقط یک‌بار در کل عمر لاگین کار می‌کرد، نه هر بار
             localStorage.setItem(ACCESS_KEY, r.data.accessToken)
+            localStorage.setItem(REFRESH_KEY, r.data.refreshToken)
             return r.data.accessToken
           })
           .finally(() => {
