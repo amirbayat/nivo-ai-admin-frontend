@@ -337,6 +337,8 @@ export const fa = {
     scope: 'محدوده‌ی نمایش',
     scopeGeneral: 'عمومی (نیوو اصلی)',
     scopeNivoCal: 'مخصوص نیوو کالری',
+    bazaarSku: 'شناسه‌ی محصول (SKU) کافه‌بازار',
+    bazaarSkuHint: 'از پیشخان بازار → برنامه → «پرداخت درون‌برنامه‌ای» بگیرید. فقط برای بسته‌های ثابت — خالی بگذارید یعنی این بسته از طریق کافه‌بازار قابل‌خرید نیست.',
     priceToman: 'قیمت (تومان)',
     priceFrom: (price: number) => `از ${price.toLocaleString('fa-IR')} تومان`,
     extractionSection: 'تبدیل عکس به پرامپت — دو حالت خودکار',

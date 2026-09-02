@@ -4,6 +4,7 @@ import {
   Button,
   Modal,
   Form,
+  Input,
   InputNumber,
   Select,
   Switch,
@@ -50,6 +51,7 @@ interface PackageFormValues {
   isActive: boolean
   sortOrder: number
   scope: CreditPackageScope
+  bazaarSku: string | null
 }
 
 export function CreditConfigPage() {
@@ -114,6 +116,7 @@ export function CreditConfigPage() {
       isActive: true,
       sortOrder: packages?.length ?? 0,
       scope: 'GENERAL',
+      bazaarSku: null,
     })
     setOpen(true)
   }
@@ -129,6 +132,7 @@ export function CreditConfigPage() {
       isActive: pkg.isActive,
       sortOrder: pkg.sortOrder,
       scope: pkg.scope,
+      bazaarSku: pkg.bazaarSku,
     })
     setOpen(true)
   }
@@ -233,6 +237,13 @@ export function CreditConfigPage() {
       key: 'isActive',
       width: 90,
       render: (v: boolean) => <Tag color={v ? 'green' : 'red'}>{v ? 'فعال' : 'غیرفعال'}</Tag>,
+    },
+    {
+      title: fa.creditConfig.bazaarSku,
+      dataIndex: 'bazaarSku',
+      key: 'bazaarSku',
+      width: 160,
+      render: (v: string | null) => (v ? <span style={{ fontFamily: 'monospace' }}>{v}</span> : '—'),
     },
     {
       title: fa.common.actions,
@@ -372,6 +383,13 @@ export function CreditConfigPage() {
                 { value: 'NIVO_CAL', label: fa.creditConfig.scopeNivoCal },
               ]}
             />
+          </Form.Item>
+          <Form.Item
+            name="bazaarSku"
+            label={fa.creditConfig.bazaarSku}
+            extra={fa.creditConfig.bazaarSkuHint}
+          >
+            <Input style={{ width: '100%' }} disabled={isCustomAmountWatched} allowClear />
           </Form.Item>
           <Space size="large" wrap>
             <Form.Item name="isPopular" label={fa.creditConfig.isPopular} valuePropName="checked">

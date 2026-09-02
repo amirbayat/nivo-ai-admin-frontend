@@ -374,6 +374,7 @@ export interface CreditPackage {
   isActive: boolean
   sortOrder: number
   scope: CreditPackageScope
+  bazaarSku: string | null
   createdAt: string
 }
 
