@@ -42,6 +42,8 @@ interface ModelFormValues {
   imageGenOutputImagePricePerM: number | null
   imageGenQuality: string | null
   imageGenSize: string | null
+  imageGenFlatPriceUsd: number | null
+  imageGenFlatPriceUnit: 'image' | 'megapixel' | null
   isActive: boolean
   sortOrder: number
   tier: AiModel['tier']
@@ -100,6 +102,7 @@ export function ModelsPage() {
 
   const filteredModels = (models ?? []).filter((m) => !typeFilter || m.modelType === typeFilter)
   const watchedSupportsImageGen: boolean = Form.useWatch('supportsImageGen', form) ?? false
+  const watchedFlatPriceUnit: string | null | undefined = Form.useWatch('imageGenFlatPriceUnit', form)
   const watchedModelType: AiModel['modelType'] | undefined = Form.useWatch('modelType', form)
   const isImageGenType = watchedModelType === 'IMAGE_GEN'
 
@@ -146,6 +149,8 @@ export function ModelsPage() {
       imageGenOutputImagePricePerM: model.imageGenOutputImagePricePerM,
       imageGenQuality: model.imageGenQuality,
       imageGenSize: model.imageGenSize,
+      imageGenFlatPriceUsd: model.imageGenFlatPriceUsd,
+      imageGenFlatPriceUnit: model.imageGenFlatPriceUnit,
       isActive: model.isActive,
       sortOrder: model.sortOrder,
       tier: model.tier,
@@ -491,7 +496,7 @@ export function ModelsPage() {
               <Form.Item
                 name="imageGenSize"
                 label="ابعاد تصویر"
-                extra="دقیقاً همان مقداری که به provider پاس داده می‌شود — مثل 1024x1024، 1024x1536، 1536x1024"
+                extra="دقیقاً همان مقداری که به provider پاس داده می‌شود — مثل 1024x1024، 1024x1536، 1536x1024. برای مدل‌های قیمت‌گذاری «هر مگاپیکسل» هم از همین فیلد برای محاسبه‌ی مگاپیکسل استفاده می‌شود."
               >
                 <Input placeholder="1024x1024" style={{ fontFamily: 'monospace' }} />
               </Form.Item>
@@ -503,19 +508,45 @@ export function ModelsPage() {
                 <Input placeholder="medium" style={{ fontFamily: 'monospace' }} />
               </Form.Item>
               <Form.Item
-                name="imageGenOutputImagePricePerM"
-                label="قیمت توکن عکس خروجی ($ به ازای هر ۱M توکن)"
-                extra="هزینه‌ی اصلی تولید عکس. provider بعد از هر بار تولید تعداد توکن خروجی واقعی را برمی‌گرداند و هزینه از همون عدد واقعی حساب می‌شود — نه یک عدد ثابت هر عکس (چون کیفیت/ابعاد بالاتر یعنی توکن خروجی بیشتر، خودش خودکار حساب می‌شود)."
+                name="imageGenFlatPriceUnit"
+                label="نوع قیمت‌گذاری"
+                extra="بعضی مدل‌ها (Recraft، Flux، Seedream، ...) per-token نیستند — قیمت ثابت هر عکس یا هر مگاپیکسل دارند. برای این‌ها این فیلد را ست کن و فقط «قیمت ثابت» زیر را پر کن، نه فیلدهای per-token."
               >
-                <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="8.00" />
+                <Select
+                  allowClear
+                  placeholder="توکنی (پیش‌فرض)"
+                  options={[
+                    { value: 'image', label: 'ثابت — به‌ازای هر عکس' },
+                    { value: 'megapixel', label: 'ثابت — به‌ازای هر مگاپیکسل' },
+                  ]}
+                />
               </Form.Item>
-              <Form.Item
-                name="imageGenInputImagePricePerM"
-                label="قیمت توکن عکس ورودی ($ به ازای هر ۱M توکن) — فقط حالت ویرایش"
-                extra="وقتی کاربر عکس آپلود می‌کند و می‌خواهد ویرایش/ترکیبش کنید، خود عکس(های) ورودی هم توکن مصرف می‌کنند و جدا حساب می‌شوند. برای تولید از صفر (بدون عکس ورودی) این هزینه صفر می‌ماند."
-              >
-                <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="2.50" />
-              </Form.Item>
+              {watchedFlatPriceUnit ? (
+                <Form.Item
+                  name="imageGenFlatPriceUsd"
+                  label={watchedFlatPriceUnit === 'megapixel' ? 'قیمت ثابت ($ به ازای هر مگاپیکسل)' : 'قیمت ثابت ($ به ازای هر عکس)'}
+                  extra="جایگزین قیمت‌های per-token زیر است — فقط همین یک عدد استفاده می‌شود."
+                >
+                  <InputNumber style={{ width: '100%' }} min={0} step={0.001} placeholder="0.04" />
+                </Form.Item>
+              ) : (
+                <>
+                  <Form.Item
+                    name="imageGenOutputImagePricePerM"
+                    label="قیمت توکن عکس خروجی ($ به ازای هر ۱M توکن)"
+                    extra="هزینه‌ی اصلی تولید عکس. provider بعد از هر بار تولید تعداد توکن خروجی واقعی را برمی‌گرداند و هزینه از همون عدد واقعی حساب می‌شود — نه یک عدد ثابت هر عکس (چون کیفیت/ابعاد بالاتر یعنی توکن خروجی بیشتر، خودش خودکار حساب می‌شود)."
+                  >
+                    <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="8.00" />
+                  </Form.Item>
+                  <Form.Item
+                    name="imageGenInputImagePricePerM"
+                    label="قیمت توکن عکس ورودی ($ به ازای هر ۱M توکن) — فقط حالت ویرایش"
+                    extra="وقتی کاربر عکس آپلود می‌کند و می‌خواهد ویرایش/ترکیبش کنید، خود عکس(های) ورودی هم توکن مصرف می‌کنند و جدا حساب می‌شوند. برای تولید از صفر (بدون عکس ورودی) این هزینه صفر می‌ماند."
+                  >
+                    <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="2.50" />
+                  </Form.Item>
+                </>
+              )}
             </>
           )}
         </Form>

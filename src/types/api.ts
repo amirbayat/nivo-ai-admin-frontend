@@ -369,6 +369,10 @@ export interface AiModel {
   imageGenOutputImagePricePerM: number | null
   imageGenQuality: string | null
   imageGenSize: string | null
+  // برای مدل‌های flat-priced (Recraft/Flux/Seedream/...) — قیمت ثابت هر عکس/مگاپیکسل، جایگزین
+  // imageGenOutputImagePricePerM وقتی مدل اصلاً per-token قیمت‌گذاری نمی‌شود
+  imageGenFlatPriceUsd: number | null
+  imageGenFlatPriceUnit: 'image' | 'megapixel' | null
   isActive: boolean
   sortOrder: number
   tier: 'SIMPLE' | 'MEDIUM' | 'COMPLEX'
