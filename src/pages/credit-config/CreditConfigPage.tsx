@@ -15,7 +15,7 @@ import {
   Card,
   message,
 } from 'antd'
-import { PlusOutlined, SaveOutlined } from '@ant-design/icons'
+import { MinusCircleOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { CreditPackage, CreditPackageScope } from '@/types/api'
 import {
@@ -45,6 +45,7 @@ const SCOPE_TAG_COLOR: Record<CreditPackageScope, string> = {
 interface ConfigFormValues {
   tomanPerCredit: number
   purchaseMarkup: number
+  roundingSteps: number[]
   freeSignupCredits: number
   extractionEconomicalModel?: string
   extractionEconomicalCreditCost: number
@@ -87,6 +88,7 @@ export function CreditConfigPage() {
       configForm.setFieldsValue({
         tomanPerCredit: config.tomanPerCredit,
         purchaseMarkup: config.purchaseMarkup,
+        roundingSteps: [...config.roundingSteps].sort((a, b) => a - b),
         freeSignupCredits: config.freeSignupCredits,
         extractionEconomicalModel: config.extractionEconomicalModel ?? undefined,
         extractionEconomicalCreditCost: config.extractionEconomicalCreditCost,
@@ -176,7 +178,7 @@ export function CreditConfigPage() {
 
   function computePrice(pkg: CreditPackage): number {
     if (!config) return 0
-    const base = pkg.credits * config.tomanPerCredit * config.purchaseMarkup
+    const base = pkg.credits * config.tomanPerCredit
     return Math.round(base * (1 - pkg.discountPercent / 100))
   }
 
@@ -291,6 +293,28 @@ export function CreditConfigPage() {
               <InputNumber style={{ width: 260 }} min={0} step={5} />
             </Form.Item>
           </Space>
+
+          <Title level={5} style={{ margin: '8px 0 4px' }}>{fa.creditConfig.roundingStepsSection}</Title>
+          <Typography.Text type="secondary" style={{ display: 'block', marginBottom: 12 }}>
+            {fa.creditConfig.roundingStepsHint}
+          </Typography.Text>
+          <Form.List name="roundingSteps">
+            {(fields, { add, remove }) => (
+              <Space direction="vertical" style={{ marginBottom: 12 }}>
+                {fields.map((field) => (
+                  <Space key={field.key} align="baseline">
+                    <Form.Item {...field} rules={[{ required: true }]} noStyle>
+                      <InputNumber style={{ width: 160 }} min={0.01} max={1} step={0.05} />
+                    </Form.Item>
+                    <MinusCircleOutlined onClick={() => remove(field.name)} />
+                  </Space>
+                ))}
+                <Button type="dashed" onClick={() => add(0.5)} icon={<PlusOutlined />}>
+                  {fa.creditConfig.addRoundingStep}
+                </Button>
+              </Space>
+            )}
+          </Form.List>
 
           <Typography.Text type="secondary" style={{ display: 'block', margin: '8px 0 12px' }}>
             {fa.creditConfig.extractionSectionHint}

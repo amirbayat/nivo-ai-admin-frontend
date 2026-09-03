@@ -21,6 +21,7 @@ export function useUpdateCreditConfig() {
           CreditConfig,
           | 'tomanPerCredit'
           | 'purchaseMarkup'
+          | 'roundingSteps'
           | 'freeSignupCredits'
           | 'extractionEconomicalModel'
           | 'extractionEconomicalCreditCost'

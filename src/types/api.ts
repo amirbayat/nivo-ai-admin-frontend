@@ -388,6 +388,7 @@ export interface CreditConfig {
   id: string
   tomanPerCredit: number
   purchaseMarkup: number
+  roundingSteps: number[]
   freeSignupCredits: number
   extractionEconomicalModel: string | null
   extractionEconomicalCreditCost: number
