@@ -31,6 +31,7 @@ import {
   FunnelPlotOutlined,
   WalletOutlined,
   BulbOutlined,
+  VideoCameraOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
 import { useUnreadNotificationCount } from '@/queries/admin-notifications.queries'
@@ -51,6 +52,7 @@ const menuItems = [
   { key: '/admin/model-routing', icon: <ApartmentOutlined />, label: fa.nav.modelRouting },
   { key: '/admin/model-feedback', icon: <LikeOutlined />, label: fa.nav.modelFeedback },
   { key: '/admin/chat-config', icon: <CommentOutlined />, label: fa.nav.chatConfig },
+  { key: '/admin/video-studio-config', icon: <VideoCameraOutlined />, label: fa.nav.videoStudioConfig },
   { key: '/admin/growth', icon: <GiftOutlined />, label: fa.nav.growth },
   { key: '/admin/analytics', icon: <BarChartOutlined />, label: fa.nav.analytics },
   { key: '/admin/behavior', icon: <RadarChartOutlined />, label: fa.nav.behavior },

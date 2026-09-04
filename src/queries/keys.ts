@@ -74,6 +74,9 @@ export const keys = {
   chatConfig: {
     detail: () => ['admin', 'chat-config'] as const,
   },
+  videoStudioConfig: {
+    detail: () => ['admin', 'video-studio-config'] as const,
+  },
   growth: {
     config: () => ['admin', 'growth', 'config'] as const,
     onboardingGift: () => ['admin', 'growth', 'onboarding-gift'] as const,

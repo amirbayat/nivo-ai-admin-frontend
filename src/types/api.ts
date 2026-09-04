@@ -303,6 +303,17 @@ export interface ChatConfig {
   updatedAt: string
 }
 
+// docs/PRD-video-studio-chat-flow.md — تنظیمات ادمین‌محور استودیوی ویدیو
+export interface VideoStudioConfig {
+  id: string
+  characterOptionCount: number
+  maxCharacterRegeneratesPerProject: number
+  maxConcurrentVideoJobsPerUser: number
+  maxVideoGenPerDayPerUser: number | null
+  defaultAudioEnabled: boolean
+  updatedAt: string
+}
+
 export type ReasoningEffort = 'minimal' | 'low' | 'medium' | 'high'
 
 export interface RoutingStep {

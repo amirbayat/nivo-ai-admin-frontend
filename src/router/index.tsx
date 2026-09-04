@@ -15,6 +15,7 @@ import { CategoryTreePage } from '@/pages/creative-categories/CategoryTreePage'
 import { ModelRoutingPage } from '@/pages/model-routing/ModelRoutingPage'
 import { ModelFeedbackPage } from '@/pages/model-feedback/ModelFeedbackPage'
 import { ChatConfigPage } from '@/pages/chat-config/ChatConfigPage'
+import { VideoStudioConfigPage } from '@/pages/video-studio-config/VideoStudioConfigPage'
 import { GrowthPage } from '@/pages/growth/GrowthPage'
 import { AnalyticsPage } from '@/pages/analytics/AnalyticsPage'
 import { CampaignsPage } from '@/pages/campaigns/CampaignsPage'
@@ -75,6 +76,7 @@ export function AppRouter() {
         <Route path="model-routing" element={<ModelRoutingPage />} />
         <Route path="model-feedback" element={<ModelFeedbackPage />} />
         <Route path="chat-config" element={<ChatConfigPage />} />
+        <Route path="video-studio-config" element={<VideoStudioConfigPage />} />
         <Route path="growth" element={<GrowthPage />} />
         <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="sales-bot" element={<SalesBotPage />} />

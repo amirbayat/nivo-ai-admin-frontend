@@ -22,6 +22,7 @@ export const fa = {
     feedback: 'فیدبک',
     modelFeedback: 'فیدبک مدل‌ها',
     chatConfig: 'تنظیمات چت',
+    videoStudioConfig: 'تنظیمات استودیوی ویدیو',
     growth: 'رشد و بازاریابی',
     tickets: 'تیکت‌ها',
     analytics: 'آنالیز مصرف',
