@@ -44,6 +44,12 @@ interface ModelFormValues {
   imageGenSize: string | null
   imageGenFlatPriceUsd: number | null
   imageGenFlatPriceUnit: 'image' | 'megapixel' | null
+  // این چهار فیلد فقط از طریق ایمپورت اکسل پر می‌شوند (نه فرم دستی) — فرم فقط null/[] پاس می‌دهد
+  videoGenPricePerSecondUsd: number | null
+  videoGenAudioMultiplier: number | null
+  videoGenSupportedDurationsSec: number[]
+  videoGenSupportedSizes: string[]
+  videoStudioEligible: boolean
   isActive: boolean
   sortOrder: number
   tier: AiModel['tier']
@@ -72,12 +78,14 @@ const MODEL_TYPE_LABELS: Record<AiModel['modelType'], string> = {
   CHAT: 'چت',
   EMBEDDING: 'Embedding',
   IMAGE_GEN: 'تولید عکس',
+  VIDEO_GEN: 'تولید ویدیو',
 }
 
 const MODEL_TYPE_TAG_COLORS: Record<AiModel['modelType'], string> = {
   CHAT: 'default',
   EMBEDDING: 'cyan',
   IMAGE_GEN: 'magenta',
+  VIDEO_GEN: 'volcano',
 }
 
 const PROVIDER_COLORS: Record<string, string> = {
@@ -125,6 +133,7 @@ export function ModelsPage() {
       isActive: true,
       supportsVision: false,
       supportsImageGen: false,
+      videoStudioEligible: false,
       sortOrder: (models?.length ?? 0),
       provider: 'openai',
       tier: 'MEDIUM',
@@ -151,6 +160,7 @@ export function ModelsPage() {
       imageGenSize: model.imageGenSize,
       imageGenFlatPriceUsd: model.imageGenFlatPriceUsd,
       imageGenFlatPriceUnit: model.imageGenFlatPriceUnit,
+      videoStudioEligible: model.videoStudioEligible,
       isActive: model.isActive,
       sortOrder: model.sortOrder,
       tier: model.tier,
@@ -306,6 +316,33 @@ export function ModelsPage() {
       render: (v: boolean) => <Tag color={v ? 'green' : 'red'}>{v ? 'فعال' : 'غیرفعال'}</Tag>,
     },
     {
+      // دستور صریح کاربر: «فضا بده که مشخص کنم کدوم مدل متنی/تصویری برای ویدیو استفاده بشه» —
+      // یک سوییچ سریع همین‌جا توی جدول، بدون نیاز به باز کردن فرم ادیت برای هر مدل
+      title: 'استودیوی ویدیو',
+      dataIndex: 'videoStudioEligible',
+      key: 'videoStudioEligible',
+      width: 110,
+      render: (v: boolean, record: AiModel) =>
+        record.modelType === 'CHAT' || record.modelType === 'IMAGE_GEN' ? (
+          <Switch
+            size="small"
+            checked={v}
+            loading={updateModel.isPending && updateModel.variables?.id === record.id}
+            onChange={(checked) =>
+              updateModel.mutate(
+                { id: record.id, data: { videoStudioEligible: checked } },
+                {
+                  onSuccess: () => void messageApi.success(fa.models.saved),
+                  onError: () => void messageApi.error(fa.common.error),
+                },
+              )
+            }
+          />
+        ) : (
+          <Tag>—</Tag>
+        ),
+    },
+    {
       title: fa.common.actions,
       key: 'actions',
       fixed: 'left',
@@ -341,6 +378,7 @@ export function ModelsPage() {
               { value: 'CHAT', label: 'چت' },
               { value: 'EMBEDDING', label: 'Embedding' },
               { value: 'IMAGE_GEN', label: 'تولید عکس' },
+              { value: 'VIDEO_GEN', label: 'تولید ویدیو' },
             ]}
           />
           <Button icon={<DownloadOutlined />} href="/modelSample.xlsx" target="_blank">
@@ -424,6 +462,7 @@ export function ModelsPage() {
                 { value: 'CHAT', label: 'چت (تولید متن)' },
                 { value: 'EMBEDDING', label: 'Embedding' },
                 { value: 'IMAGE_GEN', label: 'تولید عکس' },
+                { value: 'VIDEO_GEN', label: 'تولید ویدیو (فقط از طریق ایمپورت اکسل پر می‌شود)' },
               ]}
             />
           </Form.Item>
@@ -489,6 +528,16 @@ export function ModelsPage() {
             <Form.Item name="isActive" label={fa.models.active} valuePropName="checked">
               <Switch />
             </Form.Item>
+            {watchedModelType !== 'VIDEO_GEN' && watchedModelType !== 'EMBEDDING' && (
+              <Form.Item
+                name="videoStudioEligible"
+                label="استودیوی ویدیو"
+                valuePropName="checked"
+                extra="اگر روشن باشد، این مدل در چیپ مدل چت/عکس استودیوی ویدیو هم قابل انتخاب می‌شود"
+              >
+                <Switch />
+              </Form.Item>
+            )}
           </Space>
 
           {watchedSupportsImageGen && (

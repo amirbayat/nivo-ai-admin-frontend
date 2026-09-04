@@ -362,7 +362,7 @@ export interface AdminTicket {
   replies: Array<{ id: string; fromAdmin: boolean; body: string; createdAt: string }>
 }
 
-export type AiModelType = 'CHAT' | 'EMBEDDING' | 'IMAGE_GEN'
+export type AiModelType = 'CHAT' | 'EMBEDDING' | 'IMAGE_GEN' | 'VIDEO_GEN'
 // docs/PRD-openrouter-migration.md §۶.۳ — کدام پلتفرم(های) inference این name را می‌شناسد
 export type AiPlatform = 'LIARA' | 'OPENROUTER'
 
@@ -384,6 +384,13 @@ export interface AiModel {
   // imageGenOutputImagePricePerM وقتی مدل اصلاً per-token قیمت‌گذاری نمی‌شود
   imageGenFlatPriceUsd: number | null
   imageGenFlatPriceUnit: 'image' | 'megapixel' | null
+  // docs/PRD-video-studio-chat-flow.md — فقط برای modelType==='VIDEO_GEN'
+  videoGenPricePerSecondUsd: number | null
+  videoGenAudioMultiplier: number | null
+  videoGenSupportedDurationsSec: number[]
+  videoGenSupportedSizes: string[]
+  // فقط برای CHAT/IMAGE_GEN معنی دارد — تعیین می‌کند این مدل توی چیپ چت/عکس استودیوی ویدیو نشان داده شود یا نه
+  videoStudioEligible: boolean
   isActive: boolean
   sortOrder: number
   tier: 'SIMPLE' | 'MEDIUM' | 'COMPLEX'
