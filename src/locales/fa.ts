@@ -34,6 +34,7 @@ export const fa = {
     networkOutage: 'قطعی نت',
     notifications: 'نوتیفیکیشن‌ها',
     creditConfig: 'اعتبار نیوو',
+    pricingTiers: 'پله‌های ضریب قیمت',
     creativePrompts: 'سبک‌های دیسکاوری',
     creativeCategories: 'دسته‌بندی استودیو',
     pushNotifications: 'ارسال نوتیف به کاربران',
@@ -368,6 +369,24 @@ export const fa = {
     sourceImageAccuracyCreditCost: 'نیوو اضافه‌ی سوییچ «استفاده از عکس اصلی»',
     sourceImageAccuracyCreditCostHint:
       'وقتی کاربر موقع تولید از یک سبک استخراج‌شده سوییچ «استفاده از عکس اصلی» را روشن کند، این مقدار به قیمت آن سبک اضافه می‌شود.',
+  },
+  pricingTiers: {
+    title: 'پله‌های ضریب قیمت',
+    hint:
+      'جایگزین ضریب ثابت قبلی: برای هر نوع تولید (متن/عکس/ویدیو)، هزینه‌ی واقعی (تومان) در یک بازه می‌افتد و ضریب همان پله در آن ضرب می‌شود. بازه‌ها نباید هم‌پوشانی داشته باشند؛ برای هر نوع، آخرین پله می‌تواند «بدون سقف» باشد.',
+    typeText: 'متن',
+    typeImage: 'عکس',
+    typeVideo: 'ویدیو',
+    addTier: 'افزودن پله',
+    editTier: 'ویرایش پله',
+    deleteConfirm: 'این پله حذف شود؟',
+    tierSaved: 'پله ذخیره شد',
+    tierDeleted: 'پله حذف شد',
+    minToman: 'حداقل هزینه (تومان)',
+    maxToman: 'حداکثر هزینه (تومان)',
+    maxTomanHint: 'خالی = بدون سقف',
+    markup: 'ضریب',
+    noTiers: 'هنوز پله‌ای برای این نوع تعریف نشده — بدون پله، ضریب ۱ (بدون افزایش) اعمال می‌شود',
   },
   creativePrompts: {
     title2: 'سبک‌های دیسکاوری',

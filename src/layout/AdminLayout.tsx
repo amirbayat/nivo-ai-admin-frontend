@@ -47,6 +47,7 @@ const menuItems = [
   { key: '/admin/plans', icon: <AppstoreOutlined />, label: fa.nav.plans },
   { key: '/admin/models', icon: <RobotOutlined />, label: fa.nav.models },
   { key: '/admin/credit-config', icon: <WalletOutlined />, label: fa.nav.creditConfig },
+  { key: '/admin/pricing-tiers', icon: <WalletOutlined />, label: fa.nav.pricingTiers },
   { key: '/admin/creative-prompts', icon: <BulbOutlined />, label: fa.nav.creativePrompts },
   { key: '/admin/creative-categories', icon: <ApartmentOutlined />, label: fa.nav.creativeCategories },
   { key: '/admin/model-routing', icon: <ApartmentOutlined />, label: fa.nav.modelRouting },

@@ -432,6 +432,18 @@ export interface CreditPackage {
   createdAt: string
 }
 
+export type PricingGenerationType = 'TEXT' | 'IMAGE' | 'VIDEO'
+
+export interface PricingTier {
+  id: string
+  type: PricingGenerationType
+  minToman: number
+  maxToman: number | null
+  markup: number
+  createdAt: string
+  updatedAt: string
+}
+
 export interface CreativeCategory {
   id: string
   name: string
