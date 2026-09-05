@@ -11,6 +11,7 @@ import { TicketsPage } from '@/pages/tickets/TicketsPage'
 import { ModelsPage } from '@/pages/models/ModelsPage'
 import { CreditConfigPage } from '@/pages/credit-config/CreditConfigPage'
 import { PricingTiersPage } from '@/pages/pricing-tiers/PricingTiersPage'
+import { CaptionPricingPage } from '@/pages/caption-pricing/CaptionPricingPage'
 import { CreativePromptsPage } from '@/pages/creative-prompts/CreativePromptsPage'
 import { CategoryTreePage } from '@/pages/creative-categories/CategoryTreePage'
 import { ModelRoutingPage } from '@/pages/model-routing/ModelRoutingPage'
@@ -73,6 +74,7 @@ export function AppRouter() {
         <Route path="models" element={<ModelsPage />} />
         <Route path="credit-config" element={<CreditConfigPage />} />
         <Route path="pricing-tiers" element={<PricingTiersPage />} />
+        <Route path="caption-pricing" element={<CaptionPricingPage />} />
         <Route path="creative-prompts" element={<CreativePromptsPage />} />
         <Route path="creative-categories" element={<CategoryTreePage />} />
         <Route path="model-routing" element={<ModelRoutingPage />} />

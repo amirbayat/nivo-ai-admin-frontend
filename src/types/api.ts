@@ -444,6 +444,16 @@ export interface PricingTier {
   updatedAt: string
 }
 
+// docs/PRD-video-auto-captions.md §۱۴.۳ — پله‌ی «تا X ثانیه Y نیوو»
+export interface CaptionPricingTier {
+  id: string
+  maxDurationSec: number | null
+  creditCost: number
+  sortOrder: number
+  createdAt: string
+  updatedAt: string
+}
+
 export interface CreativeCategory {
   id: string
   name: string

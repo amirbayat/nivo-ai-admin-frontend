@@ -29,6 +29,7 @@ export const keys = {
     packages: () => ['admin', 'credit-packages'] as const,
   },
   pricingTiers: { all: () => ['admin', 'pricing-tiers'] as const },
+  captionPricingTiers: { all: () => ['admin', 'caption-pricing-tiers'] as const },
   creditsReport: {
     report: (from?: string, to?: string) => ['admin', 'credits-report', from ?? '', to ?? ''] as const,
   },

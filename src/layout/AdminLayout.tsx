@@ -48,6 +48,7 @@ const menuItems = [
   { key: '/admin/models', icon: <RobotOutlined />, label: fa.nav.models },
   { key: '/admin/credit-config', icon: <WalletOutlined />, label: fa.nav.creditConfig },
   { key: '/admin/pricing-tiers', icon: <WalletOutlined />, label: fa.nav.pricingTiers },
+  { key: '/admin/caption-pricing', icon: <WalletOutlined />, label: fa.nav.captionPricing },
   { key: '/admin/creative-prompts', icon: <BulbOutlined />, label: fa.nav.creativePrompts },
   { key: '/admin/creative-categories', icon: <ApartmentOutlined />, label: fa.nav.creativeCategories },
   { key: '/admin/model-routing', icon: <ApartmentOutlined />, label: fa.nav.modelRouting },
