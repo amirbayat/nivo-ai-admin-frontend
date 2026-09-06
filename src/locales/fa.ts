@@ -23,6 +23,8 @@ export const fa = {
     modelFeedback: 'فیدبک مدل‌ها',
     chatConfig: 'تنظیمات چت',
     videoStudioConfig: 'تنظیمات استودیوی ویدیو',
+    videoEditConfig: 'تنظیمات ویرایش ویدیو (Kie.ai)',
+    kieVideoModels: 'کاتالوگ مدل‌های Kie.ai',
     growth: 'رشد و بازاریابی',
     tickets: 'تیکت‌ها',
     analytics: 'آنالیز مصرف',

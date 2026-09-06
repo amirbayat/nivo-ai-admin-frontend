@@ -18,6 +18,8 @@ import { ModelRoutingPage } from '@/pages/model-routing/ModelRoutingPage'
 import { ModelFeedbackPage } from '@/pages/model-feedback/ModelFeedbackPage'
 import { ChatConfigPage } from '@/pages/chat-config/ChatConfigPage'
 import { VideoStudioConfigPage } from '@/pages/video-studio-config/VideoStudioConfigPage'
+import { VideoEditConfigPage } from '@/pages/video-edit-config/VideoEditConfigPage'
+import { KieVideoModelsPage } from '@/pages/kie-video-models/KieVideoModelsPage'
 import { GrowthPage } from '@/pages/growth/GrowthPage'
 import { AnalyticsPage } from '@/pages/analytics/AnalyticsPage'
 import { CampaignsPage } from '@/pages/campaigns/CampaignsPage'
@@ -81,6 +83,8 @@ export function AppRouter() {
         <Route path="model-feedback" element={<ModelFeedbackPage />} />
         <Route path="chat-config" element={<ChatConfigPage />} />
         <Route path="video-studio-config" element={<VideoStudioConfigPage />} />
+        <Route path="video-edit-config" element={<VideoEditConfigPage />} />
+        <Route path="kie-video-models" element={<KieVideoModelsPage />} />
         <Route path="growth" element={<GrowthPage />} />
         <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="sales-bot" element={<SalesBotPage />} />

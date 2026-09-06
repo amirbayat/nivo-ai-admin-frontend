@@ -79,6 +79,12 @@ export const keys = {
   videoStudioConfig: {
     detail: () => ['admin', 'video-studio-config'] as const,
   },
+  videoEditConfig: {
+    detail: () => ['admin', 'video-edit-config'] as const,
+  },
+  kieVideoModels: {
+    list: () => ['admin', 'kie-video-models'] as const,
+  },
   growth: {
     config: () => ['admin', 'growth', 'config'] as const,
     onboardingGift: () => ['admin', 'growth', 'onboarding-gift'] as const,

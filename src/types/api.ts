@@ -314,6 +314,47 @@ export interface VideoStudioConfig {
   updatedAt: string
 }
 
+// docs/PRD-video-edit-omni-kie.md — «ویرایش ویدیو» با Kie.ai، کاملاً جدا از VideoStudioConfig بالا
+export interface VideoEditConfig {
+  id: string
+  isEnabled: boolean
+  generateFixedDurationSec: number
+  maxConcurrentJobsPerUser: number
+  maxJobsPerDayPerUser: number | null
+  updatedAt: string
+}
+
+export type KieVideoCategory =
+  | 'GENERATE'
+  | 'EDIT'
+  | 'UPSCALE'
+  | 'LIPSYNC'
+  | 'DUBBING'
+  | 'MOTION_TRANSFER'
+  | 'EXTEND'
+  | 'OTHER'
+
+export interface KieVideoModel {
+  id: string
+  slug: string
+  displayName: string
+  category: KieVideoCategory
+  isActive: boolean
+  sortOrder: number
+  supportsImages: boolean
+  maxImages: number | null
+  supportsVideo: boolean
+  maxVideoDurationSec: number | null
+  maxVideoWindowSec: number | null
+  supportsAspectRatio: boolean
+  supportsDuration: boolean
+  resolutions: string[]
+  pricePerSecondUsdConfirmed: number | null
+  pricingNote: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export type ReasoningEffort = 'minimal' | 'low' | 'medium' | 'high'
 
 export interface RoutingStep {
