@@ -15,7 +15,7 @@ import {
   message,
 } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import type { KieVideoCategory, KieVideoModel } from '@/types/api'
+import type { KieVideoCategory, KieVideoModel, VideoModelProvider } from '@/types/api'
 import {
   useCreateKieVideoModel,
   useDeleteKieVideoModel,
@@ -36,9 +36,15 @@ const CATEGORY_OPTIONS: { value: KieVideoCategory; label: string }[] = [
   { value: 'OTHER', label: 'سایر' },
 ]
 
-const RESOLUTION_OPTIONS = ['360p', '720p', '1080p', '4k']
+const RESOLUTION_OPTIONS = ['480p', '720p', '1080p', '2K', '4k']
+
+const PROVIDER_OPTIONS: { value: VideoModelProvider; label: string }[] = [
+  { value: 'KIE', label: 'Kie.ai' },
+  { value: 'OPENROUTER', label: 'OpenRouter' },
+]
 
 interface FormValues {
+  provider: VideoModelProvider
   slug: string
   displayName: string
   category: KieVideoCategory
@@ -73,6 +79,7 @@ export function KieVideoModelsPage() {
     setEditing(null)
     form.resetFields()
     form.setFieldsValue({
+      provider: 'KIE',
       isActive: true,
       sortOrder: 0,
       supportsImages: false,
@@ -87,6 +94,7 @@ export function KieVideoModelsPage() {
   function openEdit(model: KieVideoModel) {
     setEditing(model)
     form.setFieldsValue({
+      provider: model.provider,
       slug: model.slug,
       displayName: model.displayName,
       category: model.category,
@@ -126,13 +134,14 @@ export function KieVideoModelsPage() {
     <div>
       {contextHolder}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <Title level={4} style={{ margin: 0 }}>کاتالوگ مدل‌های Kie.ai</Title>
+        <Title level={4} style={{ margin: 0 }}>کاتالوگ مدل‌های ویدیو (ادیت ویدیو)</Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>افزودن مدل</Button>
       </div>
       <p style={{ color: '#888', marginBottom: 16 }}>
-        هر مدل Kie.ai یک ردیف اینجاست — دقیقاً همان «slug» که در فیلد «model» به createTask فرستاده می‌شود.
-        غیرفعال‌کردن یک مدل (نه حذف واقعی) باعث می‌شود دیگر در انتخابگر «ویرایش ویدیو» دیده نشود، ولی جاب‌های قدیمی‌اش
-        دست‌نخورده می‌مانند.
+        هر مدل (چه Kie.ai چه OpenRouter) یک ردیف اینجاست. provider تعیین می‌کند کدام API صدا زده
+        شود؛ «slug» دقیقاً همان شناسه‌ای است که به آن provider فرستاده می‌شود (توضیح کامل در فیلد
+        پایین). غیرفعال‌کردن یک مدل (نه حذف واقعی) باعث می‌شود دیگر در انتخابگر «ویرایش ویدیو» دیده
+        نشود، ولی جاب‌های قدیمی‌اش دست‌نخورده می‌مانند.
       </p>
 
       <Table
@@ -142,6 +151,15 @@ export function KieVideoModelsPage() {
         pagination={false}
         columns={[
           { title: 'نام نمایشی', dataIndex: 'displayName' },
+          {
+            title: 'provider',
+            dataIndex: 'provider',
+            render: (v: VideoModelProvider) => (
+              <Tag color={v === 'OPENROUTER' ? 'purple' : 'geekblue'}>
+                {PROVIDER_OPTIONS.find(o => o.value === v)?.label ?? v}
+              </Tag>
+            ),
+          },
           { title: 'slug', dataIndex: 'slug', render: (v: string) => <Text code>{v}</Text> },
           {
             title: 'دسته',
@@ -200,7 +218,15 @@ export function KieVideoModelsPage() {
         width={520}
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
-          <Form.Item name="slug" label="slug (فیلد model در Kie، مثلاً gemini-omni-video)" rules={[{ required: true }]}>
+          <Form.Item name="provider" label="provider" rules={[{ required: true }]}>
+            <Select options={PROVIDER_OPTIONS} disabled={!!editing} />
+          </Form.Item>
+          <Form.Item
+            name="slug"
+            label="slug"
+            extra="برای Kie.ai: فیلد «model» در createTask (مثلاً gemini-omni-video). برای OpenRouter: شناسه‌ی دقیق مدل (مثلاً bytedance/seedance-2.5)."
+            rules={[{ required: true }]}
+          >
             <Input disabled={!!editing} />
           </Form.Item>
           <Form.Item name="displayName" label="نام نمایشی" rules={[{ required: true }]}>
