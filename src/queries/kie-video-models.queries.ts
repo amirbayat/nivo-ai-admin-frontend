@@ -39,3 +39,28 @@ export function useDeleteKieVideoModel() {
     onSuccess: () => void qc.invalidateQueries({ queryKey: keys.kieVideoModels.list() }),
   })
 }
+
+export interface KieVideoModelImportResult {
+  total: number
+  created: number
+  updated: number
+  errors: Array<{ row: number; message: string }>
+}
+
+// دقیقاً هم‌الگوی useImportModels در admin.queries.ts (اکسل AiModel) — همون قرارداد
+// FormData/multipart، فقط با endpoint این کاتالوگ
+export function useImportKieVideoModels() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (file: File) => {
+      const formData = new FormData()
+      formData.append('file', file)
+      return api
+        .post<KieVideoModelImportResult>('/admin/kie-video-models/import', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then((r) => r.data)
+    },
+    onSuccess: () => void qc.invalidateQueries({ queryKey: keys.kieVideoModels.list() }),
+  })
+}

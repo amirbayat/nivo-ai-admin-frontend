@@ -12,13 +12,15 @@ import {
   Table,
   Tag,
   Typography,
+  Upload,
   message,
 } from 'antd'
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons'
 import type { KieVideoCategory, KieVideoModel, VideoModelProvider } from '@/types/api'
 import {
   useCreateKieVideoModel,
   useDeleteKieVideoModel,
+  useImportKieVideoModels,
   useKieVideoModels,
   useUpdateKieVideoModel,
 } from '@/queries/kie-video-models.queries'
@@ -36,7 +38,7 @@ const CATEGORY_OPTIONS: { value: KieVideoCategory; label: string }[] = [
   { value: 'OTHER', label: 'سایر' },
 ]
 
-const RESOLUTION_OPTIONS = ['480p', '720p', '1080p', '2K', '4k']
+const RESOLUTION_OPTIONS = ['480p', '720p', '1080p', '2K', '4K']
 
 const PROVIDER_OPTIONS: { value: VideoModelProvider; label: string }[] = [
   { value: 'KIE', label: 'Kie.ai' },
@@ -70,6 +72,7 @@ export function KieVideoModelsPage() {
   const createModel = useCreateKieVideoModel()
   const updateModel = useUpdateKieVideoModel()
   const deleteModel = useDeleteKieVideoModel()
+  const importModels = useImportKieVideoModels()
   const [form] = Form.useForm<FormValues>()
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<KieVideoModel | null>(null)
@@ -130,12 +133,46 @@ export function KieVideoModelsPage() {
     })
   }
 
+  // دقیقاً هم‌الگوی handleImport در ModelsPage.tsx (اکسل AiModel) — upsert روی slug به‌جای name
+  function handleImport(file: File) {
+    importModels.mutate(file, {
+      onSuccess: result => {
+        if (result.created > 0 || result.updated > 0) {
+          void messageApi.success(`${result.created} مدل اضافه شد، ${result.updated} مدل به‌روزرسانی شد`)
+        }
+        if (result.errors.length > 0) {
+          Modal.warning({
+            title: 'در برخی ردیف‌ها خطا وجود داشت',
+            width: 600,
+            content: (
+              <ul style={{ maxHeight: 300, overflow: 'auto', paddingRight: 16 }}>
+                {result.errors.map(e => (
+                  <li key={e.row}>ردیف {e.row}: {e.message}</li>
+                ))}
+              </ul>
+            ),
+          })
+        }
+      },
+      onError: () => void messageApi.error('آپلود فایل با خطا مواجه شد'),
+    })
+    return false
+  }
+
   return (
     <div>
       {contextHolder}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <Title level={4} style={{ margin: 0 }}>کاتالوگ مدل‌های ویدیو (ادیت ویدیو)</Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>افزودن مدل</Button>
+        <Space>
+          <Button icon={<DownloadOutlined />} href="/kieVideoModelSample.xlsx" target="_blank">
+            دانلود نمونه اکسل
+          </Button>
+          <Upload accept=".xlsx,.xls" showUploadList={false} beforeUpload={handleImport}>
+            <Button icon={<UploadOutlined />} loading={importModels.isPending}>آپلود اکسل</Button>
+          </Upload>
+          <Button type="primary" icon={<PlusOutlined />} onClick={openAdd}>افزودن مدل</Button>
+        </Space>
       </div>
       <p style={{ color: '#888', marginBottom: 16 }}>
         هر مدل (چه Kie.ai چه OpenRouter) یک ردیف اینجاست. provider تعیین می‌کند کدام API صدا زده
