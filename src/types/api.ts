@@ -335,6 +335,7 @@ export type KieVideoCategory =
   | 'OTHER'
 
 export type VideoModelProvider = 'KIE' | 'OPENROUTER'
+export type KieInputSchema = 'OMNI' | 'SEEDANCE' | 'WAN_V2V' | 'WAN_R2V' | 'WAN_VIDEO_EDIT'
 
 export interface KieVideoModel {
   id: string
@@ -354,6 +355,9 @@ export interface KieVideoModel {
   resolutions: string[]
   pricePerSecondUsdConfirmed: number | null
   pricingNote: string | null
+  kieInputSchema: KieInputSchema
+  supportsScenePreservingEdit: boolean
+  fixedDurations: number[]
   createdAt: string
   updatedAt: string
 }

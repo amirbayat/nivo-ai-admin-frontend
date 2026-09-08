@@ -16,7 +16,7 @@ import {
   message,
 } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons'
-import type { KieVideoCategory, KieVideoModel, VideoModelProvider } from '@/types/api'
+import type { KieInputSchema, KieVideoCategory, KieVideoModel, VideoModelProvider } from '@/types/api'
 import {
   useCreateKieVideoModel,
   useDeleteKieVideoModel,
@@ -45,6 +45,15 @@ const PROVIDER_OPTIONS: { value: VideoModelProvider; label: string }[] = [
   { value: 'OPENROUTER', label: 'OpenRouter' },
 ]
 
+// فقط برای provider=KIE معنا دارد — کدام builder در video-edit.processor.ts صدا زده می‌شود
+const KIE_INPUT_SCHEMA_OPTIONS: { value: KieInputSchema; label: string }[] = [
+  { value: 'OMNI', label: 'Omni — video_list با پنجره‌ی start/end' },
+  { value: 'SEEDANCE', label: 'Seedance — reference_video_urls, duration:-1' },
+  { value: 'WAN_V2V', label: 'Wan V2V — video_urls, duration فقط "5"/"10"' },
+  { value: 'WAN_R2V', label: 'Wan R2V — reference_video/image, duration ۲تا۱۰' },
+  { value: 'WAN_VIDEO_EDIT', label: 'Wan VideoEdit — video_url تکی، duration:0' },
+]
+
 interface FormValues {
   provider: VideoModelProvider
   slug: string
@@ -62,6 +71,9 @@ interface FormValues {
   resolutions: string[]
   pricePerSecondUsdConfirmed?: number
   pricingNote?: string
+  kieInputSchema: KieInputSchema
+  supportsScenePreservingEdit: boolean
+  fixedDurations: number[]
 }
 
 // docs/PRD-video-edit-omni-kie.md — «همه‌ی این مدل‌ها رو می‌خوام» (کاربر) → این صفحه دقیقاً
@@ -90,6 +102,9 @@ export function KieVideoModelsPage() {
       supportsAspectRatio: true,
       supportsDuration: true,
       resolutions: ['720p'],
+      kieInputSchema: 'OMNI',
+      supportsScenePreservingEdit: false,
+      fixedDurations: [],
     })
     setOpen(true)
   }
@@ -113,6 +128,9 @@ export function KieVideoModelsPage() {
       resolutions: model.resolutions,
       pricePerSecondUsdConfirmed: model.pricePerSecondUsdConfirmed ?? undefined,
       pricingNote: model.pricingNote ?? undefined,
+      kieInputSchema: model.kieInputSchema,
+      supportsScenePreservingEdit: model.supportsScenePreservingEdit,
+      fixedDurations: model.fixedDurations,
     })
     setOpen(true)
   }
@@ -125,10 +143,15 @@ export function KieVideoModelsPage() {
       }
       const onError = () => void messageApi.error('ذخیره نشد، دوباره امتحان کن')
 
+      // Select mode="tags" همیشه رشته برمی‌گرداند، حتی وقتی کاربر عدد تایپ کرده — تبدیل صریح
+      const payload = {
+        ...values,
+        fixedDurations: (values.fixedDurations ?? []).map(Number).filter(n => !Number.isNaN(n)),
+      }
       if (editing) {
-        updateModel.mutate({ id: editing.id, ...values }, { onSuccess, onError })
+        updateModel.mutate({ id: editing.id, ...payload }, { onSuccess, onError })
       } else {
-        createModel.mutate(values, { onSuccess, onError })
+        createModel.mutate(payload, { onSuccess, onError })
       }
     })
   }
@@ -213,6 +236,8 @@ export function KieVideoModelsPage() {
                     ویدیو (پنجره تا {m.maxVideoWindowSec ?? '?'}ث از فایل تا {m.maxVideoDurationSec ?? '?'}ث)
                   </Tag>
                 )}
+                {m.supportsScenePreservingEdit && <Tag color="magenta">ادیت صحنه‌حفظ‌کننده</Tag>}
+                {m.provider === 'KIE' && <Tag>{m.kieInputSchema}</Tag>}
               </Space>
             ),
           },
@@ -271,6 +296,29 @@ export function KieVideoModelsPage() {
           </Form.Item>
           <Form.Item name="category" label="دسته" rules={[{ required: true }]}>
             <Select options={CATEGORY_OPTIONS} />
+          </Form.Item>
+          <Form.Item
+            name="kieInputSchema"
+            label="نحوه‌ی ساخت ورودی (فقط Kie.ai)"
+            extra="کدام builder در video-edit.processor.ts صدا زده شود — برای مدل‌های OpenRouter بی‌اثر است."
+            rules={[{ required: true }]}
+          >
+            <Select options={KIE_INPUT_SCHEMA_OPTIONS} />
+          </Form.Item>
+          <Form.Item
+            name="supportsScenePreservingEdit"
+            label="ادیت صحنه‌حفظ‌کننده‌ی واقعی دارد"
+            valuePropName="checked"
+            extra="فقط اگر مدل واقعاً می‌تواند «فقط این بخش رو عوض کن، بقیه دست‌نخورده بمونه» را انجام دهد (مثل Omni/Wan-VideoEdit)؛ روشن‌کردنش تب «ادیت» را برای این مدل در فرانت فعال می‌کند."
+          >
+            <Switch />
+          </Form.Item>
+          <Form.Item
+            name="fixedDurations"
+            label="مدت‌های ثابت مجاز (اختیاری)"
+            extra='خالی = مدت پیوسته از تنظیمات کلی. پر = فقط همین مقادیر دقیق (مثلاً Wan V2V فقط ۵/۱۰ را می‌پذیرد) — عدد را تایپ و Enter بزن.'
+          >
+            <Select mode="tags" tokenSeparators={[',']} />
           </Form.Item>
           <Form.Item name="resolutions" label="رزولوشن‌های پشتیبانی‌شده">
             <Select mode="multiple" options={RESOLUTION_OPTIONS.map(r => ({ value: r, label: r }))} />
