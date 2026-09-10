@@ -427,8 +427,10 @@ export interface AiModel {
   // docs/PRD-image-gen-pricing-and-credit-fix.md بخش A — true یعنی این مدل باید از OpenRouter
   // POST /images (نه /chat/completions) فراخوانی شود
   imageGenUseDirectApi: boolean
-  // بخش D — تخمین خودکار «نیوو» (میانگین هزینه‌ی واقعی مصرف اخیر)، فقط توسط job دوره‌ای نوشته
-  // می‌شود — از پنل ادمین قابل‌ویرایش دستی نیست
+  // Job-written provider USD per image. Catalog converts to credits at read time.
+  // Not admin-editable.
+  estimatedImageGenCostUsd: number | null
+  // Derived at catalog read (not stored). Kept on the admin GET payload for now.
   estimatedImageGenCreditCost: number | null
   // docs/PRD-video-studio-chat-flow.md — فقط برای modelType==='VIDEO_GEN'
   videoGenPricePerSecondUsd: number | null

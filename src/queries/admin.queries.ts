@@ -289,8 +289,11 @@ export function useModels() {
   })
 }
 
-// estimatedImageGenCreditCost is written only by the periodic estimate job — not by admin create/update
-type AiModelWritePayload = Omit<AiModel, 'id' | 'createdAt' | 'estimatedImageGenCreditCost'>
+// estimatedImageGenCostUsd / estimatedImageGenCreditCost are job/catalog-derived — not admin-writable
+type AiModelWritePayload = Omit<
+  AiModel,
+  'id' | 'createdAt' | 'estimatedImageGenCreditCost' | 'estimatedImageGenCostUsd'
+>
 
 export function useCreateModel() {
   const qc = useQueryClient()
