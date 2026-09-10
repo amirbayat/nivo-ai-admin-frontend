@@ -44,6 +44,7 @@ interface ModelFormValues {
   imageGenSize: string | null
   imageGenFlatPriceUsd: number | null
   imageGenFlatPriceUnit: 'image' | 'megapixel' | null
+  imageGenUseDirectApi: boolean
   // این چهار فیلد فقط از طریق ایمپورت اکسل پر می‌شوند (نه فرم دستی) — فرم فقط null/[] پاس می‌دهد
   videoGenPricePerSecondUsd: number | null
   videoGenAudioMultiplier: number | null
@@ -133,6 +134,7 @@ export function ModelsPage() {
       isActive: true,
       supportsVision: false,
       supportsImageGen: false,
+      imageGenUseDirectApi: false,
       videoStudioEligible: false,
       sortOrder: (models?.length ?? 0),
       provider: 'openai',
@@ -160,6 +162,7 @@ export function ModelsPage() {
       imageGenSize: model.imageGenSize,
       imageGenFlatPriceUsd: model.imageGenFlatPriceUsd,
       imageGenFlatPriceUnit: model.imageGenFlatPriceUnit,
+      imageGenUseDirectApi: model.imageGenUseDirectApi,
       videoStudioEligible: model.videoStudioEligible,
       isActive: model.isActive,
       sortOrder: model.sortOrder,
@@ -485,7 +488,7 @@ export function ModelsPage() {
             rules={[{ required: true }]}
             extra={
               isImageGenType
-                ? 'وقتی چند ردیف مدل تولید عکس (با کیفیت/قیمت مختلف) توی یک پلن مجاز باشند، سیستم بر اساس پیچیدگی درخواست کاربر و (برای Pay-as-you-go) موجودی کیف‌پولش خودش این سطح را انتخاب می‌کند — SIMPLE = ارزان‌ترین/ساده‌ترین کیفیت (مثلاً low)، COMPLEX = گران‌ترین/بهترین کیفیت (مثلاً high). هشدار: این فیلد برای مدل‌های token-based مستقیماً سقف تخمین «بدترین‌حالت» پیش از تولید را هم تعیین می‌کند (SIMPLE≈۳۰۰ توکن، COMPLEX≈۴۲۰۰ توکن خروجی) — این جدول فقط برای خانواده‌ی GPT-Image (که quality واقعاً مصرف توکن را کم/زیاد می‌کند) کالیبره شده. برای مدل‌هایی مثل Gemini/Nano-Banana که مصرف توکن هر عکس تقریباً ثابت است (نه وابسته به «کیفیت»)، همیشه COMPLEX بگذار — وگرنه preflight هزینه را دست‌کم می‌گیرد و ممکن است تولید رایگان اتفاق بیفتد.'
+                ? 'وقتی چند ردیف مدل تولید عکس (با کیفیت/قیمت مختلف) توی یک پلن مجاز باشند، سیستم بر اساس پیچیدگی درخواست کاربر و (برای Pay-as-you-go) موجودی کیف‌پولش خودش این سطح را انتخاب می‌کند — SIMPLE = ارزان‌ترین/ساده‌ترین کیفیت (مثلاً low)، COMPLEX = گران‌ترین/بهترین کیفیت (مثلاً high).'
                 : 'مسیریاب هوشمند برای پیام‌های ساده/متوسط/پیچیده از این سطح استفاده می‌کند'
             }
           >
@@ -542,6 +545,14 @@ export function ModelsPage() {
 
           {watchedSupportsImageGen && (
             <>
+              <Form.Item
+                name="imageGenUseDirectApi"
+                label="فراخوانی از endpoint اختصاصی OpenRouter"
+                valuePropName="checked"
+                extra="این مدل باید از endpoint اختصاصی تصویر OpenRouter (POST /images) فراخوانی بشه، نه چت — برای مدل‌هایی که has_chat_completions=false دارن (Recraft، Flux، Seedream، Krea، Riverflow، Grok-Imagine، MAI-Image، خانواده‌ی خالص gpt-image، ...)"
+              >
+                <Switch />
+              </Form.Item>
               <Form.Item
                 name="imageGenSize"
                 label="ابعاد تصویر"
