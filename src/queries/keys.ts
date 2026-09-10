@@ -76,9 +76,6 @@ export const keys = {
   chatConfig: {
     detail: () => ['admin', 'chat-config'] as const,
   },
-  videoStudioConfig: {
-    detail: () => ['admin', 'video-studio-config'] as const,
-  },
   videoEditConfig: {
     detail: () => ['admin', 'video-edit-config'] as const,
   },

@@ -55,7 +55,6 @@ const menuItems = [
   { key: '/admin/model-routing', icon: <ApartmentOutlined />, label: fa.nav.modelRouting },
   { key: '/admin/model-feedback', icon: <LikeOutlined />, label: fa.nav.modelFeedback },
   { key: '/admin/chat-config', icon: <CommentOutlined />, label: fa.nav.chatConfig },
-  { key: '/admin/video-studio-config', icon: <VideoCameraOutlined />, label: fa.nav.videoStudioConfig },
   { key: '/admin/video-edit-config', icon: <VideoCameraOutlined />, label: fa.nav.videoEditConfig },
   { key: '/admin/kie-video-models', icon: <ApiOutlined />, label: fa.nav.kieVideoModels },
   { key: '/admin/growth', icon: <GiftOutlined />, label: fa.nav.growth },

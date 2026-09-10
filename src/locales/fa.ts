@@ -22,7 +22,6 @@ export const fa = {
     feedback: 'فیدبک',
     modelFeedback: 'فیدبک مدل‌ها',
     chatConfig: 'تنظیمات چت',
-    videoStudioConfig: 'تنظیمات استودیوی ویدیو',
     videoEditConfig: 'تنظیمات ویرایش ویدیو (Kie.ai)',
     kieVideoModels: 'کاتالوگ مدل‌های ویدیو (ادیت ویدیو)',
     growth: 'رشد و بازاریابی',

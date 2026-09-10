@@ -303,18 +303,7 @@ export interface ChatConfig {
   updatedAt: string
 }
 
-// docs/PRD-video-studio-chat-flow.md — تنظیمات ادمین‌محور استودیوی ویدیو
-export interface VideoStudioConfig {
-  id: string
-  characterOptionCount: number
-  maxCharacterRegeneratesPerProject: number
-  maxConcurrentVideoJobsPerUser: number
-  maxVideoGenPerDayPerUser: number | null
-  defaultAudioEnabled: boolean
-  updatedAt: string
-}
-
-// docs/PRD-video-edit-omni-kie.md — «ویرایش ویدیو» با Kie.ai، کاملاً جدا از VideoStudioConfig بالا
+// docs/PRD-video-edit-omni-kie.md — «ویرایش ویدیو» با Kie.ai
 export interface VideoEditConfig {
   id: string
   isEnabled: boolean
@@ -443,8 +432,6 @@ export interface AiModel {
   videoGenAudioMultiplier: number | null
   videoGenSupportedDurationsSec: number[]
   videoGenSupportedSizes: string[]
-  // فقط برای CHAT/IMAGE_GEN معنی دارد — تعیین می‌کند این مدل توی چیپ چت/عکس استودیوی ویدیو نشان داده شود یا نه
-  videoStudioEligible: boolean
   isActive: boolean
   sortOrder: number
   tier: 'SIMPLE' | 'MEDIUM' | 'COMPLEX'
