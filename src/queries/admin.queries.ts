@@ -289,10 +289,13 @@ export function useModels() {
   })
 }
 
+// estimatedImageGenCreditCost is written only by the periodic estimate job — not by admin create/update
+type AiModelWritePayload = Omit<AiModel, 'id' | 'createdAt' | 'estimatedImageGenCreditCost'>
+
 export function useCreateModel() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: Omit<AiModel, 'id' | 'createdAt'>) =>
+    mutationFn: (data: AiModelWritePayload) =>
       api.post<AiModel>('/admin/models', data).then((r) => r.data),
     onSuccess: () => void qc.invalidateQueries({ queryKey: keys.models.list() }),
   })
@@ -301,7 +304,7 @@ export function useCreateModel() {
 export function useUpdateModel() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Omit<AiModel, 'id' | 'createdAt'>> }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<AiModelWritePayload> }) =>
       api.patch<AiModel>(`/admin/models/${id}`, data).then((r) => r.data),
     onSuccess: () => void qc.invalidateQueries({ queryKey: keys.models.list() }),
   })
