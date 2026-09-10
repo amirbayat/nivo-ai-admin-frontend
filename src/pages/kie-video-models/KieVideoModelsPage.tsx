@@ -23,7 +23,10 @@ import {
   useImportKieVideoModels,
   useKieVideoModels,
   useUpdateKieVideoModel,
+  type UpsertKieVideoModelData,
 } from '@/queries/kie-video-models.queries'
+import { parseInputFieldsRaw } from '@/types/inputFieldsSchema'
+import { InputFieldsEditor } from './InputFieldsEditor'
 
 const { Title, Text } = Typography
 
@@ -43,6 +46,8 @@ const RESOLUTION_OPTIONS = ['480p', '720p', '1080p', '2K', '4K']
 const PROVIDER_OPTIONS: { value: VideoModelProvider; label: string }[] = [
   { value: 'KIE', label: 'Kie.ai' },
   { value: 'OPENROUTER', label: 'OpenRouter' },
+  { value: 'VEO', label: 'Google Veo (روی Kie.ai)' },
+  { value: 'RUNWAY', label: 'Runway (روی Kie.ai)' },
 ]
 
 // فقط برای provider=KIE معنا دارد — کدام builder در video-edit.processor.ts صدا زده می‌شود
@@ -89,6 +94,9 @@ export function KieVideoModelsPage() {
   const [open, setOpen] = useState(false)
   const [editing, setEditing] = useState<KieVideoModel | null>(null)
   const [messageApi, contextHolder] = message.useMessage()
+  // معماری data-driven — جدا از antd form نگه‌داشته می‌شود چون JSON تودرتوست، نه یک فیلد تخت
+  // (توضیح کامل قرارداد خالی/«null» در InputFieldsEditor و types/inputFieldsSchema.ts)
+  const [inputFieldsRaw, setInputFieldsRaw] = useState('')
 
   function openAdd() {
     setEditing(null)
@@ -106,11 +114,13 @@ export function KieVideoModelsPage() {
       supportsScenePreservingEdit: false,
       fixedDurations: [],
     })
+    setInputFieldsRaw('')
     setOpen(true)
   }
 
   function openEdit(model: KieVideoModel) {
     setEditing(model)
+    setInputFieldsRaw(model.inputFields != null ? JSON.stringify(model.inputFields, null, 2) : '')
     form.setFieldsValue({
       provider: model.provider,
       slug: model.slug,
@@ -136,6 +146,13 @@ export function KieVideoModelsPage() {
   }
 
   function handleSave() {
+    // همون قرارداد cellToJsonInputFields بک‌اند: خالی=دست‌نزن، "null"=پاک‌کن، غیرمعتبر=مانع ذخیره
+    const inputFieldsStatus = parseInputFieldsRaw(inputFieldsRaw)
+    if (inputFieldsStatus.kind === 'invalid') {
+      void messageApi.error(`inputFields نامعتبر: ${inputFieldsStatus.error}`)
+      return
+    }
+
     form.validateFields().then(values => {
       const onSuccess = () => {
         void messageApi.success('ذخیره شد')
@@ -144,10 +161,17 @@ export function KieVideoModelsPage() {
       const onError = () => void messageApi.error('ذخیره نشد، دوباره امتحان کن')
 
       // Select mode="tags" همیشه رشته برمی‌گرداند، حتی وقتی کاربر عدد تایپ کرده — تبدیل صریح
-      const payload = {
+      const payload: UpsertKieVideoModelData = {
         ...values,
         fixedDurations: (values.fixedDurations ?? []).map(Number).filter(n => !Number.isNaN(n)),
       }
+      if (inputFieldsStatus.kind === 'explicitNull') {
+        payload.inputFields = null
+      } else if (inputFieldsStatus.kind === 'valid') {
+        payload.inputFields = inputFieldsStatus.data
+      }
+      // kind === 'empty' → کلید inputFields اصلاً به payload اضافه نمی‌شود (بدون تغییر)
+
       if (editing) {
         updateModel.mutate({ id: editing.id, ...payload }, { onSuccess, onError })
       } else {
@@ -277,7 +301,7 @@ export function KieVideoModelsPage() {
         okText="ذخیره"
         cancelText="انصراف"
         confirmLoading={createModel.isPending || updateModel.isPending}
-        width={520}
+        width={900}
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item name="provider" label="provider" rules={[{ required: true }]}>
@@ -304,6 +328,12 @@ export function KieVideoModelsPage() {
             rules={[{ required: true }]}
           >
             <Select options={KIE_INPUT_SCHEMA_OPTIONS} />
+          </Form.Item>
+          <Form.Item
+            label="فیلدهای ورودی — معماری داده‌محور (اختیاری)"
+            extra='خالی = بدون تغییر (مدل جدید همچنان معماری قدیمی enum-dispatch بالا را استفاده می‌کند). برای بازگرداندن یک مدل به معماری قدیمی، فقط کلمه‌ی "null" را تایپ کن. در غیر این صورت باید JSON معتبر طبق KieFieldSchema باشد؛ پردازشگر فقط وقتی این مقدار غیر-null باشد از generic payload-builder استفاده می‌کند.'
+          >
+            <InputFieldsEditor value={inputFieldsRaw} onChange={setInputFieldsRaw} models={editing ? undefined : models} />
           </Form.Item>
           <Form.Item
             name="supportsScenePreservingEdit"

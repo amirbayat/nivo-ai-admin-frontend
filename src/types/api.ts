@@ -323,7 +323,7 @@ export type KieVideoCategory =
   | 'EXTEND'
   | 'OTHER'
 
-export type VideoModelProvider = 'KIE' | 'OPENROUTER'
+export type VideoModelProvider = 'KIE' | 'OPENROUTER' | 'VEO' | 'RUNWAY'
 export type KieInputSchema = 'OMNI' | 'SEEDANCE' | 'WAN_V2V' | 'WAN_R2V' | 'WAN_VIDEO_EDIT'
 
 export interface KieVideoModel {
@@ -347,6 +347,9 @@ export interface KieVideoModel {
   kieInputSchema: KieInputSchema
   supportsScenePreservingEdit: boolean
   fixedDurations: number[]
+  // معماری data-driven — null یعنی این مدل هنوز معماری قدیمی enum-dispatch است؛ شکل دقیق در
+  // src/types/inputFields.ts (آینه‌ی دستی nivo-ai-backend/.../input-fields.schema.ts)
+  inputFields: unknown | null
   createdAt: string
   updatedAt: string
 }
