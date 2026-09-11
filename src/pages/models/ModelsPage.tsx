@@ -38,6 +38,10 @@ interface ModelFormValues {
   outputPricePerM: number
   supportsVision: boolean
   supportsImageGen: boolean
+  supportsWebSearch: boolean
+  supportsFileInput: boolean
+  supportsVideoInput: boolean
+  supportsAudioInput: boolean
   imageGenInputImagePricePerM: number | null
   imageGenOutputImagePricePerM: number | null
   imageGenQuality: string | null
@@ -121,6 +125,10 @@ export function ModelsPage() {
       form.setFieldsValue({
         supportsImageGen: true,
         supportsVision: false,
+        supportsWebSearch: false,
+        supportsFileInput: false,
+        supportsVideoInput: false,
+        supportsAudioInput: false,
         outputPricePerM: 0,
       })
     }
@@ -133,6 +141,10 @@ export function ModelsPage() {
       isActive: true,
       supportsVision: false,
       supportsImageGen: false,
+      supportsWebSearch: false,
+      supportsFileInput: false,
+      supportsVideoInput: false,
+      supportsAudioInput: false,
       imageGenUseDirectApi: false,
       sortOrder: (models?.length ?? 0),
       provider: 'openai',
@@ -154,6 +166,10 @@ export function ModelsPage() {
       outputPricePerM: model.outputPricePerM,
       supportsVision: model.supportsVision,
       supportsImageGen: model.supportsImageGen,
+      supportsWebSearch: model.supportsWebSearch,
+      supportsFileInput: model.supportsFileInput,
+      supportsVideoInput: model.supportsVideoInput,
+      supportsAudioInput: model.supportsAudioInput,
       imageGenInputImagePricePerM: model.imageGenInputImagePricePerM,
       imageGenOutputImagePricePerM: model.imageGenOutputImagePricePerM,
       imageGenQuality: model.imageGenQuality,
@@ -278,6 +294,27 @@ export function ModelsPage() {
       key: 'supportsVision',
       width: 100,
       render: (v: boolean) => v ? <Tag color="blue">✓ Vision</Tag> : <Tag>—</Tag>,
+    },
+    {
+      title: fa.models.webSearch,
+      dataIndex: 'supportsWebSearch',
+      key: 'supportsWebSearch',
+      width: 90,
+      render: (v: boolean) => v ? <Tag color="cyan">✓ وب</Tag> : <Tag>—</Tag>,
+    },
+    {
+      title: fa.models.fileInput,
+      dataIndex: 'supportsFileInput',
+      key: 'supportsFileInput',
+      width: 80,
+      render: (v: boolean) => v ? <Tag color="geekblue">✓ فایل</Tag> : <Tag>—</Tag>,
+    },
+    {
+      title: fa.models.videoInput,
+      dataIndex: 'supportsVideoInput',
+      key: 'supportsVideoInput',
+      width: 90,
+      render: (v: boolean) => v ? <Tag color="gold">✓ ویدیو</Tag> : <Tag>—</Tag>,
     },
     {
       title: fa.models.imageGen,
@@ -491,9 +528,23 @@ export function ModelsPage() {
           </Form.Item>
           <Space size="large">
             {!isImageGenType && (
-              <Form.Item name="supportsVision" label={fa.models.vision} valuePropName="checked">
-                <Switch />
-              </Form.Item>
+              <>
+                <Form.Item name="supportsVision" label={fa.models.vision} valuePropName="checked">
+                  <Switch />
+                </Form.Item>
+                <Form.Item name="supportsWebSearch" label={fa.models.webSearch} valuePropName="checked">
+                  <Switch />
+                </Form.Item>
+                <Form.Item name="supportsFileInput" label={fa.models.fileInput} valuePropName="checked">
+                  <Switch />
+                </Form.Item>
+                <Form.Item name="supportsVideoInput" label={fa.models.videoInput} valuePropName="checked">
+                  <Switch />
+                </Form.Item>
+                <Form.Item name="supportsAudioInput" label={fa.models.audioInput} valuePropName="checked">
+                  <Switch />
+                </Form.Item>
+              </>
             )}
             <Form.Item name="supportsImageGen" label={fa.models.imageGen} valuePropName="checked">
               <Switch disabled={isImageGenType} />

@@ -416,6 +416,10 @@ export interface AiModel {
   outputPricePerM: number
   supportsVision: boolean
   supportsImageGen: boolean
+  supportsWebSearch: boolean
+  supportsFileInput: boolean
+  supportsVideoInput: boolean
+  supportsAudioInput: boolean
   imageGenInputImagePricePerM: number | null
   imageGenOutputImagePricePerM: number | null
   imageGenQuality: string | null
