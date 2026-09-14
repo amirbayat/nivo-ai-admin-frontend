@@ -33,6 +33,7 @@ import {
   BulbOutlined,
   VideoCameraOutlined,
   ApiOutlined,
+  SafetyCertificateOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
 import { useUnreadNotificationCount } from '@/queries/admin-notifications.queries'
@@ -66,6 +67,7 @@ const menuItems = [
   { key: '/admin/campaigns', icon: <RocketOutlined />, label: fa.nav.campaigns },
   { key: '/admin/articles', icon: <ReadOutlined />, label: fa.nav.articles },
   { key: '/admin/article-categories', icon: <TagsOutlined />, label: fa.nav.articleCategories },
+  { key: '/admin/content-agent/api-keys', icon: <SafetyCertificateOutlined />, label: fa.nav.contentAgentApiKeys },
   { key: '/admin/payments', icon: <PayCircleOutlined />, label: fa.nav.payments },
   { key: '/admin/feedback', icon: <MessageOutlined />, label: fa.nav.feedback },
   { key: '/admin/tickets', icon: <CustomerServiceOutlined />, label: fa.nav.tickets },

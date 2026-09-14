@@ -31,6 +31,7 @@ export const fa = {
     campaigns: 'کمپین سافت‌لانچ',
     articles: 'مقالات',
     articleCategories: 'دسته‌بندی مقالات',
+    contentAgentApiKeys: 'کلیدهای ایجنت محتوا',
     otp: 'کدهای OTP',
     networkOutage: 'قطعی نت',
     notifications: 'نوتیفیکیشن‌ها',

@@ -270,6 +270,14 @@ export interface DiscountCode {
   createdAt: string
 }
 
+export interface ContentAgentApiKey {
+  id: string
+  label: string
+  isActive: boolean
+  lastUsedAt: string | null
+  createdAt: string
+}
+
 export interface GrowthConfig {
   id: string
   welcomeDiscountPercent: number

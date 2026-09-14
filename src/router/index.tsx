@@ -24,6 +24,7 @@ import { AnalyticsPage } from '@/pages/analytics/AnalyticsPage'
 import { CampaignsPage } from '@/pages/campaigns/CampaignsPage'
 import { SalesBotPage } from '@/pages/sales-bot/SalesBotPage'
 import { ArticlesPage } from '@/pages/articles/ArticlesPage'
+import { ApiKeysPage } from '@/pages/content-agent/ApiKeysPage'
 import { ArticleCategoriesPage } from '@/pages/articles/ArticleCategoriesPage'
 import { OtpListPage } from '@/pages/otp/OtpListPage'
 import { LiveStatsPage } from '@/pages/live-stats/LiveStatsPage'
@@ -89,6 +90,7 @@ export function AppRouter() {
         <Route path="campaigns" element={<CampaignsPage />} />
         <Route path="articles" element={<ArticlesPage />} />
         <Route path="article-categories" element={<ArticleCategoriesPage />} />
+        <Route path="content-agent/api-keys" element={<ApiKeysPage />} />
         <Route path="otp" element={<OtpListPage />} />
         <Route path="live-stats" element={<LiveStatsPage />} />
         <Route path="network-outage" element={<NetworkOutagePage />} />
