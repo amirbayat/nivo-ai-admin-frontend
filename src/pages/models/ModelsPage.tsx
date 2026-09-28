@@ -49,6 +49,7 @@ interface ModelFormValues {
   imageGenFlatPriceUsd: number | null
   imageGenFlatPriceUnit: 'image' | 'megapixel' | null
   imageGenUseDirectApi: boolean
+  imageGenRequiresInputImage: boolean
   // این چهار فیلد فقط از طریق ایمپورت اکسل پر می‌شوند (نه فرم دستی) — فرم فقط null/[] پاس می‌دهد
   videoGenPricePerSecondUsd: number | null
   videoGenAudioMultiplier: number | null
@@ -146,6 +147,7 @@ export function ModelsPage() {
       supportsVideoInput: false,
       supportsAudioInput: false,
       imageGenUseDirectApi: false,
+      imageGenRequiresInputImage: false,
       sortOrder: (models?.length ?? 0),
       provider: 'openai',
       tier: 'MEDIUM',
@@ -177,6 +179,7 @@ export function ModelsPage() {
       imageGenFlatPriceUsd: model.imageGenFlatPriceUsd,
       imageGenFlatPriceUnit: model.imageGenFlatPriceUnit,
       imageGenUseDirectApi: model.imageGenUseDirectApi,
+      imageGenRequiresInputImage: model.imageGenRequiresInputImage,
       isActive: model.isActive,
       sortOrder: model.sortOrder,
       tier: model.tier,
@@ -561,6 +564,14 @@ export function ModelsPage() {
                 label="فراخوانی از endpoint اختصاصی OpenRouter"
                 valuePropName="checked"
                 extra="این مدل باید از endpoint اختصاصی تصویر OpenRouter (POST /images) فراخوانی بشه، نه چت — برای مدل‌هایی که has_chat_completions=false دارن (Recraft، Flux، Seedream، Krea، Riverflow، Grok-Imagine، MAI-Image، خانواده‌ی خالص gpt-image، ...)"
+              >
+                <Switch />
+              </Form.Item>
+              <Form.Item
+                name="imageGenRequiresInputImage"
+                label="فقط با عکس ورودی کار می‌کند"
+                valuePropName="checked"
+                extra="این مدل بدون عکس ورودی رد می‌شه (مثل واریانت‌های style-transfer ری‌کرفت) — روشن کن تا «تولید از صفر» با یک خطای فارسی روشن رد بشه، نه یک ارور خام provider"
               >
                 <Switch />
               </Form.Item>

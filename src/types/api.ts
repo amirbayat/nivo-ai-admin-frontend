@@ -439,6 +439,9 @@ export interface AiModel {
   // docs/PRD-image-gen-pricing-and-credit-fix.md بخش A — true یعنی این مدل باید از OpenRouter
   // POST /images (نه /chat/completions) فراخوانی شود
   imageGenUseDirectApi: boolean
+  // true یعنی این مدل بدون عکس ورودی کار نمی‌کند (مثل recraft-v4-styles-pro) — «تولید از صفر»
+  // برایش رد می‌شود با یک خطای فارسی روشن
+  imageGenRequiresInputImage: boolean
   // Job-written provider USD per image. Catalog converts to credits at read time.
   // Not admin-editable.
   estimatedImageGenCostUsd: number | null
