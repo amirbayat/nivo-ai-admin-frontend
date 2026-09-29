@@ -61,6 +61,28 @@ export const keys = {
     waitlist: (campaignId: string, status?: string) =>
       ['admin', 'campaigns', campaignId, 'waitlist', status ?? 'all'] as const,
   },
+  salesAgentQuality: {
+    abStats: () => ['admin', 'sales-agent-quality', 'ab-stats'] as const,
+    failedMessages: (
+      page: number,
+      storeId?: string,
+      variant?: string,
+      reason?: string,
+      from?: string,
+      to?: string,
+    ) =>
+      [
+        'admin',
+        'sales-agent-quality',
+        'failed-messages',
+        page,
+        storeId ?? 'all',
+        variant ?? 'all',
+        reason ?? 'all',
+        from ?? '',
+        to ?? '',
+      ] as const,
+  },
   salesBot: {
     config: () => ['admin', 'sales-bot', 'config'] as const,
     overview: (from: string, to: string) => ['admin', 'sales-bot', 'analytics', 'overview', from, to] as const,

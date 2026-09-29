@@ -589,6 +589,37 @@ export interface ModelFeedbackSummary {
   createdAt: string
 }
 
+// ── Sales Agent Quality (A/B مدل‌ها + پیام‌های نافهم) ────────────────────────
+
+export interface AbModelStat {
+  variant: string
+  conversations: number
+  avgClarifyAttempts: number
+  stuckHandoffRate: number
+  approvedOrderRate: number
+  aiCalls: number
+  fallbackRate: number
+  avgLatencyMs: number
+}
+
+export interface FailedMessageItem {
+  id: string
+  storeName: string
+  customerMessage: string
+  variant: string | null
+  // docs/PRD-seller-knowledge-base.md بخش ۴ — UNCLEAR (NLU نفهمید) در برابر NO_KB_MATCH
+  // (فهمید، ولی باکس دانش فروشگاه جوابی نداشت)
+  reason: 'UNCLEAR' | 'NO_KB_MATCH'
+  endedInHandoff: boolean
+  createdAt: string
+}
+
+export interface PaginatedFailedMessages {
+  items: FailedMessageItem[]
+  total: number
+  page: number
+}
+
 // ── Usage Analytics ─────────────────────────────────────────────────────────
 
 export interface AnalyticsModelTypeBreakdown {
