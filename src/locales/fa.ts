@@ -598,6 +598,7 @@ export const fa = {
     traceKbSourceLabels: {
       STORE_KB: 'دانش‌نامه‌ی فروشگاه',
       PRODUCT_DESCRIPTION: 'توضیحات محصول',
+      STORE_PROFILE: 'اطلاعات ثابت فروشگاه (ارسال/مرجوعی/معرفی)',
       STUB: 'پاسخ پیش‌فرض (بدون جواب واقعی)',
     } as Record<string, string>,
     traceVoiceGenerated: (voiceName: string, tone: string) => `🔊 وویس: ساخته شد — صدای ${voiceName}، لحن «${tone}»`,

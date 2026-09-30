@@ -662,7 +662,7 @@ export interface AiTraceInfo {
   handler: string
   factsOrPrompt: string
   model: string
-  kbSource?: 'STORE_KB' | 'PRODUCT_DESCRIPTION' | 'STUB'
+  kbSource?: 'STORE_KB' | 'PRODUCT_DESCRIPTION' | 'STORE_PROFILE' | 'STUB'
   voice?: AiTraceVoiceInfo
 }
 
