@@ -35,11 +35,13 @@ const SCOPE_LABEL: Record<CreditPackageScope, string> = {
   GENERAL: fa.creditConfig.scopeGeneral,
   NIVO_CAL: fa.creditConfig.scopeNivoCal,
   NIVO_CAL_BAZAAR: fa.creditConfig.scopeNivoCalBazaar,
+  STORE_AI_CREDIT: fa.creditConfig.scopeStoreAiCredit,
 }
 const SCOPE_TAG_COLOR: Record<CreditPackageScope, string> = {
   GENERAL: 'default',
   NIVO_CAL: 'cyan',
   NIVO_CAL_BAZAAR: 'purple',
+  STORE_AI_CREDIT: 'green',
 }
 
 interface ConfigFormValues {
@@ -238,6 +240,7 @@ export function CreditConfigPage() {
         { text: fa.creditConfig.scopeGeneral, value: 'GENERAL' },
         { text: fa.creditConfig.scopeNivoCal, value: 'NIVO_CAL' },
         { text: fa.creditConfig.scopeNivoCalBazaar, value: 'NIVO_CAL_BAZAAR' },
+        { text: fa.creditConfig.scopeStoreAiCredit, value: 'STORE_AI_CREDIT' },
       ],
       onFilter: (value, record) => record.scope === value,
       render: (v: CreditPackageScope) => (
@@ -417,6 +420,7 @@ export function CreditConfigPage() {
                 { value: 'GENERAL', label: fa.creditConfig.scopeGeneral },
                 { value: 'NIVO_CAL', label: fa.creditConfig.scopeNivoCal },
                 { value: 'NIVO_CAL_BAZAAR', label: fa.creditConfig.scopeNivoCalBazaar },
+                { value: 'STORE_AI_CREDIT', label: fa.creditConfig.scopeStoreAiCredit },
               ]}
             />
           </Form.Item>
