@@ -16,6 +16,8 @@ import type {
   ModelFeedbackItem,
   ModelFeedbackSummary,
   TokenStats,
+  PaginatedProductComments,
+  ProductCommentStatus,
 } from '@/types/api'
 import { keys } from './keys'
 
@@ -360,6 +362,26 @@ export function useModelFeedback(page: number, model?: string, vote?: string) {
       api
         .get<PaginatedModelFeedback>('/admin/model-feedback', { params: { page, model, vote } })
         .then((r) => r.data),
+  })
+}
+
+// docs/PRD-customer-comments-and-discounts.md بخش الف/۵
+export function useComments(page: number, status?: string, storeId?: string) {
+  return useQuery({
+    queryKey: keys.comments.list(page, status, storeId),
+    queryFn: () =>
+      api
+        .get<PaginatedProductComments>('/admin/comments', { params: { page, status, storeId } })
+        .then(r => r.data),
+  })
+}
+
+export function useModerateComment() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: ProductCommentStatus }) =>
+      api.patch(`/admin/comments/${id}/moderate`, { status }).then(r => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin', 'comments'] }),
   })
 }
 

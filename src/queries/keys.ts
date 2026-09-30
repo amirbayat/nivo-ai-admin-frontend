@@ -38,6 +38,10 @@ export const keys = {
       ['admin', 'model-feedback', page, model ?? 'all', vote ?? 'all'] as const,
     summary: () => ['admin', 'model-feedback', 'summary'] as const,
   },
+  comments: {
+    list: (page: number, status?: string, storeId?: string) =>
+      ['admin', 'comments', page, status ?? 'all', storeId ?? 'all'] as const,
+  },
   analytics: {
     overview: (from: string, to: string, compare: boolean) =>
       ['admin', 'analytics', 'overview', from, to, compare] as const,

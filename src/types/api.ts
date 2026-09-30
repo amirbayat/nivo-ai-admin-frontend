@@ -560,6 +560,32 @@ export interface CreativePromptSubmission extends CreativePrompt {
   submittedBy: { phone: string; name: string | null } | null
 }
 
+// docs/PRD-customer-comments-and-discounts.md بخش الف/۵
+export type ProductCommentStatus = 'PENDING' | 'AI_AUTO_REJECTED' | 'ADMIN_APPROVED' | 'ADMIN_REJECTED'
+
+export interface ProductCommentItem {
+  id: string
+  storeId: string
+  productId: string | null
+  customerId: string
+  text: string
+  rating: number | null
+  status: ProductCommentStatus
+  aiVerdict: string | null
+  aiConfidence: number | null
+  moderatedAt: string | null
+  createdAt: string
+  store: { name: string }
+  product: { name: string } | null
+}
+
+export interface PaginatedProductComments {
+  items: ProductCommentItem[]
+  total: number
+  page: number
+  limit: number
+}
+
 export interface ModelFeedbackItem {
   id: string
   messageId: string
