@@ -62,7 +62,8 @@ export const keys = {
       ['admin', 'campaigns', campaignId, 'waitlist', status ?? 'all'] as const,
   },
   salesAgentQuality: {
-    abStats: () => ['admin', 'sales-agent-quality', 'ab-stats'] as const,
+    abStats: (groupBy: 'variant' | 'channel', storeId?: string, from?: string, to?: string) =>
+      ['admin', 'sales-agent-quality', 'ab-stats', groupBy, storeId ?? 'all', from ?? '', to ?? ''] as const,
     failedMessages: (
       page: number,
       storeId?: string,

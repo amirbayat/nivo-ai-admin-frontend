@@ -3,11 +3,21 @@ import { api } from '@/lib/api'
 import type { AbModelStat, ConversationTraceResponse, PaginatedFailedMessages } from '@/types/api'
 import { keys } from './keys'
 
-export function useAbStats() {
+interface AbStatsParams {
+  groupBy: 'variant' | 'channel'
+  storeId?: string
+  from?: string
+  to?: string
+}
+
+export function useAbStats(params: AbStatsParams) {
+  const { groupBy, storeId, from, to } = params
   return useQuery({
-    queryKey: keys.salesAgentQuality.abStats(),
+    queryKey: keys.salesAgentQuality.abStats(groupBy, storeId, from, to),
     queryFn: () =>
-      api.get<AbModelStat[]>('/admin/sales-agent/ab-stats').then((r) => r.data),
+      api
+        .get<AbModelStat[]>('/admin/sales-agent/ab-stats', { params: { groupBy, storeId, from, to } })
+        .then((r) => r.data),
   })
 }
 

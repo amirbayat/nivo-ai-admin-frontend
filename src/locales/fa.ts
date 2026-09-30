@@ -529,6 +529,12 @@ export const fa = {
   },
   salesAgentQuality: {
     title: 'کیفیت ایجنت فروش',
+    groupByModel: 'بر اساس مدل',
+    groupByChannel: 'بر اساس کانال',
+    channelLabels: {
+      WEB: 'وب',
+      TELEGRAM: 'تلگرام',
+    } as Record<string, string>,
     conversations: 'مکالمات',
     stuckHandoffRate: 'نرخ ارجاع به انسان',
     approvedOrderRate: 'نرخ سفارش موفق',

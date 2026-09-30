@@ -591,8 +591,10 @@ export interface ModelFeedbackSummary {
 
 // ── Sales Agent Quality (A/B مدل‌ها + پیام‌های نافهم) ────────────────────────
 
+// docs/PRD-sales-agent-admin-analytics.md بخش ۴ — group یعنی نام مدل (groupBy=variant) یا
+// 'WEB'/'TELEGRAM' (groupBy=channel)، بسته به toggle فعلی صفحه
 export interface AbModelStat {
-  variant: string
+  group: string
   conversations: number
   avgClarifyAttempts: number
   stuckHandoffRate: number

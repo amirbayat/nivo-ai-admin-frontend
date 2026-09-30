@@ -14,10 +14,16 @@ function pct(v: number): string {
   return `${(v * 100).toFixed(1)}٪`
 }
 
-function AbStatCard({ stat }: { stat: AbModelStat }) {
+// docs/PRD-sales-agent-admin-analytics.md بخش ۴ — groupBy=channel یعنی group مقدار enum
+// CustomerChannel است ('WEB'/'TELEGRAM')، نه اسم مدل — برچسب فارسی جداگانه دارد
+function groupLabel(groupBy: 'variant' | 'channel', group: string): string {
+  return groupBy === 'channel' ? (fa.salesAgentQuality.channelLabels[group] ?? group) : group
+}
+
+function AbStatCard({ stat, groupBy }: { stat: AbModelStat; groupBy: 'variant' | 'channel' }) {
   const handoffColor = stat.stuckHandoffRate > 0.3 ? '#cf1322' : '#3f8600'
   return (
-    <Card title={<span style={{ fontFamily: 'monospace' }}>{stat.variant}</span>}>
+    <Card title={<span style={{ fontFamily: groupBy === 'variant' ? 'monospace' : 'inherit' }}>{groupLabel(groupBy, stat.group)}</span>}>
       <Row gutter={[16, 8]}>
         <Col span={12}>
           <Statistic title={fa.salesAgentQuality.conversations} value={stat.conversations} />
@@ -51,13 +57,27 @@ function AbStatCard({ stat }: { stat: AbModelStat }) {
 
 export function SalesAgentQualityPage() {
   const [page, setPage] = useState(1)
+  const [groupBy, setGroupBy] = useState<'variant' | 'channel'>('variant')
   const [modelFilter, setModelFilter] = useState<string | undefined>(undefined)
   const [storeFilter, setStoreFilter] = useState<string | undefined>(undefined)
   const [reasonFilter, setReasonFilter] = useState<'UNCLEAR' | 'NO_KB_MATCH' | undefined>(undefined)
   const [range, setRange] = useState<[Dayjs, Dayjs] | undefined>(undefined)
   const [traceConversationId, setTraceConversationId] = useState<string | null>(null)
 
-  const { data: abStats, isLoading: abStatsLoading } = useAbStats()
+  const statsParams = {
+    storeId: storeFilter,
+    from: range?.[0]?.format('YYYY-MM-DD'),
+    to: range?.[1]?.format('YYYY-MM-DD'),
+  }
+  // مدل همیشه جدا واکشی می‌شود چون گزینه‌های فیلتر «مدل» جدول پایین به آن نیاز دارند، صرف‌نظر
+  // از این‌که toggle کارت‌های بالا روی «کانال» باشد یا نه
+  const { data: modelStats, isLoading: modelStatsLoading } = useAbStats({ groupBy: 'variant', ...statsParams })
+  const { data: channelStats, isLoading: channelStatsLoading } = useAbStats({
+    groupBy: 'channel',
+    ...statsParams,
+  })
+  const abStats = groupBy === 'variant' ? modelStats : channelStats
+  const abStatsLoading = groupBy === 'variant' ? modelStatsLoading : channelStatsLoading
   const { data: failedMessages, isLoading: failedLoading } = useFailedMessages({
     page,
     variant: modelFilter,
@@ -139,6 +159,15 @@ export function SalesAgentQualityPage() {
         {fa.salesAgentQuality.title}
       </Title>
 
+      <Space style={{ marginBottom: 16 }}>
+        <Button type={groupBy === 'variant' ? 'primary' : 'default'} onClick={() => setGroupBy('variant')}>
+          {fa.salesAgentQuality.groupByModel}
+        </Button>
+        <Button type={groupBy === 'channel' ? 'primary' : 'default'} onClick={() => setGroupBy('channel')}>
+          {fa.salesAgentQuality.groupByChannel}
+        </Button>
+      </Space>
+
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         {abStatsLoading || !abStats?.length ? (
           <Col span={24}>
@@ -146,8 +175,8 @@ export function SalesAgentQualityPage() {
           </Col>
         ) : (
           abStats.map((stat) => (
-            <Col xs={24} sm={12} lg={8} key={stat.variant}>
-              <AbStatCard stat={stat} />
+            <Col xs={24} sm={12} lg={8} key={stat.group}>
+              <AbStatCard stat={stat} groupBy={groupBy} />
             </Col>
           ))
         )}
@@ -164,7 +193,7 @@ export function SalesAgentQualityPage() {
               setModelFilter(v)
               setPage(1)
             }}
-            options={(abStats ?? []).map((s) => ({ value: s.variant, label: s.variant }))}
+            options={(modelStats ?? []).map((s) => ({ value: s.group, label: s.group }))}
           />
           <Select
             allowClear
