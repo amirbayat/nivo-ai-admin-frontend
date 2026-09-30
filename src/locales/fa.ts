@@ -29,6 +29,7 @@ export const fa = {
     analytics: 'آنالیز مصرف',
     salesBot: 'ربات فروش',
     salesAgentQuality: 'کیفیت ایجنت فروش',
+    salesAgentQa: 'تست QA مدل‌ها',
     comments: 'نظرات خریداران',
     campaigns: 'کمپین سافت‌لانچ',
     articles: 'مقالات',
@@ -610,6 +611,22 @@ export const fa = {
       FAILED: 'تولید صدا شکست خورد',
     } as Record<string, string>,
     traceShowPrompt: 'نمایش کامل prompt/facts',
+  },
+  // docs/PRD-product-strategy-and-roadmap.md بخش ۵.۵ — قبل از فعال‌کردن هر مدل/پرامپت جدید در
+  // A/B، این‌جا سریع چک می‌شود که مدل روی سؤال‌های رایج جواب معقول می‌دهد
+  salesAgentQa: {
+    title: 'تست QA قبل از دیپلوی مدل',
+    subtitle: 'یک فروشگاه واقعی و یک مدل انتخاب کن — ۲۰ سؤال رایج روی همان مدل اجرا می‌شود تا سریع پاسخ‌ها را بازبینی کنی.',
+    selectStore: 'فروشگاه',
+    selectVariant: 'مدل',
+    run: 'اجرای تست',
+    running: 'در حال اجرا...',
+    category: 'دسته',
+    question: 'سؤال',
+    answer: 'پاسخ مدل',
+    latency: 'زمان پاسخ',
+    error: 'خطا',
+    empty: 'هنوز تستی اجرا نشده',
   },
   common: {
     save: 'ذخیره',

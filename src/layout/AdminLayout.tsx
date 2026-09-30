@@ -36,6 +36,7 @@ import {
   SafetyCertificateOutlined,
   LineChartOutlined,
   StarOutlined,
+  ExperimentOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
 import { useUnreadNotificationCount } from '@/queries/admin-notifications.queries'
@@ -67,6 +68,7 @@ const menuItems = [
   { key: '/admin/anon-analytics', icon: <FunnelPlotOutlined />, label: fa.nav.anonAnalytics },
   { key: '/admin/sales-bot', icon: <ShopOutlined />, label: fa.nav.salesBot },
   { key: '/admin/sales-agent-quality', icon: <LineChartOutlined />, label: fa.nav.salesAgentQuality },
+  { key: '/admin/sales-agent-qa', icon: <ExperimentOutlined />, label: fa.nav.salesAgentQa },
   { key: '/admin/comments', icon: <StarOutlined />, label: fa.nav.comments },
   { key: '/admin/campaigns', icon: <RocketOutlined />, label: fa.nav.campaigns },
   { key: '/admin/articles', icon: <ReadOutlined />, label: fa.nav.articles },

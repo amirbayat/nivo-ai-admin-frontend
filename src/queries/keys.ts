@@ -90,6 +90,10 @@ export const keys = {
     trace: (conversationId: string) =>
       ['admin', 'sales-agent-quality', 'trace', conversationId] as const,
   },
+  // docs/PRD-product-strategy-and-roadmap.md بخش ۵.۵ — ست سؤال‌های طلایی، جدا از آمار A/B واقعی بالا
+  salesAgentQa: {
+    stores: () => ['admin', 'sales-agent-qa', 'stores'] as const,
+  },
   salesBot: {
     config: () => ['admin', 'sales-bot', 'config'] as const,
     overview: (from: string, to: string) => ['admin', 'sales-bot', 'analytics', 'overview', from, to] as const,

@@ -630,6 +630,17 @@ export interface AbModelStat {
   avgLatencyMs: number
 }
 
+// docs/PRD-product-strategy-and-roadmap.md بخش ۵.۵ — نتیجه‌ی یک سؤال طلایی؛ answer/error هرگز
+// هم‌زمان پر نیستند
+export interface GoldenQuestionResult {
+  id: string
+  category: string
+  question: string
+  answer?: string
+  error?: string
+  latencyMs: number
+}
+
 export interface FailedMessageItem {
   id: string
   conversationId: string

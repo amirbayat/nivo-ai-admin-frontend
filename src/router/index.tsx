@@ -24,6 +24,7 @@ import { AnalyticsPage } from '@/pages/analytics/AnalyticsPage'
 import { CampaignsPage } from '@/pages/campaigns/CampaignsPage'
 import { SalesBotPage } from '@/pages/sales-bot/SalesBotPage'
 import { SalesAgentQualityPage } from '@/pages/sales-agent-quality/SalesAgentQualityPage'
+import { SalesAgentQaPage } from '@/pages/sales-agent-qa/SalesAgentQaPage'
 import { CommentsModerationPage } from '@/pages/comments-moderation/CommentsModerationPage'
 import { ArticlesPage } from '@/pages/articles/ArticlesPage'
 import { ApiKeysPage } from '@/pages/content-agent/ApiKeysPage'
@@ -90,6 +91,7 @@ export function AppRouter() {
         <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="sales-bot" element={<SalesBotPage />} />
         <Route path="sales-agent-quality" element={<SalesAgentQualityPage />} />
+        <Route path="sales-agent-qa" element={<SalesAgentQaPage />} />
         <Route path="comments" element={<CommentsModerationPage />} />
         <Route path="campaigns" element={<CampaignsPage />} />
         <Route path="articles" element={<ArticlesPage />} />
