@@ -90,6 +90,11 @@ export const keys = {
     trace: (conversationId: string) =>
       ['admin', 'sales-agent-quality', 'trace', conversationId] as const,
   },
+  // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۵
+  buyerIntentDiscovery: {
+    report: (storeId?: string, from?: string, to?: string) =>
+      ['admin', 'buyer-intent-discovery', storeId ?? 'all', from ?? '', to ?? ''] as const,
+  },
   // docs/PRD-product-strategy-and-roadmap.md بخش ۵.۵ — ست سؤال‌های طلایی، جدا از آمار A/B واقعی بالا
   salesAgentQa: {
     stores: () => ['admin', 'sales-agent-qa', 'stores'] as const,

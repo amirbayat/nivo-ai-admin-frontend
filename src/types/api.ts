@@ -677,16 +677,46 @@ export interface AiTraceInfo {
   voice?: AiTraceVoiceInfo
 }
 
+// docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۴.۲ — لایه‌ی «نیاز خریدار»، مکمل و جدا از
+// intent اجرایی (چندبرچسبی)
+export interface ClassificationTraceInfo {
+  intent: string
+  handler: string
+  buyerNeeds?: string[]
+  unmatchedBuyerNeed?: string
+}
+
 export interface ConversationTraceItem {
   id: string
   createdAt: string
   customerMessage?: string
   agentReply?: { text: string; flag?: 'UNCLEAR' | 'NO_KB_MATCH' }
   trace?: AiTraceInfo
+  classificationTrace?: ClassificationTraceInfo
 }
 
 export interface ConversationTraceResponse {
   items: ConversationTraceItem[]
+}
+
+// docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۵ — گزارش تجمیعی صفحه‌ی مستقل کشف intent
+export interface BuyerNeedCount {
+  tag: string
+  count: number
+}
+
+export interface UnmatchedBuyerNeedItem {
+  label: string
+  count: number
+  conversationId: string
+  storeName: string
+  sampleMessage: string
+  lastSeenAt: string
+}
+
+export interface BuyerIntentDiscoveryResponse {
+  buyerNeedCounts: BuyerNeedCount[]
+  unmatched: UnmatchedBuyerNeedItem[]
 }
 
 // ── Usage Analytics ─────────────────────────────────────────────────────────
