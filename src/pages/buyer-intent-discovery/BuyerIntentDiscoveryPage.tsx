@@ -3,7 +3,7 @@ import type { Dayjs } from 'dayjs'
 import { Button, Card, DatePicker, Select, Space, Table, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useBuyerIntentDiscovery } from '@/queries/buyer-intent-discovery.queries'
-import type { BuyerNeedCount, UnmatchedBuyerNeedItem } from '@/types/api'
+import type { BuyerNeedCount, LowConfidenceItem, UnmatchedBuyerNeedItem } from '@/types/api'
 import { fa } from '@/locales/fa'
 import { ConversationTraceDrawer } from '@/pages/sales-agent-quality/ConversationTraceDrawer'
 
@@ -30,7 +30,9 @@ export function BuyerIntentDiscoveryPage() {
   // همان الگوی SalesAgentQualityPage — چون endpoint مستقل لیست فروشگاه‌ها وجود ندارد، گزینه‌های
   // فیلتر از خودِ داده‌ی برگشتی (بخش unmatched) استخراج می‌شوند
   const storeOptions = useMemo(() => {
-    const names = new Set((data?.unmatched ?? []).map((i) => i.storeName).filter(Boolean))
+    const names = new Set(
+      [...(data?.unmatched ?? []), ...(data?.lowConfidence ?? [])].map((i) => i.storeName).filter(Boolean),
+    )
     return Array.from(names).map((name) => ({ value: name, label: name }))
   }, [data])
 
@@ -94,6 +96,51 @@ export function BuyerIntentDiscoveryPage() {
     },
   ]
 
+  const lowConfidenceColumns: ColumnsType<LowConfidenceItem> = [
+    {
+      title: fa.buyerIntentDiscovery.sampleMessageColumn,
+      dataIndex: 'sampleMessage',
+      key: 'sampleMessage',
+      ellipsis: true,
+    },
+    {
+      title: fa.buyerIntentDiscovery.intentColumn,
+      dataIndex: 'intent',
+      key: 'intent',
+      width: 140,
+    },
+    {
+      title: fa.buyerIntentDiscovery.confidenceColumn,
+      dataIndex: 'confidence',
+      key: 'confidence',
+      width: 100,
+      render: (v: 'MEDIUM' | 'LOW') => fa.buyerIntentDiscovery.confidenceLabels[v] ?? v,
+    },
+    {
+      title: fa.salesAgentQuality.store,
+      dataIndex: 'storeName',
+      key: 'storeName',
+      width: 160,
+    },
+    {
+      title: fa.buyerIntentDiscovery.dateColumn,
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      width: 130,
+      render: (v: string) => new Date(v).toLocaleString('fa-IR'),
+    },
+    {
+      title: '',
+      key: 'actions',
+      width: 140,
+      render: (_: unknown, item: LowConfidenceItem) => (
+        <Button size="small" onClick={() => setTraceConversationId(item.conversationId)}>
+          {fa.buyerIntentDiscovery.viewConversation}
+        </Button>
+      ),
+    },
+  ]
+
   return (
     <div>
       <Title level={4} style={{ marginBottom: 16 }}>
@@ -128,6 +175,17 @@ export function BuyerIntentDiscoveryPage() {
           rowKey="label"
           dataSource={data?.unmatched ?? []}
           columns={unmatchedColumns}
+          loading={isLoading}
+          locale={{ emptyText: fa.common.noData }}
+          pagination={{ pageSize: 20, showSizeChanger: false }}
+        />
+      </Card>
+
+      <Card title={fa.buyerIntentDiscovery.lowConfidenceTableTitle} style={{ marginTop: 24 }}>
+        <Table<LowConfidenceItem>
+          rowKey="conversationId"
+          dataSource={data?.lowConfidence ?? []}
+          columns={lowConfidenceColumns}
           loading={isLoading}
           locale={{ emptyText: fa.common.noData }}
           pagination={{ pageSize: 20, showSizeChanger: false }}

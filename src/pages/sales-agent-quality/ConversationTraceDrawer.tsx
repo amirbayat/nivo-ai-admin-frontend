@@ -21,11 +21,16 @@ function TraceTimelineItem({ item }: { item: ConversationTraceItem }) {
   if (item.customerMessage !== undefined) {
     const needs = item.classificationTrace?.buyerNeeds
     const unmatched = item.classificationTrace?.unmatchedBuyerNeed
+    const confidence = item.classificationTrace?.intentConfidence
     return (
       <Space direction="vertical" size={2} style={{ display: 'flex' }}>
         <Text>{fa.salesAgentQuality.traceCustomerMessage(item.customerMessage)}</Text>
         {needs && needs.length > 0 && <Text type="secondary">{fa.salesAgentQuality.traceBuyerNeeds(needs)}</Text>}
         {unmatched && <Text type="warning">{fa.salesAgentQuality.traceUnmatchedBuyerNeed(unmatched)}</Text>}
+        {/* HIGH عمداً نمایش داده نمی‌شود — فقط وقتی مدل خودش نامطمئن بوده ارزش دیدن دارد */}
+        {confidence && confidence !== 'HIGH' && (
+          <Text type="warning">{fa.salesAgentQuality.traceLowConfidence(confidence)}</Text>
+        )}
       </Space>
     )
   }

@@ -615,6 +615,8 @@ export const fa = {
     // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۴.۲ — لایه‌ی «نیاز خریدار»، زیر پیام مشتری
     traceBuyerNeeds: (tags: string[]) => `🎯 نیازهای شناسایی‌شده: ${tags.join('، ')}`,
     traceUnmatchedBuyerNeed: (label: string) => `❓ نیاز خارج از taxonomy: «${label}»`,
+    traceLowConfidence: (level: 'MEDIUM' | 'LOW') =>
+      `⚠️ اطمینان تشخیص intent: ${level === 'LOW' ? 'پایین' : 'متوسط'}`,
   },
   // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۵ — صفحه‌ی مستقل کشف intent
   buyerIntentDiscovery: {
@@ -628,6 +630,11 @@ export const fa = {
     sampleMessageColumn: 'نمونه پیام مشتری',
     lastSeenColumn: 'آخرین مشاهده',
     viewConversation: 'مشاهده‌ی مکالمه',
+    lowConfidenceTableTitle: 'احتمال طبقه‌بندی اشتباه — اطمینان پایین مدل',
+    intentColumn: 'intent تشخیص‌داده‌شده',
+    confidenceColumn: 'اطمینان',
+    confidenceLabels: { MEDIUM: 'متوسط', LOW: 'پایین' } as Record<string, string>,
+    dateColumn: 'تاریخ',
     tagLabels: {
       PRODUCT_SPEC: 'مشخصات فنی/جزئیات محصول',
       USAGE_GUIDE: 'نحوه‌ی استفاده',

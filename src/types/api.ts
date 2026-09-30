@@ -684,6 +684,7 @@ export interface ClassificationTraceInfo {
   handler: string
   buyerNeeds?: string[]
   unmatchedBuyerNeed?: string
+  intentConfidence?: 'HIGH' | 'MEDIUM' | 'LOW'
 }
 
 export interface ConversationTraceItem {
@@ -714,9 +715,19 @@ export interface UnmatchedBuyerNeedItem {
   lastSeenAt: string
 }
 
+export interface LowConfidenceItem {
+  conversationId: string
+  storeName: string
+  intent: string
+  confidence: 'MEDIUM' | 'LOW'
+  sampleMessage: string
+  createdAt: string
+}
+
 export interface BuyerIntentDiscoveryResponse {
   buyerNeedCounts: BuyerNeedCount[]
   unmatched: UnmatchedBuyerNeedItem[]
+  lowConfidence: LowConfidenceItem[]
 }
 
 // ── Usage Analytics ─────────────────────────────────────────────────────────
