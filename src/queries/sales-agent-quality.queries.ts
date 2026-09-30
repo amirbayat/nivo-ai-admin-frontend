@@ -4,7 +4,7 @@ import type { AbModelStat, ConversationTraceResponse, PaginatedFailedMessages } 
 import { keys } from './keys'
 
 interface AbStatsParams {
-  groupBy: 'variant' | 'channel'
+  groupBy: 'variant' | 'channel' | 'voiceVariant'
   storeId?: string
   from?: string
   to?: string

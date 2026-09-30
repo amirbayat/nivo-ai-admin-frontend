@@ -531,9 +531,14 @@ export const fa = {
     title: 'کیفیت ایجنت فروش',
     groupByModel: 'بر اساس مدل',
     groupByChannel: 'بر اساس کانال',
+    groupByVoice: 'A/B وویس',
     channelLabels: {
       WEB: 'وب',
       TELEGRAM: 'تلگرام',
+    } as Record<string, string>,
+    voiceVariantLabels: {
+      ON: 'وویس فعال',
+      OFF: 'فقط متن',
     } as Record<string, string>,
     conversations: 'مکالمات',
     stuckHandoffRate: 'نرخ ارجاع به انسان',

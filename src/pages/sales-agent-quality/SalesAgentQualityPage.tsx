@@ -14,13 +14,17 @@ function pct(v: number): string {
   return `${(v * 100).toFixed(1)}٪`
 }
 
-// docs/PRD-sales-agent-admin-analytics.md بخش ۴ — groupBy=channel یعنی group مقدار enum
-// CustomerChannel است ('WEB'/'TELEGRAM')، نه اسم مدل — برچسب فارسی جداگانه دارد
-function groupLabel(groupBy: 'variant' | 'channel', group: string): string {
-  return groupBy === 'channel' ? (fa.salesAgentQuality.channelLabels[group] ?? group) : group
+// docs/PRD-sales-agent-admin-analytics.md بخش ۴ + docs/PRD-sales-agent-voice.md بخش ۶.۱ —
+// groupBy=channel یعنی group مقدار enum CustomerChannel است ('WEB'/'TELEGRAM')، و
+// groupBy=voiceVariant یعنی group مقدار enum VoiceVariant است ('ON'/'OFF') — نه اسم مدل،
+// پس هرکدام برچسب فارسی جداگانه دارند
+function groupLabel(groupBy: 'variant' | 'channel' | 'voiceVariant', group: string): string {
+  if (groupBy === 'channel') return fa.salesAgentQuality.channelLabels[group] ?? group
+  if (groupBy === 'voiceVariant') return fa.salesAgentQuality.voiceVariantLabels[group] ?? group
+  return group
 }
 
-function AbStatCard({ stat, groupBy }: { stat: AbModelStat; groupBy: 'variant' | 'channel' }) {
+function AbStatCard({ stat, groupBy }: { stat: AbModelStat; groupBy: 'variant' | 'channel' | 'voiceVariant' }) {
   const handoffColor = stat.stuckHandoffRate > 0.3 ? '#cf1322' : '#3f8600'
   return (
     <Card title={<span style={{ fontFamily: groupBy === 'variant' ? 'monospace' : 'inherit' }}>{groupLabel(groupBy, stat.group)}</span>}>
@@ -57,7 +61,7 @@ function AbStatCard({ stat, groupBy }: { stat: AbModelStat; groupBy: 'variant' |
 
 export function SalesAgentQualityPage() {
   const [page, setPage] = useState(1)
-  const [groupBy, setGroupBy] = useState<'variant' | 'channel'>('variant')
+  const [groupBy, setGroupBy] = useState<'variant' | 'channel' | 'voiceVariant'>('variant')
   const [modelFilter, setModelFilter] = useState<string | undefined>(undefined)
   const [storeFilter, setStoreFilter] = useState<string | undefined>(undefined)
   const [reasonFilter, setReasonFilter] = useState<'UNCLEAR' | 'NO_KB_MATCH' | undefined>(undefined)
@@ -76,8 +80,13 @@ export function SalesAgentQualityPage() {
     groupBy: 'channel',
     ...statsParams,
   })
-  const abStats = groupBy === 'variant' ? modelStats : channelStats
-  const abStatsLoading = groupBy === 'variant' ? modelStatsLoading : channelStatsLoading
+  const { data: voiceStats, isLoading: voiceStatsLoading } = useAbStats({
+    groupBy: 'voiceVariant',
+    ...statsParams,
+  })
+  const abStats = groupBy === 'variant' ? modelStats : groupBy === 'channel' ? channelStats : voiceStats
+  const abStatsLoading =
+    groupBy === 'variant' ? modelStatsLoading : groupBy === 'channel' ? channelStatsLoading : voiceStatsLoading
   const { data: failedMessages, isLoading: failedLoading } = useFailedMessages({
     page,
     variant: modelFilter,
@@ -165,6 +174,9 @@ export function SalesAgentQualityPage() {
         </Button>
         <Button type={groupBy === 'channel' ? 'primary' : 'default'} onClick={() => setGroupBy('channel')}>
           {fa.salesAgentQuality.groupByChannel}
+        </Button>
+        <Button type={groupBy === 'voiceVariant' ? 'primary' : 'default'} onClick={() => setGroupBy('voiceVariant')}>
+          {fa.salesAgentQuality.groupByVoice}
         </Button>
       </Space>
 
