@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react'
 import type { Dayjs } from 'dayjs'
-import { Card, Col, DatePicker, Row, Select, Space, Statistic, Table, Tag, Typography } from 'antd'
+import { Button, Card, Col, DatePicker, Row, Select, Space, Statistic, Table, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useAbStats, useFailedMessages } from '@/queries/sales-agent-quality.queries'
 import type { AbModelStat, FailedMessageItem } from '@/types/api'
 import { fa } from '@/locales/fa'
+import { ConversationTraceDrawer } from './ConversationTraceDrawer'
 
 const { Title } = Typography
 const { RangePicker } = DatePicker
@@ -54,6 +55,7 @@ export function SalesAgentQualityPage() {
   const [storeFilter, setStoreFilter] = useState<string | undefined>(undefined)
   const [reasonFilter, setReasonFilter] = useState<'UNCLEAR' | 'NO_KB_MATCH' | undefined>(undefined)
   const [range, setRange] = useState<[Dayjs, Dayjs] | undefined>(undefined)
+  const [traceConversationId, setTraceConversationId] = useState<string | null>(null)
 
   const { data: abStats, isLoading: abStatsLoading } = useAbStats()
   const { data: failedMessages, isLoading: failedLoading } = useFailedMessages({
@@ -118,6 +120,16 @@ export function SalesAgentQualityPage() {
       key: 'createdAt',
       width: 130,
       render: (v: string) => new Date(v).toLocaleString('fa-IR'),
+    },
+    {
+      title: '',
+      key: 'actions',
+      width: 120,
+      render: (_: unknown, item: FailedMessageItem) => (
+        <Button size="small" onClick={() => setTraceConversationId(item.conversationId)}>
+          {fa.salesAgentQuality.viewTrace}
+        </Button>
+      ),
     },
   ]
 
@@ -203,6 +215,8 @@ export function SalesAgentQualityPage() {
           }}
         />
       </Card>
+
+      <ConversationTraceDrawer conversationId={traceConversationId} onClose={() => setTraceConversationId(null)} />
     </div>
   )
 }

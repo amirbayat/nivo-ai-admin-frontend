@@ -82,6 +82,8 @@ export const keys = {
         from ?? '',
         to ?? '',
       ] as const,
+    trace: (conversationId: string) =>
+      ['admin', 'sales-agent-quality', 'trace', conversationId] as const,
   },
   salesBot: {
     config: () => ['admin', 'sales-bot', 'config'] as const,

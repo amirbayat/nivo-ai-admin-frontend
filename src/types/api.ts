@@ -604,6 +604,7 @@ export interface AbModelStat {
 
 export interface FailedMessageItem {
   id: string
+  conversationId: string
   storeName: string
   customerMessage: string
   variant: string | null
@@ -618,6 +619,35 @@ export interface PaginatedFailedMessages {
   items: FailedMessageItem[]
   total: number
   page: number
+}
+
+// docs/PRD-admin-ai-decision-trace-log.md — تایم‌لاین کامل یک مکالمه برای دیباگ ادمین
+export interface AiTraceVoiceInfo {
+  generated: boolean
+  voiceName?: string
+  toneVariant?: string
+  reason?: 'TOO_SHORT' | 'CONVERSATION_CAP' | 'FAILED'
+}
+
+export interface AiTraceInfo {
+  intent: string
+  handler: string
+  factsOrPrompt: string
+  model: string
+  kbSource?: 'STORE_KB' | 'PRODUCT_DESCRIPTION' | 'STUB'
+  voice?: AiTraceVoiceInfo
+}
+
+export interface ConversationTraceItem {
+  id: string
+  createdAt: string
+  customerMessage?: string
+  agentReply?: { text: string; flag?: 'UNCLEAR' | 'NO_KB_MATCH' }
+  trace?: AiTraceInfo
+}
+
+export interface ConversationTraceResponse {
+  items: ConversationTraceItem[]
 }
 
 // ── Usage Analytics ─────────────────────────────────────────────────────────

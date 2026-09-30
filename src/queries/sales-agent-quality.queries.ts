@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api'
-import type { AbModelStat, PaginatedFailedMessages } from '@/types/api'
+import type { AbModelStat, ConversationTraceResponse, PaginatedFailedMessages } from '@/types/api'
 import { keys } from './keys'
 
 export function useAbStats() {
@@ -30,5 +30,16 @@ export function useFailedMessages(params: FailedMessagesParams) {
           params: { page, storeId, variant, reason, from, to },
         })
         .then((r) => r.data),
+  })
+}
+
+export function useConversationTrace(conversationId: string | null) {
+  return useQuery({
+    queryKey: keys.salesAgentQuality.trace(conversationId ?? ''),
+    queryFn: () =>
+      api
+        .get<ConversationTraceResponse>(`/admin/sales-agent/conversations/${conversationId}/trace`)
+        .then((r) => r.data),
+    enabled: !!conversationId,
   })
 }
