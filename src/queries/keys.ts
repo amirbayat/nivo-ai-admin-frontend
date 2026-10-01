@@ -97,6 +97,12 @@ export const keys = {
     adPlacementInstrumentation: (storeId?: string) =>
       ['admin', 'sales-agent-quality', 'ad-placement-instrumentation', storeId ?? 'all'] as const,
   },
+  // فیدبک کاربر ۱۴۰۵/۰۷/۰۱ — لیست عمومی و قابل‌مرور همه‌ی مکالمات، جدا از salesAgentQuality
+  // (که فقط failed-messages را لیست می‌کند)
+  salesConversations: {
+    list: (page: number, storeId?: string, state?: string, from?: string, to?: string) =>
+      ['admin', 'sales-conversations', page, storeId ?? 'all', state ?? 'all', from ?? '', to ?? ''] as const,
+  },
   // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۵
   buyerIntentDiscovery: {
     report: (storeId?: string, from?: string, to?: string) =>

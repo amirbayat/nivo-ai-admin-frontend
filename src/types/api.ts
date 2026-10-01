@@ -677,6 +677,31 @@ export interface PaginatedFailedMessages {
   page: number
 }
 
+// فیدبک کاربر ۱۴۰۵/۰۷/۰۱ — برخلاف FailedMessageItem (فقط پیام‌های نافهم)، این یک ردیف از
+// لیست عمومی و قابل‌مرور همه‌ی مکالمات است (GET /admin/sales-agent/conversations)
+export interface SalesConversationListItem {
+  id: string
+  storeId: string
+  storeName: string
+  customerName: string | null
+  customerPhone: string | null
+  channel: 'WEB' | 'TELEGRAM'
+  currentState: string
+  abVariant: string | null
+  lastMessagePreview: string
+  lastMessageAt: string | null
+  failedTurnCount: number
+  endedInHandoff: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface PaginatedSalesConversations {
+  items: SalesConversationListItem[]
+  total: number
+  page: number
+}
+
 // docs/PRD-product-strategy-and-roadmap.md بخش ۵.۱۰ بند ۳
 export interface FollowUpInstrumentation {
   sentCount: number

@@ -25,6 +25,7 @@ import { CampaignsPage } from '@/pages/campaigns/CampaignsPage'
 import { SalesBotPage } from '@/pages/sales-bot/SalesBotPage'
 import { SalesAgentQualityPage } from '@/pages/sales-agent-quality/SalesAgentQualityPage'
 import { BuyerIntentDiscoveryPage } from '@/pages/buyer-intent-discovery/BuyerIntentDiscoveryPage'
+import { SalesConversationsPage } from '@/pages/sales-conversations/SalesConversationsPage'
 import { SalesAgentQaPage } from '@/pages/sales-agent-qa/SalesAgentQaPage'
 import { CommentsModerationPage } from '@/pages/comments-moderation/CommentsModerationPage'
 import { ArticlesPage } from '@/pages/articles/ArticlesPage'
@@ -93,6 +94,7 @@ export function AppRouter() {
         <Route path="sales-bot" element={<SalesBotPage />} />
         <Route path="sales-agent-quality" element={<SalesAgentQualityPage />} />
         <Route path="buyer-intent-discovery" element={<BuyerIntentDiscoveryPage />} />
+        <Route path="sales-conversations" element={<SalesConversationsPage />} />
         <Route path="sales-agent-qa" element={<SalesAgentQaPage />} />
         <Route path="comments" element={<CommentsModerationPage />} />
         <Route path="campaigns" element={<CampaignsPage />} />
