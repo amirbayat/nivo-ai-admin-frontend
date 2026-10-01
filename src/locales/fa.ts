@@ -788,6 +788,15 @@ export const fa = {
     passed: 'درست',
     failed: 'نادرست',
     intentEmpty: 'هنوز تست intent اجرا نشده',
+    // docs/PRD-sales-agent-implicit-need-detection.md بخش ۵ (فاز ۰) — baseline قبل از هر
+    // تغییر در schema/پرامپت طبقه‌بندی؛ انتظار می‌رود موارد «هدف ضمنی مرتبط»/«هدف نامرتبط»
+    // فعلاً fail شوند (دقیقاً همان باگ ریشه‌ای سند)
+    implicitNeedTitle: 'تست baseline تشخیص نیاز ضمنی (فاز ۰)',
+    implicitNeedSubtitle:
+      'baseline سیستم فعلی (بدون هیچ تغییری) روی پیام‌هایی با هدف/نیاز ضمنی — برای سنجش قبل/بعد فازهای بعدی سند. موارد علامت‌خورده به «⚠️ نیازمند فاز بعد» با schema فعلی قابل سنجش کامل نیستند.',
+    runImplicitNeed: 'اجرای تست نیاز ضمنی',
+    notMeasurableYet: '⚠️ نیازمند فاز بعد',
+    implicitNeedEmpty: 'هنوز تست نیاز ضمنی اجرا نشده',
   },
   common: {
     save: 'ذخیره',

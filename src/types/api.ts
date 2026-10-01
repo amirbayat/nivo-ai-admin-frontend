@@ -658,6 +658,23 @@ export interface IntentGoldenResult {
   latencyMs: number
 }
 
+// docs/PRD-sales-agent-implicit-need-detection.md بخش ۵ (فاز ۰)
+export interface ImplicitNeedGoldenResult {
+  id: string
+  category: string
+  message: string
+  expectedIntent: string
+  actualIntent?: string
+  intentConfidence?: string
+  expectedBuyerNeeds?: string[]
+  actualBuyerNeeds?: string[]
+  unmatchedBuyerNeed?: string
+  passed: boolean
+  notFullyMeasurableYet?: boolean
+  error?: string
+  latencyMs: number
+}
+
 export interface FailedMessageItem {
   id: string
   conversationId: string

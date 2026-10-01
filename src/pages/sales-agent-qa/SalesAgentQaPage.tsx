@@ -1,8 +1,13 @@
 import { useState } from 'react'
 import { Alert, Button, Card, Select, Space, Table, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { useQaStores, useRunGoldenSet, useRunIntentGoldenSet } from '@/queries/sales-agent-qa.queries'
-import type { GoldenQuestionResult, IntentGoldenResult } from '@/types/api'
+import {
+  useQaStores,
+  useRunGoldenSet,
+  useRunIntentGoldenSet,
+  useRunImplicitNeedGoldenSet,
+} from '@/queries/sales-agent-qa.queries'
+import type { GoldenQuestionResult, IntentGoldenResult, ImplicitNeedGoldenResult } from '@/types/api'
 import { fa } from '@/locales/fa'
 
 const { Title, Paragraph, Text } = Typography
@@ -23,9 +28,11 @@ export function SalesAgentQaPage() {
   const [storeId, setStoreId] = useState<string | undefined>(undefined)
   const [variant, setVariant] = useState<string | undefined>(undefined)
   const [intentVariant, setIntentVariant] = useState<string | undefined>(undefined)
+  const [implicitNeedVariant, setImplicitNeedVariant] = useState<string | undefined>(undefined)
   const { data: stores, isLoading: storesLoading } = useQaStores()
   const runGoldenSet = useRunGoldenSet()
   const runIntentGoldenSet = useRunIntentGoldenSet()
+  const runImplicitNeedGoldenSet = useRunImplicitNeedGoldenSet()
 
   const columns: ColumnsType<GoldenQuestionResult> = [
     { title: fa.salesAgentQa.category, dataIndex: 'category', key: 'category', width: 120 },
@@ -109,6 +116,69 @@ export function SalesAgentQaPage() {
           <Tag color={item.passed ? 'green' : 'red'}>
             {item.passed ? fa.salesAgentQa.passed : fa.salesAgentQa.failed}
           </Tag>
+        ),
+    },
+  ]
+
+  const implicitNeedColumns: ColumnsType<ImplicitNeedGoldenResult> = [
+    { title: fa.salesAgentQa.category, dataIndex: 'category', key: 'category', width: 150 },
+    { title: fa.salesAgentQa.message, dataIndex: 'message', key: 'message', ellipsis: true },
+    {
+      title: fa.salesAgentQa.expected,
+      key: 'expected',
+      width: 220,
+      render: (_: unknown, item: ImplicitNeedGoldenResult) => (
+        <Space direction="vertical" size={0}>
+          <Text style={{ fontFamily: 'monospace', fontSize: 12 }}>{item.expectedIntent}</Text>
+          {item.expectedBuyerNeeds && item.expectedBuyerNeeds.length > 0 && (
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              {item.expectedBuyerNeeds.join('، ')}
+            </Text>
+          )}
+        </Space>
+      ),
+    },
+    {
+      title: fa.salesAgentQa.actual,
+      key: 'actual',
+      width: 220,
+      render: (_: unknown, item: ImplicitNeedGoldenResult) =>
+        item.error ? (
+          <Tag color="red">
+            {fa.salesAgentQa.error}: {item.error}
+          </Tag>
+        ) : (
+          <Space direction="vertical" size={0}>
+            <Text style={{ fontFamily: 'monospace', fontSize: 12 }}>{item.actualIntent}</Text>
+            {item.actualBuyerNeeds && item.actualBuyerNeeds.length > 0 && (
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                {item.actualBuyerNeeds.join('، ')}
+              </Text>
+            )}
+            {item.unmatchedBuyerNeed && (
+              <Text type="warning" style={{ fontSize: 12 }}>
+                ❓ {item.unmatchedBuyerNeed}
+              </Text>
+            )}
+          </Space>
+        ),
+    },
+    {
+      title: fa.salesAgentQa.result,
+      key: 'passed',
+      width: 150,
+      render: (_: unknown, item: ImplicitNeedGoldenResult) =>
+        item.error ? null : (
+          <Space direction="vertical" size={0}>
+            <Tag color={item.passed ? 'green' : 'red'}>
+              {item.passed ? fa.salesAgentQa.passed : fa.salesAgentQa.failed}
+            </Tag>
+            {item.notFullyMeasurableYet && (
+              <Text type="warning" style={{ fontSize: 11 }}>
+                {fa.salesAgentQa.notMeasurableYet}
+              </Text>
+            )}
+          </Space>
         ),
     },
   ]
@@ -214,6 +284,57 @@ export function SalesAgentQaPage() {
         columns={intentColumns}
         loading={runIntentGoldenSet.isPending}
         locale={{ emptyText: fa.salesAgentQa.intentEmpty }}
+        pagination={false}
+      />
+
+      <Title level={4} style={{ margin: '32px 0 4px' }}>
+        {fa.salesAgentQa.implicitNeedTitle}
+      </Title>
+      <Paragraph type="secondary">{fa.salesAgentQa.implicitNeedSubtitle}</Paragraph>
+
+      <Card style={{ marginBottom: 16 }}>
+        <Space wrap>
+          <Select
+            style={{ width: 220 }}
+            placeholder={fa.salesAgentQa.selectVariant}
+            value={implicitNeedVariant}
+            onChange={setImplicitNeedVariant}
+            options={VARIANT_OPTIONS.map((v) => ({ value: v, label: v }))}
+          />
+          <Button
+            type="primary"
+            disabled={!implicitNeedVariant}
+            loading={runImplicitNeedGoldenSet.isPending}
+            onClick={() =>
+              implicitNeedVariant && runImplicitNeedGoldenSet.mutate({ variant: implicitNeedVariant })
+            }
+          >
+            {runImplicitNeedGoldenSet.isPending ? fa.salesAgentQa.running : fa.salesAgentQa.runImplicitNeed}
+          </Button>
+          {runImplicitNeedGoldenSet.data && (
+            <Text type="secondary">
+              {runImplicitNeedGoldenSet.data.filter((r) => r.passed).length} /{' '}
+              {runImplicitNeedGoldenSet.data.length} {fa.salesAgentQa.passed}
+            </Text>
+          )}
+        </Space>
+      </Card>
+
+      {runImplicitNeedGoldenSet.isError && (
+        <Alert
+          type="error"
+          showIcon
+          style={{ marginBottom: 16 }}
+          message={<Text>{fa.salesAgentQa.error}</Text>}
+        />
+      )}
+
+      <Table<ImplicitNeedGoldenResult>
+        rowKey="id"
+        dataSource={runImplicitNeedGoldenSet.data ?? []}
+        columns={implicitNeedColumns}
+        loading={runImplicitNeedGoldenSet.isPending}
+        locale={{ emptyText: fa.salesAgentQa.implicitNeedEmpty }}
         pagination={false}
       />
     </div>
