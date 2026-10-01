@@ -164,6 +164,39 @@ export function SalesAgentQaPage() {
         ),
     },
     {
+      title: fa.salesAgentQa.signals,
+      key: 'signals',
+      width: 260,
+      render: (_: unknown, item: ImplicitNeedGoldenResult) =>
+        item.error ? null : (
+          <Space direction="vertical" size={0} style={{ fontSize: 11 }}>
+            <Text style={{ fontSize: 11 }}>
+              needType: <Text code>{item.actualNeedType ?? '—'}</Text>
+              {item.expectedNeedType && item.expectedNeedType !== item.actualNeedType && (
+                <Text type="danger"> (انتظار: {item.expectedNeedType})</Text>
+              )}
+            </Text>
+            <Text style={{ fontSize: 11 }}>
+              storeRelevance: <Text code>{item.actualStoreRelevance ?? '—'}</Text>
+              {item.expectedStoreRelevance && item.expectedStoreRelevance !== item.actualStoreRelevance && (
+                <Text type="danger"> (انتظار: {item.expectedStoreRelevance})</Text>
+              )}
+            </Text>
+            <Text style={{ fontSize: 11 }}>
+              pitchReadiness: <Text code>{item.actualPitchReadiness ?? '—'}</Text>
+              {item.expectedPitchReadiness && item.expectedPitchReadiness !== item.actualPitchReadiness && (
+                <Text type="danger"> (انتظار: {item.expectedPitchReadiness})</Text>
+              )}
+            </Text>
+            {item.implicitNeedSummary && (
+              <Text type="secondary" style={{ fontSize: 11 }}>
+                «{item.implicitNeedSummary}»
+              </Text>
+            )}
+          </Space>
+        ),
+    },
+    {
       title: fa.salesAgentQa.result,
       key: 'passed',
       width: 150,
