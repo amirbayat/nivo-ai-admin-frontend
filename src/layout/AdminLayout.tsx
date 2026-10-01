@@ -39,6 +39,7 @@ import {
   ExperimentOutlined,
   AimOutlined,
   UnorderedListOutlined,
+  FileSearchOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
 import { useUnreadNotificationCount } from '@/queries/admin-notifications.queries'
@@ -74,6 +75,7 @@ const menuItems = [
   { key: '/admin/sales-conversations', icon: <UnorderedListOutlined />, label: fa.nav.salesConversations },
   { key: '/admin/sales-agent-qa', icon: <ExperimentOutlined />, label: fa.nav.salesAgentQa },
   { key: '/admin/comments', icon: <StarOutlined />, label: fa.nav.comments },
+  { key: '/admin/product-enrichment', icon: <FileSearchOutlined />, label: fa.nav.productEnrichment },
   { key: '/admin/campaigns', icon: <RocketOutlined />, label: fa.nav.campaigns },
   { key: '/admin/articles', icon: <ReadOutlined />, label: fa.nav.articles },
   { key: '/admin/article-categories', icon: <TagsOutlined />, label: fa.nav.articleCategories },

@@ -18,6 +18,8 @@ import type {
   TokenStats,
   PaginatedProductComments,
   ProductCommentStatus,
+  PaginatedLowCompletenessProducts,
+  ProductEnrichmentDraft,
 } from '@/types/api'
 import { keys } from './keys'
 
@@ -397,5 +399,43 @@ export function useTriggerModelFeedbackSummary() {
   return useMutation({
     mutationFn: () => api.post('/admin/model-feedback/trigger').then((r) => r.data),
     onSuccess: () => void qc.invalidateQueries({ queryKey: keys.modelFeedback.summary() }),
+  })
+}
+
+// docs/PRD-admin-product-enrichment-review.md
+export function useLowCompletenessProducts(page: number, storeId?: string) {
+  return useQuery({
+    queryKey: keys.productEnrichment.lowCompleteness(page, storeId),
+    queryFn: () =>
+      api
+        .get<PaginatedLowCompletenessProducts>('/admin/products/low-completeness', { params: { page, storeId } })
+        .then(r => r.data),
+  })
+}
+
+export function useCreateEnrichmentDraft() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ productId, source, resourceText }: { productId: string; source: 'WEB_SEARCH' | 'ADMIN_RESOURCE'; resourceText?: string }) =>
+      api.post<ProductEnrichmentDraft>(`/admin/products/${productId}/enrichment-draft`, { source, resourceText }).then(r => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin', 'product-enrichment'] }),
+  })
+}
+
+export function useApproveEnrichmentDraft() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (draftId: string) =>
+      api.post(`/admin/products/enrichment-draft/${draftId}/approve`).then(r => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin', 'product-enrichment'] }),
+  })
+}
+
+export function useRejectEnrichmentDraft() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (draftId: string) =>
+      api.post(`/admin/products/enrichment-draft/${draftId}/reject`).then(r => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin', 'product-enrichment'] }),
   })
 }

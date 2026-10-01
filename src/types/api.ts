@@ -1436,3 +1436,40 @@ export interface AnonConversionPathSegment {
   sessionCount: number
   stages: AnonFunnelStage[]
 }
+
+// docs/PRD-admin-product-enrichment-review.md
+export type ProductEnrichmentStatus =
+  | 'PENDING_ADMIN_REVIEW'
+  | 'PENDING_SELLER_REVIEW'
+  | 'SELLER_APPROVED'
+  | 'SELLER_REJECTED'
+  | 'ADMIN_REJECTED'
+
+export interface LowCompletenessProduct {
+  id: string
+  name: string
+  storeId: string
+  storeName: string
+  completeness: { percent: number; missing: string[] }
+  activeDraftStatus: ProductEnrichmentStatus | null
+}
+
+export interface PaginatedLowCompletenessProducts {
+  items: LowCompletenessProduct[]
+  total: number
+  page: number
+  limit: number
+}
+
+export interface ProductEnrichmentDraft {
+  id: string
+  productId: string
+  status: ProductEnrichmentStatus
+  source: 'ADMIN_RESOURCE' | 'WEB_SEARCH'
+  adminResourceText: string | null
+  suggestedDescription: string
+  suggestedQuestions: string[]
+  suggestedSpecs: { label: string; value: string }[] | null
+  sourceNote: string | null
+  createdAt: string
+}
