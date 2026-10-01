@@ -641,6 +641,21 @@ export interface GoldenQuestionResult {
   latencyMs: number
 }
 
+// docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۵.۴
+export interface IntentGoldenResult {
+  id: string
+  message: string
+  expectedIntent: string
+  actualIntent?: string
+  intentConfidence?: string
+  expectedBuyerNeeds?: string[]
+  actualBuyerNeeds?: string[]
+  unmatchedBuyerNeed?: string
+  passed: boolean
+  error?: string
+  latencyMs: number
+}
+
 export interface FailedMessageItem {
   id: string
   conversationId: string

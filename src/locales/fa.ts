@@ -689,6 +689,19 @@ export const fa = {
     latency: 'زمان پاسخ',
     error: 'خطا',
     empty: 'هنوز تستی اجرا نشده',
+    // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۵.۴
+    intentTitle: 'تست دقت تشخیص intent/نیاز خریدار',
+    intentSubtitle:
+      'یک مدل انتخاب کن — یک ست ثابت پیام نمونه (synthetic، نه پیام واقعی مشتری) روی آن اجرا می‌شود تا ببینی تشخیص intent/buyerNeeds چقدر دقیق است. جایگزین eval-set واقعی (پیام‌های واقعی بعد از دیپلوی) نیست، فقط smoke-test سریع.',
+    runIntent: 'اجرای تست intent',
+    message: 'پیام نمونه',
+    expected: 'انتظار',
+    actual: 'خروجی مدل',
+    confidence: 'اطمینان',
+    result: 'نتیجه',
+    passed: 'درست',
+    failed: 'نادرست',
+    intentEmpty: 'هنوز تست intent اجرا نشده',
   },
   common: {
     save: 'ذخیره',
