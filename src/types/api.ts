@@ -675,6 +675,36 @@ export interface PaginatedFailedMessages {
   page: number
 }
 
+// docs/PRD-product-strategy-and-roadmap.md بخش ۵.۱۰ بند ۳
+export interface FollowUpInstrumentation {
+  sentCount: number
+  respondedCount: number
+  responseRate: number
+  verdictCounts: { POSITIVE: number; NEGATIVE: number; UNRELATED: number }
+}
+
+export interface CartRecoveryInstrumentation {
+  remindersSent: number
+  recoveredCount: number
+  recoveryRate: number
+}
+
+export interface AdPlacementInstrumentationItem {
+  id: string
+  storeId: string
+  storeName: string
+  placement: 'TELEGRAM_STORE_SEARCH' | 'MARKETPLACE_FEATURED'
+  status: 'ACTIVE' | 'EXPIRED' | 'CANCELLED'
+  startsAt: string
+  endsAt: string
+  impressionCount: number
+}
+
+export interface AdPlacementInstrumentation {
+  items: AdPlacementInstrumentationItem[]
+  totalImpressions: number
+}
+
 // docs/PRD-admin-ai-decision-trace-log.md — تایم‌لاین کامل یک مکالمه برای دیباگ ادمین
 export interface AiTraceVoiceInfo {
   generated: boolean
@@ -716,9 +746,12 @@ export interface ConversationTraceResponse {
 }
 
 // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۵ — گزارش تجمیعی صفحه‌ی مستقل کشف intent
+// docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۴.۱ — یک taxonomy واحد با فیلد journey_stage
+// روی هر رکورد، به‌جای چند taxonomy جدا
 export interface BuyerNeedCount {
   tag: string
   count: number
+  journeyStage: 'PRE_PURCHASE' | 'PAYMENT' | 'POST_PURCHASE'
 }
 
 export interface UnmatchedBuyerNeedItem {
@@ -728,6 +761,9 @@ export interface UnmatchedBuyerNeedItem {
   storeName: string
   sampleMessage: string
   lastSeenAt: string
+  // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۵.۲ — intent اجرایی تک‌برچسبی که کنار همین
+  // unmatchedBuyerNeed کلاسیفای شده بود
+  nearestIntent: string
 }
 
 export interface LowConfidenceItem {

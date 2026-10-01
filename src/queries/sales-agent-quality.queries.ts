@@ -1,6 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api'
-import type { AbModelStat, ConversationTraceResponse, PaginatedFailedMessages } from '@/types/api'
+import type {
+  AbModelStat,
+  AdPlacementInstrumentation,
+  CartRecoveryInstrumentation,
+  ConversationTraceResponse,
+  FollowUpInstrumentation,
+  PaginatedFailedMessages,
+} from '@/types/api'
 import { keys } from './keys'
 
 interface AbStatsParams {
@@ -39,6 +46,48 @@ export function useFailedMessages(params: FailedMessagesParams) {
         .get<PaginatedFailedMessages>('/admin/sales-agent/failed-messages', {
           params: { page, storeId, variant, reason, from, to },
         })
+        .then((r) => r.data),
+  })
+}
+
+interface InstrumentationParams {
+  storeId?: string
+  from?: string
+  to?: string
+}
+
+export function useFollowUpInstrumentation(params: InstrumentationParams) {
+  const { storeId, from, to } = params
+  return useQuery({
+    queryKey: keys.salesAgentQuality.followUpInstrumentation(storeId, from, to),
+    queryFn: () =>
+      api
+        .get<FollowUpInstrumentation>('/admin/sales-agent/followup-instrumentation', {
+          params: { storeId, from, to },
+        })
+        .then((r) => r.data),
+  })
+}
+
+export function useCartRecoveryInstrumentation(params: InstrumentationParams) {
+  const { storeId, from, to } = params
+  return useQuery({
+    queryKey: keys.salesAgentQuality.cartRecoveryInstrumentation(storeId, from, to),
+    queryFn: () =>
+      api
+        .get<CartRecoveryInstrumentation>('/admin/sales-agent/cart-recovery-instrumentation', {
+          params: { storeId, from, to },
+        })
+        .then((r) => r.data),
+  })
+}
+
+export function useAdPlacementInstrumentation(storeId?: string) {
+  return useQuery({
+    queryKey: keys.salesAgentQuality.adPlacementInstrumentation(storeId),
+    queryFn: () =>
+      api
+        .get<AdPlacementInstrumentation>('/admin/sales-agent/ad-placement-instrumentation', { params: { storeId } })
         .then((r) => r.data),
   })
 }

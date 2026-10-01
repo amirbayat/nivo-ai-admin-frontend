@@ -609,6 +609,9 @@ export const fa = {
     traceVoiceReasonLabels: {
       TOO_SHORT: 'پاسخ خیلی کوتاه بود',
       CONVERSATION_CAP: 'سقف وویس این مکالمه پر شده بود',
+      VOICE_VARIANT_OFF: 'این مکالمه در گروه A/B بدون وویس است',
+      // docs/PRD-sales-agent-voice.md بخش ۶.۳
+      CONSECUTIVE_CAP: 'سقف ۲ وویس پشت‌سرهم پر شده بود',
       FAILED: 'تولید صدا شکست خورد',
     } as Record<string, string>,
     traceShowPrompt: 'نمایش کامل prompt/facts',
@@ -617,6 +620,16 @@ export const fa = {
     traceUnmatchedBuyerNeed: (label: string) => `❓ نیاز خارج از taxonomy: «${label}»`,
     traceLowConfidence: (level: 'MEDIUM' | 'LOW') =>
       `⚠️ اطمینان تشخیص intent: ${level === 'LOW' ? 'پایین' : 'متوسط'}`,
+    // docs/PRD-product-strategy-and-roadmap.md بخش ۵.۱۰ بند ۳
+    instrumentationTitle: 'پیگیری خودکار و تبلیغات — آیا واقعاً اثر دارند؟',
+    followUpSent: 'فالوآپ رضایت فرستاده‌شده',
+    followUpResponseRate: 'نرخ جواب‌دهی',
+    followUpPositive: 'راضی',
+    followUpNegative: 'ناراضی',
+    followUpUnrelated: 'بی‌ربط/جواب نداد',
+    cartReminderSent: 'یادآوری سبد فرستاده‌شده',
+    cartRecoveryRate: 'نرخ بازیابی سبد',
+    adPlacementImpressions: 'نمایش تبلیغ (⭐) در سرچ تلگرام',
   },
   // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۵ — صفحه‌ی مستقل کشف intent
   buyerIntentDiscovery: {
@@ -625,9 +638,17 @@ export const fa = {
     needsTableTitle: 'توزیع نیازهای شناسایی‌شده',
     tagColumn: 'نیاز',
     countColumn: 'تعداد',
+    // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۴.۱/۵.۲
+    journeyStageColumn: 'مرحله‌ی سفر خریدار',
+    journeyStageLabels: {
+      PRE_PURCHASE: 'پیش از خرید',
+      PAYMENT: 'پرداخت',
+      POST_PURCHASE: 'پس از خرید',
+    } as Record<string, string>,
     unmatchedTableTitle: 'خارج از taxonomy — نیاز به بررسی',
     labelColumn: 'برچسب پیشنهادی مدل',
     sampleMessageColumn: 'نمونه پیام مشتری',
+    nearestIntentColumn: 'نزدیک‌ترین intent موجود',
     lastSeenColumn: 'آخرین مشاهده',
     viewConversation: 'مشاهده‌ی مکالمه',
     lowConfidenceTableTitle: 'احتمال طبقه‌بندی اشتباه — اطمینان پایین مدل',

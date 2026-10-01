@@ -51,6 +51,13 @@ export function BuyerIntentDiscoveryPage() {
       sorter: (a, b) => a.count - b.count,
       defaultSortOrder: 'descend',
     },
+    {
+      title: fa.buyerIntentDiscovery.journeyStageColumn,
+      dataIndex: 'journeyStage',
+      key: 'journeyStage',
+      width: 140,
+      render: (v: string) => fa.buyerIntentDiscovery.journeyStageLabels[v] ?? v,
+    },
   ]
 
   const unmatchedColumns: ColumnsType<UnmatchedBuyerNeedItem> = [
@@ -64,6 +71,13 @@ export function BuyerIntentDiscoveryPage() {
       dataIndex: 'sampleMessage',
       key: 'sampleMessage',
       ellipsis: true,
+    },
+    {
+      title: fa.buyerIntentDiscovery.nearestIntentColumn,
+      dataIndex: 'nearestIntent',
+      key: 'nearestIntent',
+      width: 140,
+      render: (v: string) => v || '—',
     },
     {
       title: fa.salesAgentQuality.store,

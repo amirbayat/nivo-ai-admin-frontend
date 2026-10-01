@@ -2,7 +2,13 @@ import { useMemo, useState } from 'react'
 import type { Dayjs } from 'dayjs'
 import { Button, Card, Col, DatePicker, Row, Select, Space, Statistic, Table, Tag, Typography } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { useAbStats, useFailedMessages } from '@/queries/sales-agent-quality.queries'
+import {
+  useAbStats,
+  useAdPlacementInstrumentation,
+  useCartRecoveryInstrumentation,
+  useFailedMessages,
+  useFollowUpInstrumentation,
+} from '@/queries/sales-agent-quality.queries'
 import type { AbModelStat, FailedMessageItem } from '@/types/api'
 import { fa } from '@/locales/fa'
 import { ConversationTraceDrawer } from './ConversationTraceDrawer'
@@ -56,6 +62,79 @@ function AbStatCard({ stat, groupBy }: { stat: AbModelStat; groupBy: 'variant' |
         </Col>
       </Row>
     </Card>
+  )
+}
+
+// docs/PRD-product-strategy-and-roadmap.md بخش ۵.۱۰ بند ۳ — بدون این سه عدد نمی‌شد فهمید
+// فالوآپ رضایت/یادآوری سبد/تبلیغات (آیتم‌های #۱۳-۱۴) واقعاً اثر دارند یا نه
+function InstrumentationSection({ storeId, from, to }: { storeId?: string; from?: string; to?: string }) {
+  const { data: followUp, isLoading: followUpLoading } = useFollowUpInstrumentation({ storeId, from, to })
+  const { data: cartRecovery, isLoading: cartRecoveryLoading } = useCartRecoveryInstrumentation({
+    storeId,
+    from,
+    to,
+  })
+  const { data: ads, isLoading: adsLoading } = useAdPlacementInstrumentation(storeId)
+
+  return (
+    <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+      <Col xs={24} lg={8}>
+        <Card title={fa.salesAgentQuality.followUpSent} loading={followUpLoading}>
+          <Row gutter={[16, 8]}>
+            <Col span={12}>
+              <Statistic title={fa.salesAgentQuality.followUpSent} value={followUp?.sentCount ?? 0} />
+            </Col>
+            <Col span={12}>
+              <Statistic
+                title={fa.salesAgentQuality.followUpResponseRate}
+                value={pct(followUp?.responseRate ?? 0)}
+              />
+            </Col>
+            <Col span={8}>
+              <Statistic
+                title={fa.salesAgentQuality.followUpPositive}
+                value={followUp?.verdictCounts.POSITIVE ?? 0}
+                valueStyle={{ color: '#3f8600' }}
+              />
+            </Col>
+            <Col span={8}>
+              <Statistic
+                title={fa.salesAgentQuality.followUpNegative}
+                value={followUp?.verdictCounts.NEGATIVE ?? 0}
+                valueStyle={{ color: '#cf1322' }}
+              />
+            </Col>
+            <Col span={8}>
+              <Statistic
+                title={fa.salesAgentQuality.followUpUnrelated}
+                value={followUp?.verdictCounts.UNRELATED ?? 0}
+              />
+            </Col>
+          </Row>
+        </Card>
+      </Col>
+      <Col xs={24} lg={8}>
+        <Card title={fa.salesAgentQuality.cartReminderSent} loading={cartRecoveryLoading}>
+          <Row gutter={[16, 8]}>
+            <Col span={12}>
+              <Statistic title={fa.salesAgentQuality.cartReminderSent} value={cartRecovery?.remindersSent ?? 0} />
+            </Col>
+            <Col span={12}>
+              <Statistic
+                title={fa.salesAgentQuality.cartRecoveryRate}
+                value={pct(cartRecovery?.recoveryRate ?? 0)}
+                valueStyle={{ color: '#3f8600' }}
+              />
+            </Col>
+          </Row>
+        </Card>
+      </Col>
+      <Col xs={24} lg={8}>
+        <Card title={fa.salesAgentQuality.adPlacementImpressions} loading={adsLoading}>
+          <Statistic title={fa.salesAgentQuality.adPlacementImpressions} value={ads?.totalImpressions ?? 0} />
+        </Card>
+      </Col>
+    </Row>
   )
 }
 
@@ -167,6 +246,11 @@ export function SalesAgentQualityPage() {
       <Title level={4} style={{ marginBottom: 16 }}>
         {fa.salesAgentQuality.title}
       </Title>
+
+      <Title level={5} style={{ marginBottom: 12 }}>
+        {fa.salesAgentQuality.instrumentationTitle}
+      </Title>
+      <InstrumentationSection {...statsParams} />
 
       <Space style={{ marginBottom: 16 }}>
         <Button type={groupBy === 'variant' ? 'primary' : 'default'} onClick={() => setGroupBy('variant')}>

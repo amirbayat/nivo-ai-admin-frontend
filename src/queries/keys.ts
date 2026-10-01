@@ -89,6 +89,13 @@ export const keys = {
       ] as const,
     trace: (conversationId: string) =>
       ['admin', 'sales-agent-quality', 'trace', conversationId] as const,
+    // docs/PRD-product-strategy-and-roadmap.md بخش ۵.۱۰ بند ۳
+    followUpInstrumentation: (storeId?: string, from?: string, to?: string) =>
+      ['admin', 'sales-agent-quality', 'followup-instrumentation', storeId ?? 'all', from ?? '', to ?? ''] as const,
+    cartRecoveryInstrumentation: (storeId?: string, from?: string, to?: string) =>
+      ['admin', 'sales-agent-quality', 'cart-recovery-instrumentation', storeId ?? 'all', from ?? '', to ?? ''] as const,
+    adPlacementInstrumentation: (storeId?: string) =>
+      ['admin', 'sales-agent-quality', 'ad-placement-instrumentation', storeId ?? 'all'] as const,
   },
   // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۵
   buyerIntentDiscovery: {
