@@ -92,6 +92,13 @@ export function useAdPlacementInstrumentation(storeId?: string) {
   })
 }
 
+// فیدبک کاربر ۱۴۰۵/۰۷/۰۱ — بدون این refetchInterval، اگر درِاور وقتی وویس هنوز در حال
+// تولید است باز شود، تا ابد روی «در حال ساخت...» می‌ماند، حتی بعد از اینکه بک‌اند نتیجه‌ی
+// نهایی (موفق/FAILED) را persist کرده؛ فقط وقتی حداقل یک آیتم واقعاً pending است poll می‌کنیم
+function hasPendingVoice(data: ConversationTraceResponse | undefined): boolean {
+  return !!data?.items.some((item) => item.trace?.voice?.generated && !item.trace.voice.voiceName)
+}
+
 export function useConversationTrace(conversationId: string | null) {
   return useQuery({
     queryKey: keys.salesAgentQuality.trace(conversationId ?? ''),
@@ -100,5 +107,6 @@ export function useConversationTrace(conversationId: string | null) {
         .get<ConversationTraceResponse>(`/admin/sales-agent/conversations/${conversationId}/trace`)
         .then((r) => r.data),
     enabled: !!conversationId,
+    refetchInterval: (query) => (hasPendingVoice(query.state.data) ? 3500 : false),
   })
 }

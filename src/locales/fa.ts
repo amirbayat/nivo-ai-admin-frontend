@@ -364,6 +364,9 @@ export const fa = {
     scopeStoreAiCredit: 'اعتبار AI فروشگاه (فروشندگان)',
     bazaarSku: 'شناسه‌ی محصول (SKU) کافه‌بازار',
     bazaarSkuHint: 'از پیشخان بازار → برنامه → «پرداخت درون‌برنامه‌ای» بگیرید. فقط برای بسته‌های «نیوو کالری — کافه‌بازار» و غیر «مبلغ دلخواه» فعال است.',
+    // فیدبک کاربر ۱۴۰۵/۰۷/۰۱ — بسته‌ی مخصوص یک فروشگاه خاص (در کنار بسته‌های عمومی)
+    packageStoreId: 'مخصوص یک فروشگاه خاص (اختیاری)',
+    packageStoreIdHint: 'شناسه‌ی (ID) فروشگاه را بچسبانید. خالی = این بسته برای همه‌ی فروشنده‌ها قابل‌خرید است.',
     priceToman: 'قیمت (تومان)',
     priceFrom: (price: number) => `از ${price.toLocaleString('fa-IR')} تومان`,
     extractionSection: 'تبدیل عکس به پرامپت — دو حالت خودکار',
@@ -613,6 +616,8 @@ export const fa = {
       // docs/PRD-sales-agent-voice.md بخش ۶.۳
       CONSECUTIVE_CAP: 'سقف ۲ وویس پشت‌سرهم پر شده بود',
       FAILED: 'تولید صدا شکست خورد',
+      // فیدبک کاربر ۱۴۰۵/۰۷/۰۱ — فروشگاه بدون اعتبار، سقف ۳ مکالمه‌ی وویس‌دار پر شده
+      STORE_NO_CREDIT_CAP: 'فروشگاه بدون اعتبار — سقف ۳ مکالمه‌ی وویس‌دار پر شده بود',
     } as Record<string, string>,
     traceShowPrompt: 'نمایش کامل prompt/facts',
     // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۴.۲ — لایه‌ی «نیاز خریدار»، زیر پیام مشتری

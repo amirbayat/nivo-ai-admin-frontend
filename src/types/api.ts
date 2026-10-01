@@ -490,6 +490,8 @@ export interface CreditPackage {
   sortOrder: number
   scope: CreditPackageScope
   bazaarSku: string | null
+  // فیدبک کاربر ۱۴۰۵/۰۷/۰۱ — فقط برای scope=STORE_AI_CREDIT: بسته‌ی مخصوص یک فروشگاه خاص
+  storeId: string | null
   createdAt: string
 }
 
@@ -710,7 +712,13 @@ export interface AiTraceVoiceInfo {
   generated: boolean
   voiceName?: string
   toneVariant?: string
-  reason?: 'TOO_SHORT' | 'CONVERSATION_CAP' | 'FAILED'
+  reason?:
+    | 'TOO_SHORT'
+    | 'CONVERSATION_CAP'
+    | 'VOICE_VARIANT_OFF'
+    | 'CONSECUTIVE_CAP'
+    | 'STORE_NO_CREDIT_CAP'
+    | 'FAILED'
 }
 
 export interface AiTraceInfo {

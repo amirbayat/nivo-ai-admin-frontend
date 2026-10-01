@@ -66,6 +66,7 @@ interface PackageFormValues {
   sortOrder: number
   scope: CreditPackageScope
   bazaarSku: string | null
+  storeId: string | null
 }
 
 export function CreditConfigPage() {
@@ -132,6 +133,7 @@ export function CreditConfigPage() {
       sortOrder: packages?.length ?? 0,
       scope: 'GENERAL',
       bazaarSku: null,
+      storeId: null,
     })
     setOpen(true)
   }
@@ -148,6 +150,7 @@ export function CreditConfigPage() {
       sortOrder: pkg.sortOrder,
       scope: pkg.scope,
       bazaarSku: pkg.bazaarSku,
+      storeId: pkg.storeId,
     })
     setOpen(true)
   }
@@ -260,6 +263,13 @@ export function CreditConfigPage() {
       key: 'bazaarSku',
       width: 160,
       render: (v: string | null) => (v ? <span style={{ fontFamily: 'monospace' }}>{v}</span> : '—'),
+    },
+    {
+      title: fa.creditConfig.packageStoreId,
+      dataIndex: 'storeId',
+      key: 'storeId',
+      width: 160,
+      render: (v: string | null) => (v ? <Tag color="gold" style={{ fontFamily: 'monospace' }}>{v}</Tag> : '—'),
     },
     {
       title: fa.common.actions,
@@ -431,6 +441,15 @@ export function CreditConfigPage() {
               extra={fa.creditConfig.bazaarSkuHint}
             >
               <Input style={{ width: '100%' }} disabled={isCustomAmountWatched} allowClear />
+            </Form.Item>
+          )}
+          {scopeWatched === 'STORE_AI_CREDIT' && (
+            <Form.Item
+              name="storeId"
+              label={fa.creditConfig.packageStoreId}
+              extra={fa.creditConfig.packageStoreIdHint}
+            >
+              <Input style={{ width: '100%' }} dir="ltr" allowClear />
             </Form.Item>
           )}
           <Space size="large" wrap>
