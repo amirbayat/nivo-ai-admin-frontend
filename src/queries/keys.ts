@@ -70,8 +70,12 @@ export const keys = {
       ['admin', 'campaigns', campaignId, 'waitlist', status ?? 'all'] as const,
   },
   salesAgentQuality: {
-    abStats: (groupBy: 'variant' | 'channel' | 'voiceVariant', storeId?: string, from?: string, to?: string) =>
-      ['admin', 'sales-agent-quality', 'ab-stats', groupBy, storeId ?? 'all', from ?? '', to ?? ''] as const,
+    abStats: (
+      groupBy: 'variant' | 'channel' | 'voiceVariant' | 'responseStrategy',
+      storeId?: string,
+      from?: string,
+      to?: string,
+    ) => ['admin', 'sales-agent-quality', 'ab-stats', groupBy, storeId ?? 'all', from ?? '', to ?? ''] as const,
     failedMessages: (
       page: number,
       storeId?: string,

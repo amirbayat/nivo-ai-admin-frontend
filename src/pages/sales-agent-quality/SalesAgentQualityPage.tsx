@@ -20,17 +20,22 @@ function pct(v: number): string {
   return `${(v * 100).toFixed(1)}٪`
 }
 
-// docs/PRD-sales-agent-admin-analytics.md بخش ۴ + docs/PRD-sales-agent-voice.md بخش ۶.۱ —
+// docs/PRD-sales-agent-admin-analytics.md بخش ۴ + docs/PRD-sales-agent-voice.md بخش ۶.۱ +
+// docs/PRD-sales-agent-response-strategy-ab.md بخش ۱۱ —
 // groupBy=channel یعنی group مقدار enum CustomerChannel است ('WEB'/'TELEGRAM')، و
-// groupBy=voiceVariant یعنی group مقدار enum VoiceVariant است ('ON'/'OFF') — نه اسم مدل،
-// پس هرکدام برچسب فارسی جداگانه دارند
-function groupLabel(groupBy: 'variant' | 'channel' | 'voiceVariant', group: string): string {
+// groupBy=voiceVariant یعنی group مقدار enum VoiceVariant است ('ON'/'OFF')، و
+// groupBy=responseStrategy یعنی group مقدار enum ResponseStrategy است
+// ('RULE_BASED'/'SIMPLE_AGENT') — نه اسم مدل، پس هرکدام برچسب فارسی جداگانه دارند
+type AbGroupBy = 'variant' | 'channel' | 'voiceVariant' | 'responseStrategy'
+
+function groupLabel(groupBy: AbGroupBy, group: string): string {
   if (groupBy === 'channel') return fa.salesAgentQuality.channelLabels[group] ?? group
   if (groupBy === 'voiceVariant') return fa.salesAgentQuality.voiceVariantLabels[group] ?? group
+  if (groupBy === 'responseStrategy') return fa.salesAgentQuality.responseStrategyLabels[group] ?? group
   return group
 }
 
-function AbStatCard({ stat, groupBy }: { stat: AbModelStat; groupBy: 'variant' | 'channel' | 'voiceVariant' }) {
+function AbStatCard({ stat, groupBy }: { stat: AbModelStat; groupBy: AbGroupBy }) {
   const handoffColor = stat.stuckHandoffRate > 0.3 ? '#cf1322' : '#3f8600'
   return (
     <Card title={<span style={{ fontFamily: groupBy === 'variant' ? 'monospace' : 'inherit' }}>{groupLabel(groupBy, stat.group)}</span>}>
@@ -140,7 +145,7 @@ function InstrumentationSection({ storeId, from, to }: { storeId?: string; from?
 
 export function SalesAgentQualityPage() {
   const [page, setPage] = useState(1)
-  const [groupBy, setGroupBy] = useState<'variant' | 'channel' | 'voiceVariant'>('variant')
+  const [groupBy, setGroupBy] = useState<AbGroupBy>('variant')
   const [modelFilter, setModelFilter] = useState<string | undefined>(undefined)
   const [storeFilter, setStoreFilter] = useState<string | undefined>(undefined)
   const [reasonFilter, setReasonFilter] = useState<'UNCLEAR' | 'NO_KB_MATCH' | undefined>(undefined)
@@ -163,9 +168,26 @@ export function SalesAgentQualityPage() {
     groupBy: 'voiceVariant',
     ...statsParams,
   })
-  const abStats = groupBy === 'variant' ? modelStats : groupBy === 'channel' ? channelStats : voiceStats
+  const { data: responseStrategyStats, isLoading: responseStrategyStatsLoading } = useAbStats({
+    groupBy: 'responseStrategy',
+    ...statsParams,
+  })
+  const abStats =
+    groupBy === 'variant'
+      ? modelStats
+      : groupBy === 'channel'
+        ? channelStats
+        : groupBy === 'voiceVariant'
+          ? voiceStats
+          : responseStrategyStats
   const abStatsLoading =
-    groupBy === 'variant' ? modelStatsLoading : groupBy === 'channel' ? channelStatsLoading : voiceStatsLoading
+    groupBy === 'variant'
+      ? modelStatsLoading
+      : groupBy === 'channel'
+        ? channelStatsLoading
+        : groupBy === 'voiceVariant'
+          ? voiceStatsLoading
+          : responseStrategyStatsLoading
   const { data: failedMessages, isLoading: failedLoading } = useFailedMessages({
     page,
     variant: modelFilter,
@@ -261,6 +283,12 @@ export function SalesAgentQualityPage() {
         </Button>
         <Button type={groupBy === 'voiceVariant' ? 'primary' : 'default'} onClick={() => setGroupBy('voiceVariant')}>
           {fa.salesAgentQuality.groupByVoice}
+        </Button>
+        <Button
+          type={groupBy === 'responseStrategy' ? 'primary' : 'default'}
+          onClick={() => setGroupBy('responseStrategy')}
+        >
+          {fa.salesAgentQuality.groupByResponseStrategy}
         </Button>
       </Space>
 

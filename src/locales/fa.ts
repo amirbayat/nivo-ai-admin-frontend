@@ -595,6 +595,9 @@ export const fa = {
     groupByModel: 'بر اساس مدل',
     groupByChannel: 'بر اساس کانال',
     groupByVoice: 'A/B وویس',
+    // docs/PRD-sales-agent-response-strategy-ab.md بخش ۱۱ — مقایسه‌ی Track A (قانون‌محور) و
+    // Track B (agent) روی نرخ تبدیل/هزینه/تاخیر واقعی
+    groupByResponseStrategy: 'Track A/B',
     channelLabels: {
       WEB: 'وب',
       TELEGRAM: 'تلگرام',
@@ -602,6 +605,10 @@ export const fa = {
     voiceVariantLabels: {
       ON: 'وویس فعال',
       OFF: 'فقط متن',
+    } as Record<string, string>,
+    responseStrategyLabels: {
+      RULE_BASED: 'A — قانون‌محور',
+      SIMPLE_AGENT: 'B — agent',
     } as Record<string, string>,
     conversations: 'مکالمات',
     stuckHandoffRate: 'نرخ ارجاع به انسان',

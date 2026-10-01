@@ -11,7 +11,7 @@ import type {
 import { keys } from './keys'
 
 interface AbStatsParams {
-  groupBy: 'variant' | 'channel' | 'voiceVariant'
+  groupBy: 'variant' | 'channel' | 'voiceVariant' | 'responseStrategy'
   storeId?: string
   from?: string
   to?: string
