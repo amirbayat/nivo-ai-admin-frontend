@@ -791,6 +791,17 @@ export interface AiTraceInfo {
   // runFullAgentTurn پر می‌شود؛ خوداظهاری خودِ مدل
   persuasionTechniquesUsed?: PersuasionTechnique[]
   usedGeneralKnowledge?: boolean
+  // docs/PRD-full-agent-engineering-review.md بخش ۵ — فقط روی trace سطح runFullAgentTurn پر
+  // می‌شوند
+  relevantProductIdsRaw?: string[]
+  lastShownProducts?: { id: string; name: string }[]
+  toolsCalled?: { name: string; args: unknown }[]
+  initialCatalogProductIds?: string[]
+  stepsUsed?: number
+  mutationHappened?: boolean
+  progressHappened?: boolean
+  isFallbackAttempt?: boolean
+  suspiciousPriceClaims?: number[]
 }
 
 // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۴.۲ — لایه‌ی «نیاز خریدار»، مکمل و جدا از

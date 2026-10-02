@@ -678,6 +678,18 @@ export const fa = {
     traceUnmatchedBuyerNeed: (label: string) => `❓ نیاز خارج از taxonomy: «${label}»`,
     traceLowConfidence: (level: 'MEDIUM' | 'LOW') =>
       `⚠️ اطمینان تشخیص intent: ${level === 'LOW' ? 'پایین' : 'متوسط'}`,
+    // docs/PRD-full-agent-engineering-review.md بخش ۵ — فقط روی trace سطح FULL_AGENT پر می‌شوند؛
+    // هدف: پیداکردن باگ «کارت/پاسخ اشتباه» در یک نگاه بدون نیاز به reproduce دستی
+    traceToolsCalled: (tools: string[]) => `🔧 ابزارهای صدا‌زده‌شده: ${tools.join('، ') || '—'}`,
+    traceRelevantProductIdsRaw: (ids: string[]) => `🏷️ شناسه‌ی محصول خام از مدل: ${ids.join('، ')}`,
+    traceLastShownProducts: (names: string[]) => `🛍️ آخرین محصولات تایید‌شده (بعد از فیلتر): ${names.join('، ')}`,
+    traceInitialCatalogIds: (ids: string[]) => `📦 کاتالوگ اولیه‌ی همین نوبت: ${ids.length} محصول`,
+    traceStepsUsed: (steps: number) => `👣 قدم‌های مصرف‌شده: ${steps} از ۶`,
+    traceMutationHappened: '💾 این نوبت یک جهش واقعی (سبد/سفارش) ثبت کرد',
+    traceProgressHappened: '✅ این نوبت پیشرفت واقعی (افزودن به سبد/سفارش) داشت',
+    traceFallbackAttempt: '🔁 این تلاش دوم بود (fallback با مدل پیش‌فرض)',
+    traceSuspiciousPriceClaims: (amounts: number[]) =>
+      `🚨 عدد تومانی مشکوک در متن پاسخ (با هیچ مبلغ واقعی مطابقت نداشت): ${amounts.join('، ')}`,
     // docs/PRD-product-strategy-and-roadmap.md بخش ۵.۱۰ بند ۳
     instrumentationTitle: 'پیگیری خودکار و تبلیغات — آیا واقعاً اثر دارند؟',
     followUpSent: 'فالوآپ رضایت فرستاده‌شده',

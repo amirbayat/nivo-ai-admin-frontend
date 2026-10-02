@@ -48,6 +48,29 @@ function TraceTimelineItem({ item }: { item: ConversationTraceItem }) {
       )}
       {agentReply && <Text>{fa.salesAgentQuality.traceReply(agentReply.text)}</Text>}
       {voice && <Text type="secondary">{voice}</Text>}
+      {trace?.toolsCalled && trace.toolsCalled.length > 0 && (
+        <Text type="secondary">{fa.salesAgentQuality.traceToolsCalled(trace.toolsCalled.map(t => t.name))}</Text>
+      )}
+      {trace?.relevantProductIdsRaw && trace.relevantProductIdsRaw.length > 0 && (
+        <Text type="secondary">{fa.salesAgentQuality.traceRelevantProductIdsRaw(trace.relevantProductIdsRaw)}</Text>
+      )}
+      {trace?.lastShownProducts && trace.lastShownProducts.length > 0 && (
+        <Text type="secondary">
+          {fa.salesAgentQuality.traceLastShownProducts(trace.lastShownProducts.map(p => p.name))}
+        </Text>
+      )}
+      {trace?.initialCatalogProductIds && trace.initialCatalogProductIds.length > 0 && (
+        <Text type="secondary">{fa.salesAgentQuality.traceInitialCatalogIds(trace.initialCatalogProductIds)}</Text>
+      )}
+      {trace?.stepsUsed !== undefined && (
+        <Text type="secondary">{fa.salesAgentQuality.traceStepsUsed(trace.stepsUsed)}</Text>
+      )}
+      {trace?.isFallbackAttempt && <Text type="warning">{fa.salesAgentQuality.traceFallbackAttempt}</Text>}
+      {trace?.mutationHappened && <Text type="secondary">{fa.salesAgentQuality.traceMutationHappened}</Text>}
+      {trace?.progressHappened && <Text type="secondary">{fa.salesAgentQuality.traceProgressHappened}</Text>}
+      {trace?.suspiciousPriceClaims && trace.suspiciousPriceClaims.length > 0 && (
+        <Text type="danger">{fa.salesAgentQuality.traceSuspiciousPriceClaims(trace.suspiciousPriceClaims)}</Text>
+      )}
       {trace?.persuasionTechniquesUsed && trace.persuasionTechniquesUsed.length > 0 && (
         <Text type="secondary">
           {fa.salesAgentQuality.tracePersuasionTechniquesUsed(
