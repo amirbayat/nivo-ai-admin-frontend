@@ -818,7 +818,12 @@ export interface ConversationTraceItem {
   id: string
   createdAt: string
   customerMessage?: string
-  agentReply?: { text: string; flag?: 'UNCLEAR' | 'NO_KB_MATCH' }
+  agentReply?: {
+    text: string
+    flag?: 'UNCLEAR' | 'NO_KB_MATCH'
+    // فیدبک کاربر ۱۴۰۵/۰۷/۱۲ — برخلاف trace.voice (فقط روی پاسخ‌های AI-محور)، این همیشه هست
+    voice?: { generated: boolean; reason?: AiTraceVoiceInfo['reason'] }
+  }
   trace?: AiTraceInfo
   classificationTrace?: ClassificationTraceInfo
 }

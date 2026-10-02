@@ -37,7 +37,9 @@ function TraceTimelineItem({ item }: { item: ConversationTraceItem }) {
 
   const { agentReply, trace } = item
   const kbLabel = trace?.kbSource ? fa.salesAgentQuality.traceKbSourceLabels[trace.kbSource] : undefined
-  const voice = voiceLine(trace?.voice)
+  // فیدبک کاربر ۱۴۰۵/۰۷/۱۲ — پاسخ‌های قانون‌محور ثابت (فاکتور/سبد/handoff/...) هیچ‌وقت trace
+  // ندارند؛ voice آن‌ها فقط روی خودِ agentReply نشسته
+  const voice = voiceLine(trace?.voice ?? agentReply?.voice)
 
   return (
     <Space direction="vertical" size={2} style={{ display: 'flex' }}>
