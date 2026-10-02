@@ -13,15 +13,15 @@ import { fa } from '@/locales/fa'
 const { Title, Paragraph, Text } = Typography
 
 // src/modules/sales-agent/model-variants.ts (بک‌اند) — کلیدهای A/B، نه اسم خام مدل روی
-// OpenRouter؛ لیست اینجا فقط برای دراپ‌داون است، تغییرش هیچ اثری روی منطق بک‌اند ندارد
+// OpenRouter؛ لیست اینجا فقط برای دراپ‌داون است، تغییرش هیچ اثری روی منطق بک‌اند ندارد.
+// ۱۴۰۵/۰۷/۱۹: gpt-5.4-mini از pool بک‌اند حذف شد (و jev-router قدیمی‌تر که از قبل حذف شده
+// بود ولی اینجا جا مانده بود) — این لیست دستی باید هم‌زمان با MODEL_VARIANTS بک‌اند بروز بماند
 const VARIANT_OPTIONS = [
-  'gpt-5.4-mini',
   'gpt-6-luna',
   'gpt-6.1-sol',
   'gemini-3.8-flash',
   'claude-sonnet-5.5',
   'grok-4.7',
-  'jev-router',
 ]
 
 export function SalesAgentQaPage() {
