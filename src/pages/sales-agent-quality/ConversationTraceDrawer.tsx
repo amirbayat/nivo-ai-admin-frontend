@@ -48,6 +48,14 @@ function TraceTimelineItem({ item }: { item: ConversationTraceItem }) {
       )}
       {agentReply && <Text>{fa.salesAgentQuality.traceReply(agentReply.text)}</Text>}
       {voice && <Text type="secondary">{voice}</Text>}
+      {trace?.persuasionTechniquesUsed && trace.persuasionTechniquesUsed.length > 0 && (
+        <Text type="secondary">
+          {fa.salesAgentQuality.tracePersuasionTechniquesUsed(
+            trace.persuasionTechniquesUsed.map(t => fa.salesAgentQuality.persuasionTechniqueLabels[t] ?? t),
+          )}
+        </Text>
+      )}
+      {trace?.usedGeneralKnowledge && <Text type="secondary">{fa.salesAgentQuality.traceUsedGeneralKnowledge}</Text>}
       {trace?.factsOrPrompt && (
         <Collapse
           size="small"

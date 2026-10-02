@@ -609,6 +609,8 @@ export const fa = {
     responseStrategyLabels: {
       RULE_BASED: 'A — قانون‌محور',
       SIMPLE_AGENT: 'B — agent',
+      // docs/PRD-sales-agent-tool-calling-architecture.md بخش ۷ (فاز ۳)
+      FULL_AGENT: 'C — ایجنت کامل',
     } as Record<string, string>,
     conversations: 'مکالمات',
     stuckHandoffRate: 'نرخ ارجاع به انسان',
@@ -659,6 +661,18 @@ export const fa = {
       STORE_NO_CREDIT_CAP: 'فروشگاه بدون اعتبار — سقف ۳ مکالمه‌ی وویس‌دار پر شده بود',
     } as Record<string, string>,
     traceShowPrompt: 'نمایش کامل prompt/facts',
+    // docs/PRD-sales-agent-persuasion-principles.md بخش ۸ — خوداظهاری خودِ مدل، فقط روی trace
+    // سطح runFullAgentTurn
+    tracePersuasionTechniquesUsed: (labels: string[]) => `🧲 متقاعدسازی استفاده‌شده: ${labels.join('، ')}`,
+    traceUsedGeneralKnowledge: '🌐 از دانش عمومی AI (نه داده‌ی فروشگاه) هم استفاده شد',
+    persuasionTechniqueLabels: {
+      COMMITMENT_CONSISTENCY: 'تعهد و ثبات',
+      SOCIAL_PROOF: 'اثبات اجتماعی',
+      AUTHORITY: 'اقتدار',
+      LIKING: 'علاقه',
+      RECIPROCITY: 'تقابل',
+      SCARCITY: 'کمیابی',
+    } as Record<string, string>,
     // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۴.۲ — لایه‌ی «نیاز خریدار»، زیر پیام مشتری
     traceBuyerNeeds: (tags: string[]) => `🎯 نیازهای شناسایی‌شده: ${tags.join('، ')}`,
     traceUnmatchedBuyerNeed: (label: string) => `❓ نیاز خارج از taxonomy: «${label}»`,

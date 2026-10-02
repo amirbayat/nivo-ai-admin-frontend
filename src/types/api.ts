@@ -771,6 +771,15 @@ export interface AiTraceVoiceInfo {
     | 'FAILED'
 }
 
+// docs/PRD-sales-agent-persuasion-principles.md بخش ۸
+export type PersuasionTechnique =
+  | 'COMMITMENT_CONSISTENCY'
+  | 'SOCIAL_PROOF'
+  | 'AUTHORITY'
+  | 'LIKING'
+  | 'RECIPROCITY'
+  | 'SCARCITY'
+
 export interface AiTraceInfo {
   intent: string
   handler: string
@@ -778,6 +787,10 @@ export interface AiTraceInfo {
   model: string
   kbSource?: 'STORE_KB' | 'PRODUCT_DESCRIPTION' | 'STORE_PROFILE' | 'STUB'
   voice?: AiTraceVoiceInfo
+  // docs/PRD-sales-agent-persuasion-principles.md بخش ۸ — فقط روی trace سطح
+  // runFullAgentTurn پر می‌شود؛ خوداظهاری خودِ مدل
+  persuasionTechniquesUsed?: PersuasionTechnique[]
+  usedGeneralKnowledge?: boolean
 }
 
 // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۴.۲ — لایه‌ی «نیاز خریدار»، مکمل و جدا از
