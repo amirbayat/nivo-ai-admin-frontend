@@ -785,6 +785,7 @@ export const fa = {
       GREETING: 'خوش‌آمدگویی',
       BROWSING: 'مرور محصولات',
       CART_REVIEW: 'بررسی سبد',
+      ADDRESS_COLLECTION: 'در حال گرفتن آدرس',
       AWAITING_PAYMENT: 'در انتظار پرداخت',
       RECEIPT_SUBMITTED: 'رسید ارسال‌شده',
       AWAITING_SELLER_APPROVAL: 'در انتظار تأیید فروشنده',
