@@ -582,6 +582,9 @@ export const fa = {
     columnStore: 'فروشگاه',
     columnCompleteness: 'کامل‌بودن',
     columnDraftStatus: 'وضعیت پیش‌نویس',
+    // docs/PRD-sales-agent-checkout-pricing-and-roadmap.md بخش ۳ (فاز ۴.۱) — Drawer تمام‌ارتفاع
+    columnActions: 'عملیات',
+    review: 'بررسی',
     missingPhotoOnly: 'فقط عکس کم دارد — از این مسیر قابل‌تامین نیست',
     generateWebSearch: 'جستجوی وب',
     generateFromResource: 'تولید از منبع',
