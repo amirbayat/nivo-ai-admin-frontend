@@ -477,6 +477,16 @@ export interface CreditConfig {
   updatedAt: string
 }
 
+// docs/PRD-sales-agent-checkout-pricing-and-roadmap.md بخش ۶.۵ — جدا از CreditConfig بالا
+// (که مال ویجت نیوو/nivoai.ir است)؛ سهمیه‌ی رایگان روزانه + دوره‌ی آزمایشی مارکت‌پلیس
+export interface SalesAgentGlobalConfig {
+  id: string
+  freeDailyQuota: number
+  trialDurationDays: number
+  trialCreditToman: number
+  updatedAt: string
+}
+
 export type CreditPackageScope = 'GENERAL' | 'NIVO_CAL' | 'NIVO_CAL_BAZAAR' | 'STORE_AI_CREDIT'
 
 export interface CreditPackage {

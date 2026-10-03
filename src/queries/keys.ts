@@ -28,6 +28,9 @@ export const keys = {
     config: () => ['admin', 'credit-config'] as const,
     packages: () => ['admin', 'credit-packages'] as const,
   },
+  salesAgentConfig: {
+    config: () => ['admin', 'sales-agent-config'] as const,
+  },
   pricingTiers: { all: () => ['admin', 'pricing-tiers'] as const },
   captionPricingTiers: { all: () => ['admin', 'caption-pricing-tiers'] as const },
   creditsReport: {

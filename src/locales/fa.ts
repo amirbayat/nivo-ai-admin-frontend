@@ -28,6 +28,7 @@ export const fa = {
     tickets: 'تیکت‌ها',
     analytics: 'آنالیز مصرف',
     salesBot: 'ربات فروش',
+    salesAgentConfig: 'تنظیمات مارکت‌پلیس فروشندگان',
     salesAgentQuality: 'کیفیت ایجنت فروش',
     buyerIntentDiscovery: 'نیازهای خریدار',
     salesAgentQa: 'تست QA مدل‌ها',
@@ -382,6 +383,18 @@ export const fa = {
     sourceImageAccuracyCreditCost: 'نیوو اضافه‌ی سوییچ «استفاده از عکس اصلی»',
     sourceImageAccuracyCreditCostHint:
       'وقتی کاربر موقع تولید از یک سبک استخراج‌شده سوییچ «استفاده از عکس اصلی» را روشن کند، این مقدار به قیمت آن سبک اضافه می‌شود.',
+  },
+  // docs/PRD-sales-agent-checkout-pricing-and-roadmap.md بخش ۶.۵ — جدا از creditConfig بالا
+  // (مال ویجت نیوو/nivoai.ir)؛ سهمیه‌ی رایگان روزانه + دوره‌ی آزمایشی مارکت‌پلیس sales-agent
+  salesAgentConfig: {
+    title: 'تنظیمات مارکت‌پلیس فروشندگان',
+    freeDailyQuota: 'سهمیه‌ی رایگان روزانه (تعداد خریدار جدید)',
+    freeDailyQuotaHint: 'بعد از این تعداد خریدار جدید در روز، مکالمه‌های بعدی از اعتبار فروشگاه کم می‌شود — همان سقف رایگان روزانه‌ی صوت هم از همین عدد می‌خواند.',
+    trialDurationDays: 'طول دوره‌ی آزمایشی (روز)',
+    trialCreditToman: 'سقف اعتبار هدیه‌ی دوره‌ی آزمایشی (تومان)',
+    trialHint: 'از اولین چتِ اولین خریدار هر فروشگاه شروع می‌شود، تا سقف تومانی یا پایان روزهای دوره — هرکدام زودتر برسد. تغییر این دو عدد فقط روی فروشگاه‌هایی اثر می‌گذارد که هنوز اولین چتشان نیفتاده.',
+    saveConfig: 'ذخیره‌ی تنظیمات',
+    configSaved: 'تنظیمات ذخیره شد',
   },
   pricingTiers: {
     title: 'پله‌های ضریب قیمت',
