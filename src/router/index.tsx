@@ -27,6 +27,7 @@ import { SalesAgentConfigPage } from '@/pages/sales-agent-config/SalesAgentConfi
 import { SalesAgentQualityPage } from '@/pages/sales-agent-quality/SalesAgentQualityPage'
 import { BuyerIntentDiscoveryPage } from '@/pages/buyer-intent-discovery/BuyerIntentDiscoveryPage'
 import { SalesConversationsPage } from '@/pages/sales-conversations/SalesConversationsPage'
+import { StoresPage } from '@/pages/stores/StoresPage'
 import { SalesAgentQaPage } from '@/pages/sales-agent-qa/SalesAgentQaPage'
 import { CommentsModerationPage } from '@/pages/comments-moderation/CommentsModerationPage'
 import { ProductEnrichmentPage } from '@/pages/product-enrichment/ProductEnrichmentPage'
@@ -98,6 +99,7 @@ export function AppRouter() {
         <Route path="sales-agent-quality" element={<SalesAgentQualityPage />} />
         <Route path="buyer-intent-discovery" element={<BuyerIntentDiscoveryPage />} />
         <Route path="sales-conversations" element={<SalesConversationsPage />} />
+        <Route path="stores" element={<StoresPage />} />
         <Route path="sales-agent-qa" element={<SalesAgentQaPage />} />
         <Route path="comments" element={<CommentsModerationPage />} />
         <Route path="product-enrichment" element={<ProductEnrichmentPage />} />

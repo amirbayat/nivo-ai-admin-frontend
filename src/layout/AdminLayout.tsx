@@ -40,6 +40,7 @@ import {
   AimOutlined,
   UnorderedListOutlined,
   FileSearchOutlined,
+  CreditCardOutlined,
 } from '@ant-design/icons'
 import { useLogout } from '@/queries/auth.queries'
 import { useUnreadNotificationCount } from '@/queries/admin-notifications.queries'
@@ -74,6 +75,7 @@ const menuItems = [
   { key: '/admin/sales-agent-quality', icon: <LineChartOutlined />, label: fa.nav.salesAgentQuality },
   { key: '/admin/buyer-intent-discovery', icon: <AimOutlined />, label: fa.nav.buyerIntentDiscovery },
   { key: '/admin/sales-conversations', icon: <UnorderedListOutlined />, label: fa.nav.salesConversations },
+  { key: '/admin/stores', icon: <CreditCardOutlined />, label: fa.nav.stores },
   { key: '/admin/sales-agent-qa', icon: <ExperimentOutlined />, label: fa.nav.salesAgentQa },
   { key: '/admin/comments', icon: <StarOutlined />, label: fa.nav.comments },
   { key: '/admin/product-enrichment', icon: <FileSearchOutlined />, label: fa.nav.productEnrichment },

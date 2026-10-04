@@ -767,6 +767,54 @@ export interface AdPlacementInstrumentation {
   totalImpressions: number
 }
 
+// docs/PRD-admin-seller-credit-overview.md — لیست فروشنده‌ها با اعتبار/هزینه‌ی AI
+export type CreditUsageKind = 'TEXT_REPLY' | 'VOICE_TTS' | 'ASR' | 'TOPUP' | 'PRODUCT_ENRICHMENT' | 'AD_PLACEMENT'
+
+export interface StoreCreditOverviewItem {
+  storeId: string
+  slug: string
+  name: string
+  status: 'ACTIVE' | 'SUSPENDED'
+  seller: { phone: string; name: string | null }
+  creditBalanceToman: number
+  trialCreditRemainingToman: number
+  totalPurchasedToman: number
+  // هزینه‌ی واقعی AI (شامل سهمیه‌ی رایگان) در برابر مبلغی که واقعاً از اعتبار کم شده
+  totalAiCostToman: number
+  totalChargedToman: number
+  costByKind: Partial<Record<Exclude<CreditUsageKind, 'TOPUP'>, number>>
+  freeQuotaEventsCount: number
+  paidEventsCount: number
+}
+
+export interface PaginatedStoreCreditOverview {
+  items: StoreCreditOverviewItem[]
+  total: number
+  page: number
+  pageSize: number
+}
+
+export interface CreditUsageEventItem {
+  id: string
+  customerId: string | null
+  conversationId: string | null
+  model: string
+  kind: CreditUsageKind
+  costToman: number
+  isFreeQuota: boolean
+  tokensInput: number
+  tokensOutput: number
+  costUsdMicros: number
+  createdAt: string
+}
+
+export interface PaginatedCreditUsageEvents {
+  items: CreditUsageEventItem[]
+  total: number
+  page: number
+  pageSize: number
+}
+
 // docs/PRD-admin-ai-decision-trace-log.md — تایم‌لاین کامل یک مکالمه برای دیباگ ادمین
 export interface AiTraceVoiceInfo {
   generated: boolean

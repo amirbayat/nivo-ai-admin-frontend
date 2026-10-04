@@ -108,6 +108,13 @@ export const keys = {
     adPlacementInstrumentation: (storeId?: string) =>
       ['admin', 'sales-agent-quality', 'ad-placement-instrumentation', storeId ?? 'all'] as const,
   },
+  // docs/PRD-admin-seller-credit-overview.md — لیست فروشنده‌ها با اعتبار/هزینه‌ی AI
+  storeCredit: {
+    list: (page: number, search?: string, from?: string, to?: string) =>
+      ['admin', 'stores', page, search ?? '', from ?? '', to ?? ''] as const,
+    usage: (storeId: string, page: number, kind?: string, from?: string, to?: string) =>
+      ['admin', 'stores', storeId, 'credit-usage', page, kind ?? 'all', from ?? '', to ?? ''] as const,
+  },
   // فیدبک کاربر ۱۴۰۵/۰۷/۰۱ — لیست عمومی و قابل‌مرور همه‌ی مکالمات، جدا از salesAgentQuality
   // (که فقط failed-messages را لیست می‌کند)
   salesConversations: {
