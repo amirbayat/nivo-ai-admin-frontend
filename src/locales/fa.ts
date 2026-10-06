@@ -828,6 +828,10 @@ export const fa = {
     totalCharged: 'کسرشده از اعتبار',
     freeVsPaid: 'رایگان / پولی',
     viewUsage: 'جزئیات مصرف',
+    // docs/PRD-seller-demo-sandbox-hub-promo-and-release-prep.md بخش ۱۶
+    leadCaptureOnly: 'اکشن کاستوم (فقط لید)',
+    leadCaptureOnlyHint:
+      'وقتی روشن باشد، ایجنت فروش این فروشگاه دیگر سفارش/پرداخت ثبت نمی‌کند — فقط شماره‌ی علاقه‌مندها را جمع می‌کند. فقط مخصوص فروشگاه دموی خودِ فروشنده.',
     kindLabels: {
       TEXT_REPLY: 'چت متنی',
       VOICE_TTS: 'وویس',

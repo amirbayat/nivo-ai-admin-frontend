@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import type { Dayjs } from 'dayjs'
-import { Button, Card, DatePicker, Input, Space, Table, Tag, Tooltip, Typography } from 'antd'
+import { Button, Card, DatePicker, Input, Space, Switch, Table, Tag, Tooltip, Typography, message } from 'antd'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
-import { useStoreCreditOverview } from '@/queries/store-credit.queries'
+import { useSetStoreLeadCaptureOnly, useStoreCreditOverview } from '@/queries/store-credit.queries'
 import type { StoreCreditOverviewItem } from '@/types/api'
 import { fa } from '@/locales/fa'
 import { StoreCreditUsageDrawer } from './StoreCreditUsageDrawer'
@@ -34,6 +34,7 @@ export function StoresPage() {
     from: range?.[0]?.format('YYYY-MM-DD'),
     to: range?.[1]?.format('YYYY-MM-DD'),
   })
+  const setLeadCaptureOnly = useSetStoreLeadCaptureOnly()
 
   function handleSearch(value: string) {
     setSearch(value)
@@ -123,6 +124,30 @@ export function StoresPage() {
       render: (_, r) => `${r.freeQuotaEventsCount.toLocaleString('fa-IR')} / ${r.paidEventsCount.toLocaleString('fa-IR')}`,
     },
     {
+      title: (
+        <Space size={4}>
+          {fa.stores.leadCaptureOnly}
+          <Tooltip title={fa.stores.leadCaptureOnlyHint}>
+            <QuestionCircleOutlined style={{ color: '#888' }} />
+          </Tooltip>
+        </Space>
+      ),
+      key: 'leadCaptureOnly',
+      width: 130,
+      render: (_, r) => (
+        <Switch
+          checked={r.leadCaptureOnly}
+          loading={setLeadCaptureOnly.isPending && setLeadCaptureOnly.variables?.storeId === r.storeId}
+          onChange={(checked) =>
+            setLeadCaptureOnly.mutate(
+              { storeId: r.storeId, enabled: checked },
+              { onError: () => void message.error(fa.common.error) },
+            )
+          }
+        />
+      ),
+    },
+    {
       title: '',
       key: 'actions',
       width: 110,
@@ -165,7 +190,7 @@ export function StoresPage() {
           dataSource={data?.items ?? []}
           columns={columns}
           loading={isLoading}
-          scroll={{ x: 1300 }}
+          scroll={{ x: 1430 }}
           locale={{ emptyText: fa.common.noData }}
           pagination={{
             current: page,

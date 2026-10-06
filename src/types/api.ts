@@ -785,6 +785,8 @@ export interface StoreCreditOverviewItem {
   costByKind: Partial<Record<Exclude<CreditUsageKind, 'TOPUP'>, number>>
   freeQuotaEventsCount: number
   paidEventsCount: number
+  // docs/PRD-seller-demo-sandbox-hub-promo-and-release-prep.md بخش ۱۶ — فقط از پنل ادمین قابل‌تغییر
+  leadCaptureOnly: boolean
 }
 
 export interface PaginatedStoreCreditOverview {

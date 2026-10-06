@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import type { PaginatedCreditUsageEvents, PaginatedStoreCreditOverview } from '@/types/api'
 import { keys } from './keys'
@@ -12,6 +12,17 @@ export function useStoreCreditOverview(params: { page: number; search?: string; 
       api
         .get<PaginatedStoreCreditOverview>('/admin/stores', { params: { page, search, from, to } })
         .then((r) => r.data),
+  })
+}
+
+// docs/PRD-seller-demo-sandbox-hub-promo-and-release-prep.md بخش ۱۶ — فقط ادمین می‌تواند این را
+// روشن/خاموش کند (فروشنده هیچ راهی برای تغییرش ندارد)
+export function useSetStoreLeadCaptureOnly() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ storeId, enabled }: { storeId: string; enabled: boolean }) =>
+      api.patch(`/admin/stores/${storeId}/lead-capture-only`, { enabled }).then((r) => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin', 'stores'] }),
   })
 }
 
