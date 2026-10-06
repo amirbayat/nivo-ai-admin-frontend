@@ -582,6 +582,10 @@ export interface ProductCommentItem {
   customerId: string
   text: string
   rating: number | null
+  // docs/PRD-seller-demo-sandbox-hub-promo-and-release-prep.md بخش ۱۴.۲
+  imageKey: string | null
+  videoKey: string | null
+  audioKey: string | null
   status: ProductCommentStatus
   aiVerdict: string | null
   aiConfidence: number | null

@@ -4,6 +4,7 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { ProductCommentItem } from '@/types/api'
 import { useComments, useModerateComment } from '@/queries/admin.queries'
+import { useAuthedImage } from '@/hooks/useAuthedImage'
 import { fa } from '@/locales/fa'
 
 const { Title } = Typography
@@ -13,6 +14,23 @@ const STATUS_COLORS: Record<string, string> = {
   AI_AUTO_REJECTED: 'default',
   ADMIN_APPROVED: 'green',
   ADMIN_REJECTED: 'red',
+}
+
+// docs/PRD-seller-demo-sandbox-hub-promo-and-release-prep.md بخش ۱۴.۲ — پیش‌نمایش رسانه‌ی
+// نظر؛ عیناً الگوی useAuthedImage (blob + object URL) چون مسیر پشت JwtGuard/AdminGuard است،
+// نه یک <img src> مستقیم. هر سه نوع (عکس/ویدیو/صدا) را همین یک هوک پوشش می‌دهد چون فقط بایت
+// خام را با Authorization می‌گیرد، نه چیز خاص تصویر
+function ReviewMediaPreview({ row }: { row: ProductCommentItem }) {
+  const key = row.imageKey ?? row.videoKey ?? row.audioKey
+  const kind = row.imageKey ? 'image' : row.videoKey ? 'video' : row.audioKey ? 'audio' : null
+  const url = key ? `/admin/comments/${row.id}/media/${encodeURIComponent(key)}` : undefined
+  const { objectUrl, isLoading } = useAuthedImage(url)
+
+  if (!kind) return <span>{fa.comments.noMedia}</span>
+  if (isLoading || !objectUrl) return <span>...</span>
+  if (kind === 'image') return <img src={objectUrl} alt="" style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 6 }} />
+  if (kind === 'video') return <video src={objectUrl} controls style={{ width: 96, height: 64, borderRadius: 6 }} />
+  return <audio src={objectUrl} controls style={{ width: 160, height: 32 }} />
 }
 
 // docs/PRD-customer-comments-and-discounts.md بخش ۵ — صف تعدیل مرکزی، تصمیم نهایی همیشه با ادمین
@@ -56,6 +74,12 @@ export function CommentsModerationPage() {
       key: 'rating',
       width: 130,
       render: (v: number | null) => (v ? <Rate disabled defaultValue={v} style={{ fontSize: 12 }} /> : '—'),
+    },
+    {
+      title: fa.comments.media,
+      key: 'media',
+      width: 110,
+      render: (_, row) => <ReviewMediaPreview row={row} />,
     },
     {
       title: fa.comments.aiVerdict,

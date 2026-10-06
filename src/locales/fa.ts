@@ -558,6 +558,9 @@ export const fa = {
     product: 'محصول',
     noProduct: 'کلی (بدون محصول خاص)',
     rating: 'امتیاز',
+    // docs/PRD-seller-demo-sandbox-hub-promo-and-release-prep.md بخش ۱۴.۲
+    media: 'رسانه',
+    noMedia: '—',
     aiVerdict: 'نظر AI',
     aiConfident: (confidence: number) => `${Math.round(confidence * 100)}٪ اطمینان`,
     date: 'تاریخ',
