@@ -4,8 +4,10 @@ import { Button, Card, DatePicker, Input, Space, Switch, Table, Tag, Tooltip, Ty
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import { useSetStoreLeadCaptureOnly, useStoreCreditOverview } from '@/queries/store-credit.queries'
+import { useImpersonateUser } from '@/queries/admin.queries'
 import type { StoreCreditOverviewItem } from '@/types/api'
 import { fa } from '@/locales/fa'
+import { env } from '@/env'
 import { StoreCreditUsageDrawer } from './StoreCreditUsageDrawer'
 
 const { Title } = Typography
@@ -35,6 +37,21 @@ export function StoresPage() {
     to: range?.[1]?.format('YYYY-MM-DD'),
   })
   const setLeadCaptureOnly = useSetStoreLeadCaptureOnly()
+  const impersonate = useImpersonateUser()
+
+  // docs/PRD-seller-demo-sandbox-hub-promo-and-release-prep.md — ورود مستقیم به پنل همین
+  // فروشنده (مثلاً برای ویرایش دستی دیتای یک فروشگاه دمو)، بدون نیاز به OTP او
+  function handleImpersonateSeller(phone: string) {
+    impersonate.mutate(
+      { phone },
+      {
+        onSuccess: ({ code }) => {
+          window.open(`${env.VITE_PUBLIC_SITE_URL}/auth/impersonate?code=${code}`, '_blank')
+        },
+        onError: () => void message.error(fa.common.error),
+      },
+    )
+  }
 
   function handleSearch(value: string) {
     setSearch(value)
@@ -150,11 +167,20 @@ export function StoresPage() {
     {
       title: '',
       key: 'actions',
-      width: 110,
+      width: 220,
       render: (_, r) => (
-        <Button size="small" onClick={() => setDetail({ storeId: r.storeId, storeName: r.name })}>
-          {fa.stores.viewUsage}
-        </Button>
+        <Space wrap>
+          <Button size="small" onClick={() => setDetail({ storeId: r.storeId, storeName: r.name })}>
+            {fa.stores.viewUsage}
+          </Button>
+          <Button
+            size="small"
+            loading={impersonate.isPending && impersonate.variables?.phone === r.seller.phone}
+            onClick={() => handleImpersonateSeller(r.seller.phone)}
+          >
+            ورود به‌جای فروشنده
+          </Button>
+        </Space>
       ),
     },
   ]

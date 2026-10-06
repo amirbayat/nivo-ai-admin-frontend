@@ -73,6 +73,16 @@ export function useUpdateUser() {
   })
 }
 
+// docs/PRD-seller-demo-sandbox-hub-promo-and-release-prep.md — کد یک‌بارمصرف ۶۰ثانیه‌ای برای
+// ورود ادمین به‌جای یک فروشنده یا خریدار؛ خروجی فقط کد است، تبدیل به توکن واقعی روی مرورگر مقصد
+// (صفحه‌ی /auth/impersonate در سایت اصلی) انجام می‌شود، نه اینجا
+export function useImpersonateUser() {
+  return useMutation({
+    mutationFn: (body: { userId?: string; phone?: string }) =>
+      api.post<{ code: string }>('/admin/impersonate', body).then((r) => r.data),
+  })
+}
+
 export function usePlans() {
   return useQuery({
     queryKey: keys.plans.list(),

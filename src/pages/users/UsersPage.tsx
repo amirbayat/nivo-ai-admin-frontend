@@ -9,9 +9,10 @@ import type { ColumnsType } from 'antd/es/table'
 import type { AdminUser } from '@/types/api'
 import {
   useAdminUsers, useUpdateUser, useSetUserLimit,
-  useRemoveUserLimit, useChangeUserPlan, usePlans,
+  useRemoveUserLimit, useChangeUserPlan, usePlans, useImpersonateUser,
 } from '@/queries/admin.queries'
 import { fa } from '@/locales/fa'
+import { env } from '@/env'
 
 const { Title } = Typography
 const { Search } = Input
@@ -70,6 +71,19 @@ export function UsersPage() {
   const setLimit = useSetUserLimit()
   const removeLimit = useRemoveUserLimit()
   const changePlan = useChangeUserPlan()
+  const impersonate = useImpersonateUser()
+
+  function handleImpersonate(userId: string) {
+    impersonate.mutate(
+      { userId },
+      {
+        onSuccess: ({ code }) => {
+          window.open(`${env.VITE_PUBLIC_SITE_URL}/auth/impersonate?code=${code}`, '_blank')
+        },
+        onError: () => void messageApi.error(fa.common.error),
+      },
+    )
+  }
 
   function handleSearch(value: string) { setSearch(value); setPage(1) }
 
@@ -220,6 +234,13 @@ export function UsersPage() {
         <Space wrap>
           <Button size="small" onClick={() => navigate(`/admin/users/${record.id}`)}>
             جزئیات
+          </Button>
+          <Button
+            size="small"
+            loading={impersonate.isPending && impersonate.variables?.userId === record.id}
+            onClick={() => handleImpersonate(record.id)}
+          >
+            ورود به‌جای کاربر
           </Button>
           <Button size="small" type={record.isActive ? 'default' : 'primary'} onClick={() => handleToggleActive(record)}>
             {record.isActive ? fa.users.disable : fa.users.enable}
