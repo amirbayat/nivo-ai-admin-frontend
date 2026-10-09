@@ -909,11 +909,15 @@ export interface ConversationTraceItem {
   id: string
   createdAt: string
   customerMessage?: string
+  // فیدبک کاربر ۱۴۰۵/۰۷/۱۸ — هزینه‌ی ASR این پیام صوتی مشخص (اگر از وویس بوده)
+  asrCostToman?: number
   agentReply?: {
     text: string
     flag?: 'UNCLEAR' | 'NO_KB_MATCH'
     // فیدبک کاربر ۱۴۰۵/۰۷/۱۲ — برخلاف trace.voice (فقط روی پاسخ‌های AI-محور)، این همیشه هست
     voice?: { generated: boolean; reason?: AiTraceVoiceInfo['reason'] }
+    // فیدبک کاربر ۱۴۰۵/۰۷/۱۸ — هزینه‌ی VOICE_TTS این پاسخ مشخص (اگر وویس ساخته شده)
+    voiceCostToman?: number
   }
   trace?: AiTraceInfo
   classificationTrace?: ClassificationTraceInfo

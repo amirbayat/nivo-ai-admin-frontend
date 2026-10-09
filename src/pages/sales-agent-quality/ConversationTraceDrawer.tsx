@@ -25,6 +25,9 @@ function TraceTimelineItem({ item }: { item: ConversationTraceItem }) {
     return (
       <Space direction="vertical" size={2} style={{ display: 'flex' }}>
         <Text>{fa.salesAgentQuality.traceCustomerMessage(item.customerMessage)}</Text>
+        {item.asrCostToman !== undefined && (
+          <Text type="secondary">{fa.salesAgentQuality.traceAsrCost(item.asrCostToman)}</Text>
+        )}
         {needs && needs.length > 0 && <Text type="secondary">{fa.salesAgentQuality.traceBuyerNeeds(needs)}</Text>}
         {unmatched && <Text type="warning">{fa.salesAgentQuality.traceUnmatchedBuyerNeed(unmatched)}</Text>}
         {/* HIGH عمداً نمایش داده نمی‌شود — فقط وقتی مدل خودش نامطمئن بوده ارزش دیدن دارد */}
@@ -53,6 +56,9 @@ function TraceTimelineItem({ item }: { item: ConversationTraceItem }) {
       )}
       {agentReply && <Text>{fa.salesAgentQuality.traceReply(agentReply.text)}</Text>}
       {voice && <Text type="secondary">{voice}</Text>}
+      {agentReply?.voiceCostToman !== undefined && (
+        <Text type="secondary">{fa.salesAgentQuality.traceVoiceCost(agentReply.voiceCostToman)}</Text>
+      )}
       {trace?.toolsCalled && trace.toolsCalled.length > 0 && (
         <Text type="secondary">{fa.salesAgentQuality.traceToolsCalled(trace.toolsCalled.map(t => t.name))}</Text>
       )}

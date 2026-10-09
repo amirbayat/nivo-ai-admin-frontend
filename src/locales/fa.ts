@@ -670,6 +670,9 @@ export const fa = {
     traceIntent: (intent: string, handler: string) => `🧠 تشخیص: ${intent} → handler: ${handler}`,
     traceModel: (model: string) => `🤖 مدل: ${model}`,
     traceCost: (chargedToman: number) => `💰 کسرشده از اعتبار: ${chargedToman.toLocaleString('fa-IR')} تومان`,
+    // فیدبک کاربر ۱۴۰۵/۰۷/۱۸ — هزینه‌ی وویس/ASR جدا از هزینه‌ی متن (traceCost بالا) نشان داده شود
+    traceAsrCost: (chargedToman: number) => `🎙️ هزینه‌ی تبدیل صدا به متن: ${chargedToman.toLocaleString('fa-IR')} تومان`,
+    traceVoiceCost: (chargedToman: number) => `🔊 هزینه‌ی تولید صدا: ${chargedToman.toLocaleString('fa-IR')} تومان`,
     traceKbSource: (label: string) => `📚 منبع جواب: ${label}`,
     traceKbSourceLabels: {
       STORE_KB: 'دانش‌نامه‌ی فروشگاه',
