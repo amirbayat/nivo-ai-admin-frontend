@@ -16,7 +16,17 @@ export function useUpdateSalesAgentConfig() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (
-      data: Partial<Pick<SalesAgentGlobalConfig, 'freeDailyQuota' | 'trialDurationDays' | 'trialCreditToman'>>,
+      data: Partial<
+        Pick<
+          SalesAgentGlobalConfig,
+          | 'freeDailyQuota'
+          | 'trialDurationDays'
+          | 'trialCreditToman'
+          | 'buyerCostMarkup'
+          | 'sellerCostMarkup'
+          | 'avgCostPerChatToman'
+        >
+      >,
     ) => api.patch<SalesAgentGlobalConfig>('/admin/sales-agent/global-config', data).then(r => r.data),
     onSuccess: () => void qc.invalidateQueries({ queryKey: keys.salesAgentConfig.config() }),
   })

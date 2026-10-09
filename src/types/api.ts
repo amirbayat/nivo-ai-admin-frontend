@@ -484,6 +484,11 @@ export interface SalesAgentGlobalConfig {
   freeDailyQuota: number
   trialDurationDays: number
   trialCreditToman: number
+  // فیدبک کاربر ۱۴۰۵/۰۷/۱۷ — ضریب روی COGS خام قبل از کسر از اعتبار فروشگاه
+  buyerCostMarkup: number
+  sellerCostMarkup: number
+  // فقط برای برآورد نمایشی «حدود N چت» روی کارت‌های خرید اعتبار، نه کسر واقعی
+  avgCostPerChatToman: number
   updatedAt: string
 }
 
@@ -727,7 +732,8 @@ export interface SalesConversationListItem {
   channel: 'WEB' | 'TELEGRAM'
   currentState: string
   abVariant: string | null
-  totalCostToman: number
+  // فیدبک کاربر ۱۴۰۵/۰۷/۱۷ — مبلغ واقعاً کسرشده از اعتبار فروشگاه (بعد از buyerCostMarkup)
+  totalChargedToman: number
   lastMessagePreview: string
   lastMessageAt: string | null
   failedTurnCount: number
@@ -820,6 +826,8 @@ export interface CreditUsageEventItem {
   model: string
   kind: CreditUsageKind
   costToman: number
+  // فیدبک کاربر ۱۴۰۵/۰۷/۱۷ — مبلغ واقعاً کسرشده از اعتبار (بعد از buyerCostMarkup/sellerCostMarkup)
+  chargedToman: number
   isFreeQuota: boolean
   tokensInput: number
   tokensOutput: number
@@ -863,8 +871,9 @@ export interface AiTraceInfo {
   factsOrPrompt: string
   model: string
   // از CreditUsageEvent، نه خودِ payload ذخیره‌شده — بک‌اند با تطبیق زمانی ردیف‌های TEXT_REPLY
-  // همین مکالمه اضافه می‌کند؛ ممکن است نامشخص باشد (پاسخ‌های قانون‌محور هزینه‌ای ندارند)
-  costToman?: number
+  // همین مکالمه اضافه می‌کند؛ ممکن است نامشخص باشد (پاسخ‌های قانون‌محور هزینه‌ای ندارند).
+  // بعد از buyerCostMarkup (فیدبک کاربر ۱۴۰۵/۰۷/۱۷) — مبلغ واقعاً کسرشده، نه COGS خام
+  chargedToman?: number
   kbSource?: 'STORE_KB' | 'PRODUCT_DESCRIPTION' | 'STORE_PROFILE' | 'STUB'
   voice?: AiTraceVoiceInfo
   // docs/PRD-sales-agent-persuasion-principles.md بخش ۸ — فقط روی trace سطح

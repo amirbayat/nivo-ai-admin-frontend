@@ -57,6 +57,12 @@ export function StoreCreditUsageDrawer(props: {
       render: (v: number) => v.toLocaleString('fa-IR'),
     },
     {
+      title: fa.stores.usageDrawer.charged,
+      dataIndex: 'chargedToman',
+      width: 130,
+      render: (v: number) => v.toLocaleString('fa-IR'),
+    },
+    {
       title: fa.stores.usageDrawer.quota,
       dataIndex: 'isFreeQuota',
       width: 90,

@@ -71,8 +71,8 @@ export function SalesConversationsPage() {
     },
     {
       title: fa.salesConversations.cost,
-      dataIndex: 'totalCostToman',
-      key: 'totalCostToman',
+      dataIndex: 'totalChargedToman',
+      key: 'totalChargedToman',
       width: 110,
       render: (v: number) => `${v.toLocaleString('fa-IR')} تومان`,
     },

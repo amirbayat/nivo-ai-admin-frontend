@@ -10,6 +10,9 @@ interface ConfigFormValues {
   freeDailyQuota: number
   trialDurationDays: number
   trialCreditToman: number
+  buyerCostMarkup: number
+  sellerCostMarkup: number
+  avgCostPerChatToman: number
 }
 
 // docs/PRD-sales-agent-checkout-pricing-and-roadmap.md بخش ۶.۵ — سه عدد مارکت‌پلیس
@@ -26,6 +29,9 @@ export function SalesAgentConfigPage() {
         freeDailyQuota: config.freeDailyQuota,
         trialDurationDays: config.trialDurationDays,
         trialCreditToman: config.trialCreditToman,
+        buyerCostMarkup: config.buyerCostMarkup,
+        sellerCostMarkup: config.sellerCostMarkup,
+        avgCostPerChatToman: config.avgCostPerChatToman,
       })
     }
   }, [config, form])
@@ -61,6 +67,33 @@ export function SalesAgentConfigPage() {
           <Text type="secondary" style={{ display: 'block', margin: '4px 0 16px' }}>
             {fa.salesAgentConfig.trialHint}
           </Text>
+
+          <Space size="large" wrap align="start">
+            <Form.Item
+              name="buyerCostMarkup"
+              label={fa.salesAgentConfig.buyerCostMarkup}
+              rules={[{ required: true }]}
+              extra={fa.salesAgentConfig.buyerCostMarkupHint}
+            >
+              <InputNumber style={{ width: 280 }} min={1} step={0.1} />
+            </Form.Item>
+            <Form.Item
+              name="sellerCostMarkup"
+              label={fa.salesAgentConfig.sellerCostMarkup}
+              rules={[{ required: true }]}
+              extra={fa.salesAgentConfig.sellerCostMarkupHint}
+            >
+              <InputNumber style={{ width: 280 }} min={1} step={0.1} />
+            </Form.Item>
+            <Form.Item
+              name="avgCostPerChatToman"
+              label={fa.salesAgentConfig.avgCostPerChatToman}
+              rules={[{ required: true }]}
+              extra={fa.salesAgentConfig.avgCostPerChatTomanHint}
+            >
+              <InputNumber style={{ width: 280 }} min={1} step={1000} />
+            </Form.Item>
+          </Space>
 
           <Button type="primary" icon={<SaveOutlined />} htmlType="submit" loading={updateConfig.isPending}>
             {fa.salesAgentConfig.saveConfig}
