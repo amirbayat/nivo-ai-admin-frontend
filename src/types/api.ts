@@ -855,6 +855,7 @@ export interface AiTraceVoiceInfo {
     | 'VOICE_VARIANT_OFF'
     | 'CONSECUTIVE_CAP'
     | 'STORE_NO_CREDIT_CAP'
+    | 'STORE_VOICE_DISABLED'
     | 'FAILED'
 }
 

@@ -692,6 +692,8 @@ export const fa = {
       FAILED: 'تولید صدا شکست خورد',
       // فیدبک کاربر ۱۴۰۵/۰۷/۰۱ — فروشگاه بدون اعتبار، سقف ۳ مکالمه‌ی وویس‌دار پر شده
       STORE_NO_CREDIT_CAP: 'فروشگاه بدون اعتبار — سقف ۳ مکالمه‌ی وویس‌دار پر شده بود',
+      // فیدبک کاربر ۱۴۰۵/۰۷/۱۸ — فروشنده خودش وویس را از پروفایل/تنظیمات چت خاموش کرده
+      STORE_VOICE_DISABLED: 'فروشنده پاسخ صوتی را خاموش کرده',
     } as Record<string, string>,
     traceShowPrompt: 'نمایش کامل prompt/facts',
     // docs/PRD-sales-agent-persuasion-principles.md بخش ۸ — خوداظهاری خودِ مدل، فقط روی trace
