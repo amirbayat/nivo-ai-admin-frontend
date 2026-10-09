@@ -489,6 +489,8 @@ export interface SalesAgentGlobalConfig {
   sellerCostMarkup: number
   // فقط برای برآورد نمایشی «حدود N چت» روی کارت‌های خرید اعتبار، نه کسر واقعی
   avgCostPerChatToman: number
+  // null = pool تصادفی (پیش‌فرض)؛ غیر-null یکی از کلیدهای /admin/sales-agent/model-variants را فورس می‌کند
+  forcedModelVariant: string | null
   updatedAt: string
 }
 

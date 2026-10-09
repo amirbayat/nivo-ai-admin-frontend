@@ -12,6 +12,18 @@ export function useSalesAgentConfig() {
   })
 }
 
+export interface SalesAgentModelVariant {
+  key: string
+  modelId: string
+}
+
+export function useSalesAgentModelVariants() {
+  return useQuery({
+    queryKey: keys.salesAgentConfig.modelVariants(),
+    queryFn: () => api.get<SalesAgentModelVariant[]>('/admin/sales-agent/model-variants').then(r => r.data),
+  })
+}
+
 export function useUpdateSalesAgentConfig() {
   const qc = useQueryClient()
   return useMutation({
@@ -25,6 +37,7 @@ export function useUpdateSalesAgentConfig() {
           | 'buyerCostMarkup'
           | 'sellerCostMarkup'
           | 'avgCostPerChatToman'
+          | 'forcedModelVariant'
         >
       >,
     ) => api.patch<SalesAgentGlobalConfig>('/admin/sales-agent/global-config', data).then(r => r.data),

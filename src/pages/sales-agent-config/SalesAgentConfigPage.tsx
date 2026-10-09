@@ -1,10 +1,18 @@
 import { useEffect } from 'react'
-import { Card, Form, InputNumber, Space, Button, Typography, message } from 'antd'
+import { Card, Form, InputNumber, Select, Space, Button, Typography, message } from 'antd'
 import { SaveOutlined } from '@ant-design/icons'
-import { useSalesAgentConfig, useUpdateSalesAgentConfig } from '@/queries/sales-agent-config.queries'
+import {
+  useSalesAgentConfig,
+  useSalesAgentModelVariants,
+  useUpdateSalesAgentConfig,
+} from '@/queries/sales-agent-config.queries'
 import { fa } from '@/locales/fa'
 
 const { Title, Text } = Typography
+
+// null نمایش‌داده‌شده به‌عنوان یک گزینه‌ی واقعی در Select (نه undefined/حذف‌شده) چون
+// AntD Select مقدار null را هم به‌عنوان «انتخاب‌شده» قبول می‌کند
+const RANDOM_POOL_VALUE = null
 
 interface ConfigFormValues {
   freeDailyQuota: number
@@ -13,6 +21,7 @@ interface ConfigFormValues {
   buyerCostMarkup: number
   sellerCostMarkup: number
   avgCostPerChatToman: number
+  forcedModelVariant: string | null
 }
 
 // docs/PRD-sales-agent-checkout-pricing-and-roadmap.md بخش ۶.۵ — سه عدد مارکت‌پلیس
@@ -21,6 +30,7 @@ export function SalesAgentConfigPage() {
   const [form] = Form.useForm<ConfigFormValues>()
   const [messageApi, contextHolder] = message.useMessage()
   const { data: config, isLoading } = useSalesAgentConfig()
+  const { data: modelVariants } = useSalesAgentModelVariants()
   const updateConfig = useUpdateSalesAgentConfig()
 
   useEffect(() => {
@@ -32,6 +42,7 @@ export function SalesAgentConfigPage() {
         buyerCostMarkup: config.buyerCostMarkup,
         sellerCostMarkup: config.sellerCostMarkup,
         avgCostPerChatToman: config.avgCostPerChatToman,
+        forcedModelVariant: config.forcedModelVariant,
       })
     }
   }, [config, form])
@@ -94,6 +105,20 @@ export function SalesAgentConfigPage() {
               <InputNumber style={{ width: 280 }} min={1} step={1000} />
             </Form.Item>
           </Space>
+
+          <Form.Item
+            name="forcedModelVariant"
+            label={fa.salesAgentConfig.forcedModelVariant}
+            extra={fa.salesAgentConfig.forcedModelVariantHint}
+          >
+            <Select
+              style={{ width: 320 }}
+              options={[
+                { value: RANDOM_POOL_VALUE, label: fa.salesAgentConfig.forcedModelVariantPoolOption },
+                ...(modelVariants ?? []).map(v => ({ value: v.key, label: `${v.key} (${v.modelId})` })),
+              ]}
+            />
+          </Form.Item>
 
           <Button type="primary" icon={<SaveOutlined />} htmlType="submit" loading={updateConfig.isPending}>
             {fa.salesAgentConfig.saveConfig}

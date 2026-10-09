@@ -30,6 +30,7 @@ export const keys = {
   },
   salesAgentConfig: {
     config: () => ['admin', 'sales-agent-config'] as const,
+    modelVariants: () => ['admin', 'sales-agent-config', 'model-variants'] as const,
   },
   pricingTiers: { all: () => ['admin', 'pricing-tiers'] as const },
   captionPricingTiers: { all: () => ['admin', 'caption-pricing-tiers'] as const },
