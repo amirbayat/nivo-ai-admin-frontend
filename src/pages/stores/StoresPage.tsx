@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import type { Dayjs } from 'dayjs'
-import { Button, Card, DatePicker, Input, Space, Switch, Table, Tag, Tooltip, Typography, message } from 'antd'
+import { Button, Card, DatePicker, Input, Row, Col, Space, Statistic, Switch, Table, Tag, Tooltip, Typography, message } from 'antd'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
-import { useSetStoreLeadCaptureOnly, useStoreCreditOverview } from '@/queries/store-credit.queries'
+import {
+  useSetStoreLeadCaptureOnly,
+  useStoreCreditOverview,
+  useStoreCreditSummary,
+} from '@/queries/store-credit.queries'
 import { useImpersonateUser } from '@/queries/admin.queries'
 import type { StoreCreditOverviewItem } from '@/types/api'
 import { fa } from '@/locales/fa'
@@ -33,6 +37,10 @@ export function StoresPage() {
   const { data, isLoading } = useStoreCreditOverview({
     page,
     search,
+    from: range?.[0]?.format('YYYY-MM-DD'),
+    to: range?.[1]?.format('YYYY-MM-DD'),
+  })
+  const { data: summary } = useStoreCreditSummary({
     from: range?.[0]?.format('YYYY-MM-DD'),
     to: range?.[1]?.format('YYYY-MM-DD'),
   })
@@ -190,6 +198,50 @@ export function StoresPage() {
       <Title level={4} style={{ marginBottom: 16 }}>
         {fa.stores.title}
       </Title>
+
+      <Card style={{ marginBottom: 16 }}>
+        <Row gutter={24}>
+          <Col span={4}>
+            <Statistic title={fa.stores.summary.storeCount} value={summary?.storeCount ?? 0} />
+          </Col>
+          <Col span={5}>
+            <Statistic
+              title={fa.stores.summary.totalOutstandingCredit}
+              value={(summary?.totalCreditBalanceToman ?? 0) + (summary?.totalTrialCreditRemainingToman ?? 0)}
+              suffix="ت"
+            />
+          </Col>
+          <Col span={5}>
+            <Statistic
+              title={fa.stores.summary.totalPurchased}
+              value={summary?.totalPurchasedToman ?? 0}
+              suffix="ت"
+              valueStyle={{ color: '#3f8600' }}
+            />
+          </Col>
+          <Col span={5}>
+            <Statistic
+              title={fa.stores.summary.totalAiCost}
+              value={summary?.totalAiCostToman ?? 0}
+              suffix="ت"
+              valueStyle={{ color: '#cf1322' }}
+            />
+          </Col>
+          <Col span={5}>
+            <Statistic
+              title={fa.stores.summary.margin}
+              value={
+                summary && summary.totalPurchasedToman > 0
+                  ? Math.round(
+                      ((summary.totalPurchasedToman - summary.totalAiCostToman) / summary.totalPurchasedToman) * 100,
+                    )
+                  : 0
+              }
+              suffix="٪"
+            />
+          </Col>
+        </Row>
+      </Card>
 
       <Space style={{ marginBottom: 16 }}>
         <Search

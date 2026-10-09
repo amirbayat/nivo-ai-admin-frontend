@@ -727,6 +727,7 @@ export interface SalesConversationListItem {
   channel: 'WEB' | 'TELEGRAM'
   currentState: string
   abVariant: string | null
+  totalCostToman: number
   lastMessagePreview: string
   lastMessageAt: string | null
   failedTurnCount: number
@@ -800,6 +801,18 @@ export interface PaginatedStoreCreditOverview {
   pageSize: number
 }
 
+// docs/PRD-admin-seller-credit-overview.md — جمع کل روی همه‌ی فروشگاه‌ها (نه فقط صفحه‌ی فعلی)
+export interface StoreCreditSummary {
+  storeCount: number
+  totalCreditBalanceToman: number
+  totalTrialCreditRemainingToman: number
+  totalPurchasedToman: number
+  totalAiCostToman: number
+  totalChargedToman: number
+  freeQuotaEventsCount: number
+  paidEventsCount: number
+}
+
 export interface CreditUsageEventItem {
   id: string
   customerId: string | null
@@ -849,6 +862,9 @@ export interface AiTraceInfo {
   handler: string
   factsOrPrompt: string
   model: string
+  // از CreditUsageEvent، نه خودِ payload ذخیره‌شده — بک‌اند با تطبیق زمانی ردیف‌های TEXT_REPLY
+  // همین مکالمه اضافه می‌کند؛ ممکن است نامشخص باشد (پاسخ‌های قانون‌محور هزینه‌ای ندارند)
+  costToman?: number
   kbSource?: 'STORE_KB' | 'PRODUCT_DESCRIPTION' | 'STORE_PROFILE' | 'STUB'
   voice?: AiTraceVoiceInfo
   // docs/PRD-sales-agent-persuasion-principles.md بخش ۸ — فقط روی trace سطح

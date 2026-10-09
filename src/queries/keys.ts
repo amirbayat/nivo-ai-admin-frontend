@@ -110,6 +110,8 @@ export const keys = {
   },
   // docs/PRD-admin-seller-credit-overview.md — لیست فروشنده‌ها با اعتبار/هزینه‌ی AI
   storeCredit: {
+    summary: (from?: string, to?: string) =>
+      ['admin', 'stores', 'summary', from ?? '', to ?? ''] as const,
     list: (page: number, search?: string, from?: string, to?: string) =>
       ['admin', 'stores', page, search ?? '', from ?? '', to ?? ''] as const,
     usage: (storeId: string, page: number, kind?: string, from?: string, to?: string) =>

@@ -48,6 +48,9 @@ function TraceTimelineItem({ item }: { item: ConversationTraceItem }) {
       {trace && (
         <Text style={{ fontFamily: 'monospace', fontSize: 12 }}>{fa.salesAgentQuality.traceModel(trace.model)}</Text>
       )}
+      {trace?.costToman !== undefined && (
+        <Text type="secondary">{fa.salesAgentQuality.traceCost(trace.costToman)}</Text>
+      )}
       {agentReply && <Text>{fa.salesAgentQuality.traceReply(agentReply.text)}</Text>}
       {voice && <Text type="secondary">{voice}</Text>}
       {trace?.toolsCalled && trace.toolsCalled.length > 0 && (

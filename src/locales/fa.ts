@@ -660,6 +660,7 @@ export const fa = {
     traceReply: (text: string) => `💬 پاسخ: «${text}»`,
     traceIntent: (intent: string, handler: string) => `🧠 تشخیص: ${intent} → handler: ${handler}`,
     traceModel: (model: string) => `🤖 مدل: ${model}`,
+    traceCost: (costToman: number) => `💰 هزینه: ${costToman.toLocaleString('fa-IR')} تومان`,
     traceKbSource: (label: string) => `📚 منبع جواب: ${label}`,
     traceKbSourceLabels: {
       STORE_KB: 'دانش‌نامه‌ی فروشگاه',
@@ -795,6 +796,8 @@ export const fa = {
     customer: 'مشتری',
     channel: 'کانال',
     lastMessage: 'آخرین پیام',
+    model: 'مدل',
+    cost: 'هزینه',
     state: 'وضعیت',
     failedTurns: 'پیام‌های نافهم',
     handoff: 'ارجاع به انسان',
@@ -827,10 +830,17 @@ export const fa = {
     trialCredit: 'اعتبار آزمایشی',
     totalPurchased: 'جمع خریداری‌شده',
     totalAiCost: 'هزینه‌ی واقعی AI',
-    totalAiCostHint: 'هزینه‌ی واقعی هر فراخوان AI (شامل سهمیه‌ی رایگان روزانه) — نه لزوماً مبلغی که از اعتبار فروشنده کم شده',
+    totalAiCostHint: 'هزینه‌ی واقعی هر فراخوان AI — نه لزوماً مبلغی که از اعتبار فروشنده کم شده',
     totalCharged: 'کسرشده از اعتبار',
     freeVsPaid: 'رایگان / پولی',
     viewUsage: 'جزئیات مصرف',
+    summary: {
+      storeCount: 'تعداد فروشگاه',
+      totalOutstandingCredit: 'جمع اعتبار باقی‌مانده (آزمایشی+خریداری‌شده)',
+      totalPurchased: 'جمع درآمد (بسته‌های خریداری‌شده)',
+      totalAiCost: 'جمع COGS واقعی AI',
+      margin: 'حاشیه‌ی سود',
+    },
     // docs/PRD-seller-demo-sandbox-hub-promo-and-release-prep.md بخش ۱۶
     leadCaptureOnly: 'اکشن کاستوم (فقط لید)',
     leadCaptureOnlyHint:

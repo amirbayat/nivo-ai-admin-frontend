@@ -1,7 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
-import type { PaginatedCreditUsageEvents, PaginatedStoreCreditOverview } from '@/types/api'
+import type {
+  PaginatedCreditUsageEvents,
+  PaginatedStoreCreditOverview,
+  StoreCreditSummary,
+} from '@/types/api'
 import { keys } from './keys'
+
+// فیدبک کاربر ۱۴۰۵/۰۷/۱۷ — جمع کل روی همه‌ی فروشگاه‌ها، مستقل از صفحه‌بندی لیست
+export function useStoreCreditSummary(params: { from?: string; to?: string }) {
+  const { from, to } = params
+  return useQuery({
+    queryKey: keys.storeCredit.summary(from, to),
+    queryFn: () =>
+      api.get<StoreCreditSummary>('/admin/stores/summary', { params: { from, to } }).then((r) => r.data),
+  })
+}
 
 // docs/PRD-admin-seller-credit-overview.md بخش ۲ — لیست فروشنده‌ها با رول‌آپ اعتبار/هزینه‌ی AI
 export function useStoreCreditOverview(params: { page: number; search?: string; from?: string; to?: string }) {

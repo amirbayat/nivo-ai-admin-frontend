@@ -63,6 +63,20 @@ export function SalesConversationsPage() {
       ellipsis: true,
     },
     {
+      title: fa.salesConversations.model,
+      dataIndex: 'abVariant',
+      key: 'abVariant',
+      width: 140,
+      render: (v: string | null) => v ?? '—',
+    },
+    {
+      title: fa.salesConversations.cost,
+      dataIndex: 'totalCostToman',
+      key: 'totalCostToman',
+      width: 110,
+      render: (v: number) => `${v.toLocaleString('fa-IR')} تومان`,
+    },
+    {
       title: fa.salesConversations.state,
       dataIndex: 'currentState',
       key: 'currentState',
