@@ -28,6 +28,7 @@ import { SalesAgentQualityPage } from '@/pages/sales-agent-quality/SalesAgentQua
 import { BuyerIntentDiscoveryPage } from '@/pages/buyer-intent-discovery/BuyerIntentDiscoveryPage'
 import { SalesConversationsPage } from '@/pages/sales-conversations/SalesConversationsPage'
 import { StoresPage } from '@/pages/stores/StoresPage'
+import { OrdersPage } from '@/pages/orders/OrdersPage'
 import { SalesAgentQaPage } from '@/pages/sales-agent-qa/SalesAgentQaPage'
 import { CommentsModerationPage } from '@/pages/comments-moderation/CommentsModerationPage'
 import { ProductEnrichmentPage } from '@/pages/product-enrichment/ProductEnrichmentPage'
@@ -100,6 +101,7 @@ export function AppRouter() {
         <Route path="buyer-intent-discovery" element={<BuyerIntentDiscoveryPage />} />
         <Route path="sales-conversations" element={<SalesConversationsPage />} />
         <Route path="stores" element={<StoresPage />} />
+        <Route path="orders" element={<OrdersPage />} />
         <Route path="sales-agent-qa" element={<SalesAgentQaPage />} />
         <Route path="comments" element={<CommentsModerationPage />} />
         <Route path="product-enrichment" element={<ProductEnrichmentPage />} />

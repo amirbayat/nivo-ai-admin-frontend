@@ -821,6 +821,35 @@ export interface StoreCreditSummary {
   paidEventsCount: number
 }
 
+// docs/PRD-buyer-payment-method-card-or-snapppay-link.md بخش ۹.۲ — لیست سفارش کراس-فروشگاه ادمین
+export type AdminOrderStatus = 'PENDING_PAYMENT' | 'RECEIPT_SUBMITTED' | 'APPROVED' | 'REJECTED' | 'SHIPPED'
+export type AdminOrderPaymentMethod = 'CARD_TO_CARD' | 'SNAPPPAY'
+
+export interface AdminOrderListItem {
+  id: string
+  storeId: string
+  storeName: string
+  status: AdminOrderStatus
+  paymentMethod: AdminOrderPaymentMethod
+  snapppayTrackingCode: string | null
+  totalAmount: number
+  recipientName: string | null
+  recipientPhone: string | null
+  createdAt: string
+}
+
+export interface PaginatedAdminOrders {
+  items: AdminOrderListItem[]
+  total: number
+  page: number
+  pageSize: number
+}
+
+export type AdminOrderPaymentMethodStats = Record<
+  AdminOrderPaymentMethod,
+  { count: number; totalAmountToman: number }
+>
+
 export interface CreditUsageEventItem {
   id: string
   customerId: string | null

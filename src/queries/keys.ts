@@ -196,6 +196,13 @@ export const keys = {
     campaigns: (from: string, to: string) => ['admin', 'anon-analytics', 'campaigns', from, to] as const,
     conversionQuality: (from: string, to: string) => ['admin', 'anon-analytics', 'conversion-quality', from, to] as const,
   },
+  // docs/PRD-buyer-payment-method-card-or-snapppay-link.md بخش ۹.۲
+  orders: {
+    list: (page: number, storeId?: string, paymentMethod?: string, status?: string, from?: string, to?: string) =>
+      ['admin', 'orders', page, storeId ?? 'all', paymentMethod ?? 'all', status ?? 'all', from ?? '', to ?? ''] as const,
+    paymentMethodStats: (from?: string, to?: string) =>
+      ['admin', 'orders', 'payment-method-stats', from ?? '', to ?? ''] as const,
+  },
   behavior: {
     overview: (from: string, to: string) => ['events', 'overview', from, to] as const,
     journey: (actorId: string) => ['events', 'journey', actorId] as const,
