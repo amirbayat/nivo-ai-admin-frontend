@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import {
-  Button, DatePicker, Form, Input, InputNumber, Modal, Select, Switch, Table, Tag, message,
-} from 'antd'
+import { Button, DatePicker, Form, Input, Modal, Select, Switch, Table, Tag, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { PlusOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import dayjs from 'dayjs'
@@ -128,13 +127,13 @@ export function DiscountCodesTab() {
       >
         <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
           <Form.Item name="discountPercent" label="درصد تخفیف" rules={[{ required: true }]}>
-            <InputNumber min={1} max={100} style={{ width: '100%' }} />
+            <DigitsInputNumber min={1} max={100} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item
             name="maxUses" label="حداکثر تعداد مصرف"
             extra="خالی = فقط ۱ بار"
           >
-            <InputNumber min={1} style={{ width: '100%' }} placeholder="مثلاً ۵۰۰" />
+            <DigitsInputNumber min={1} style={{ width: '100%' }} placeholder="مثلاً ۵۰۰" />
           </Form.Item>
           <Form.Item name="expiresAt" label="تاریخ انقضا" extra="خالی = بدون انقضا">
             <DatePicker style={{ width: '100%' }} />

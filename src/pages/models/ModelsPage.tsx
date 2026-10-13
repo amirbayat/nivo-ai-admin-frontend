@@ -1,20 +1,6 @@
 import { useState } from 'react'
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Switch,
-  Space,
-  Tag,
-  Popconfirm,
-  Typography,
-  Upload,
-  message,
-} from 'antd'
+import { Table, Button, Modal, Form, Input, Select, Switch, Space, Tag, Popconfirm, Typography, Upload, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { PlusOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { AiModel, AiPlatform } from '@/types/api'
@@ -485,11 +471,11 @@ export function ModelsPage() {
             rules={[{ required: true }]}
             extra={isImageGenType ? 'همون متنی که به‌عنوان توصیف عکس می‌فرستید — معمولاً سهم کوچکی از هزینه‌ی کل است' : undefined}
           >
-            <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="2.50" />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="2.50" />
           </Form.Item>
           {!isImageGenType && (
             <Form.Item name="outputPricePerM" label={fa.models.outputPrice} rules={[{ required: true }]}>
-              <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="10.00" />
+              <DigitsInputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="10.00" />
             </Form.Item>
           )}
           <Form.Item
@@ -511,7 +497,7 @@ export function ModelsPage() {
             />
           </Form.Item>
           <Form.Item name="sortOrder" label={fa.models.sortOrder}>
-            <InputNumber style={{ width: '100%' }} min={0} />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} />
           </Form.Item>
           {/* docs/PRD-openrouter-migration.md §۱۳.۴/۱۴.۴ — صفحه‌ی انتخاب مدل بازطراحی‌شده در
               فرانت مصرف‌کننده: توضیح کوتاه کاربرد مدل + برچسب‌های فیلتر (ترند/محبوب/...) */}
@@ -609,7 +595,7 @@ export function ModelsPage() {
                   label={watchedFlatPriceUnit === 'megapixel' ? 'قیمت ثابت ($ به ازای هر مگاپیکسل)' : 'قیمت ثابت ($ به ازای هر عکس)'}
                   extra="جایگزین قیمت‌های per-token زیر است — فقط همین یک عدد استفاده می‌شود."
                 >
-                  <InputNumber style={{ width: '100%' }} min={0} step={0.001} placeholder="0.04" />
+                  <DigitsInputNumber style={{ width: '100%' }} min={0} step={0.001} placeholder="0.04" />
                 </Form.Item>
               ) : (
                 <>
@@ -618,14 +604,14 @@ export function ModelsPage() {
                     label="قیمت توکن عکس خروجی ($ به ازای هر ۱M توکن)"
                     extra="هزینه‌ی اصلی تولید عکس. provider بعد از هر بار تولید تعداد توکن خروجی واقعی را برمی‌گرداند و هزینه از همون عدد واقعی حساب می‌شود — نه یک عدد ثابت هر عکس (چون کیفیت/ابعاد بالاتر یعنی توکن خروجی بیشتر، خودش خودکار حساب می‌شود)."
                   >
-                    <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="8.00" />
+                    <DigitsInputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="8.00" />
                   </Form.Item>
                   <Form.Item
                     name="imageGenInputImagePricePerM"
                     label="قیمت توکن عکس ورودی ($ به ازای هر ۱M توکن) — فقط حالت ویرایش"
                     extra="وقتی کاربر عکس آپلود می‌کند و می‌خواهد ویرایش/ترکیبش کنید، خود عکس(های) ورودی هم توکن مصرف می‌کنند و جدا حساب می‌شوند. برای تولید از صفر (بدون عکس ورودی) این هزینه صفر می‌ماند."
                   >
-                    <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="2.50" />
+                    <DigitsInputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="2.50" />
                   </Form.Item>
                 </>
               )}

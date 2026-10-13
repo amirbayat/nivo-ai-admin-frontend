@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Card, Form, Input, Button, Typography, Alert, Space } from 'antd'
+import { Card, Form, Button, Typography, Alert, Space } from 'antd'
+import DigitsInput from '@/components/DigitsInput'
 import { useSendOtp, useVerifyOtp } from '@/queries/auth.queries'
 import { fa } from '@/locales/fa'
 
@@ -108,7 +109,8 @@ export function LoginPage() {
           {step === 'phone' && (
             <Form layout="vertical" onFinish={handleSendOtp}>
               <Form.Item label={fa.auth.phoneLabel} required>
-                <Input
+                <DigitsInput
+                  kind="phone"
                   size="large"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -138,7 +140,8 @@ export function LoginPage() {
                 <Text type="secondary">{fa.auth.otpSentTo(phone)}</Text>
               </Form.Item>
               <Form.Item label={fa.auth.otpLabel} required>
-                <Input
+                <DigitsInput
+                  kind="otp"
                   size="large"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}

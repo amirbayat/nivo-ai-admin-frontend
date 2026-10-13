@@ -1,20 +1,6 @@
 import { useEffect, useState } from 'react'
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  Switch,
-  Space,
-  Tag,
-  Popconfirm,
-  Typography,
-  Card,
-  message,
-} from 'antd'
+import { Table, Button, Modal, Form, Input, Select, Switch, Space, Tag, Popconfirm, Typography, Card, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { MinusCircleOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { CreditPackage, CreditPackageScope } from '@/types/api'
@@ -297,13 +283,13 @@ export function CreditConfigPage() {
         <Form form={configForm} layout="vertical" onFinish={handleSaveConfig}>
           <Space size="large" wrap align="start">
             <Form.Item name="tomanPerCredit" label={fa.creditConfig.tomanPerCredit} rules={[{ required: true }]}>
-              <InputNumber style={{ width: 220 }} min={1} step={100} />
+              <DigitsInputNumber style={{ width: 220 }} min={1} step={100} />
             </Form.Item>
             <Form.Item name="purchaseMarkup" label={fa.creditConfig.purchaseMarkup} rules={[{ required: true }]}>
-              <InputNumber style={{ width: 220 }} min={1} step={0.05} />
+              <DigitsInputNumber style={{ width: 220 }} min={1} step={0.05} />
             </Form.Item>
             <Form.Item name="freeSignupCredits" label={fa.creditConfig.freeSignupCredits} rules={[{ required: true }]}>
-              <InputNumber style={{ width: 260 }} min={0} step={5} />
+              <DigitsInputNumber style={{ width: 260 }} min={0} step={5} />
             </Form.Item>
           </Space>
 
@@ -317,7 +303,7 @@ export function CreditConfigPage() {
                 {fields.map((field) => (
                   <Space key={field.key} align="baseline">
                     <Form.Item {...field} rules={[{ required: true }]} noStyle>
-                      <InputNumber style={{ width: 160 }} min={0.01} max={1} step={0.05} />
+                      <DigitsInputNumber style={{ width: 160 }} min={0.01} max={1} step={0.05} />
                     </Form.Item>
                     <MinusCircleOutlined onClick={() => remove(field.name)} />
                   </Space>
@@ -347,7 +333,7 @@ export function CreditConfigPage() {
               label={fa.creditConfig.extractionEconomicalCreditCost}
               rules={[{ required: true }]}
             >
-              <InputNumber style={{ width: 220 }} min={0} step={1} />
+              <DigitsInputNumber style={{ width: 220 }} min={0} step={1} />
             </Form.Item>
             <Form.Item name="extractionPremiumModel" label={fa.creditConfig.extractionPremiumModel}>
               <Select
@@ -362,7 +348,7 @@ export function CreditConfigPage() {
               label={fa.creditConfig.extractionPremiumCreditCost}
               rules={[{ required: true }]}
             >
-              <InputNumber style={{ width: 220 }} min={0} step={1} />
+              <DigitsInputNumber style={{ width: 220 }} min={0} step={1} />
             </Form.Item>
             <Form.Item
               name="sourceImageAccuracyCreditCost"
@@ -370,7 +356,7 @@ export function CreditConfigPage() {
               rules={[{ required: true }]}
               extra={fa.creditConfig.sourceImageAccuracyCreditCostHint}
             >
-              <InputNumber style={{ width: 220 }} min={0} step={1} />
+              <DigitsInputNumber style={{ width: 220 }} min={0} step={1} />
             </Form.Item>
           </Space>
 
@@ -416,13 +402,13 @@ export function CreditConfigPage() {
             rules={[{ required: true }]}
             extra={isCustomAmountWatched ? fa.creditConfig.creditsCustomHint : undefined}
           >
-            <InputNumber style={{ width: '100%' }} min={1} />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} />
           </Form.Item>
           <Form.Item name="discountPercent" label={fa.creditConfig.discountPercent}>
-            <InputNumber style={{ width: '100%' }} min={0} max={100} />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} max={100} />
           </Form.Item>
           <Form.Item name="sortOrder" label={fa.creditConfig.sortOrder}>
-            <InputNumber style={{ width: '100%' }} min={0} />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} />
           </Form.Item>
           <Form.Item name="scope" label={fa.creditConfig.scope} rules={[{ required: true }]}>
             <Select

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Tree, Button, Modal, Form, Input, InputNumber, Switch, TreeSelect, Space, Tag, Popconfirm, Typography, message } from 'antd'
+import { Tree, Button, Modal, Form, Input, Switch, TreeSelect, Space, Tag, Popconfirm, Typography, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import type { DataNode } from 'antd/es/tree'
 import type { CreativeCategory } from '@/types/api'
@@ -175,7 +176,7 @@ export function CategoryTreePage() {
             />
           </Form.Item>
           <Form.Item name="sortOrder" label={fa.creditConfig.sortOrder}>
-            <InputNumber style={{ width: '100%' }} min={0} />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} />
           </Form.Item>
           <Form.Item name="isActive" label={fa.creditConfig.active} valuePropName="checked">
             <Switch />

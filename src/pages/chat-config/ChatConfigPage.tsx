@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Alert, Button, Card, Divider, Form, InputNumber, Select, Spin, Switch, Typography, message } from 'antd'
+import { Alert, Button, Card, Divider, Form, Select, Spin, Switch, Typography, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { useChatConfig, useUpdateChatConfig } from '@/queries/chat-config.queries'
 import { ContextEditor } from '@/pages/sales-bot/ContextEditor'
 
@@ -78,7 +79,7 @@ export function ChatConfigPage() {
             extra="وقتی تاریخچه‌ی مکالمه از آخرین خلاصه‌سازی به این تعداد توکن برسد، دوباره خلاصه می‌شود."
             rules={[{ required: true }]}
           >
-            <InputNumber min={100} max={100_000} step={500} style={{ width: '100%' }} />
+            <DigitsInputNumber min={100} max={100_000} step={500} style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
@@ -87,7 +88,7 @@ export function ChatConfigPage() {
             extra="خروجی خلاصه‌ساز کوتاه نگه داشته می‌شود؛ عدد بالاتر یعنی خلاصه‌ی مفصل‌تر (و هزینه‌ی بیشتر)."
             rules={[{ required: true }]}
           >
-            <InputNumber min={50} max={4096} step={50} style={{ width: '100%' }} />
+            <DigitsInputNumber min={50} max={4096} step={50} style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
@@ -96,7 +97,7 @@ export function ChatConfigPage() {
             extra="این خلاصه با پیشرفت چت‌های داخل هر پروژه خودکار به‌روز می‌شود و به همه‌ی چت‌های آن پروژه اضافه می‌شود؛ عدد بالاتر یعنی خلاصه‌ی مفصل‌تر (و هزینه‌ی بیشتر)."
             rules={[{ required: true }]}
           >
-            <InputNumber min={500} max={20_000} step={500} style={{ width: '100%' }} />
+            <DigitsInputNumber min={500} max={20_000} step={500} style={{ width: '100%' }} />
           </Form.Item>
 
           <Divider>محدودیت عکس در چت</Divider>
@@ -106,7 +107,7 @@ export function ChatConfigPage() {
             label="حداکثر تعداد عکس هر پیام"
             rules={[{ required: true }]}
           >
-            <InputNumber min={1} max={10} style={{ width: '100%' }} />
+            <DigitsInputNumber min={1} max={10} style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
@@ -115,7 +116,7 @@ export function ChatConfigPage() {
             extra="بعد از decode شدن از base64 اندازه‌گیری می‌شود؛ فرانت خودش عکس‌ها را قبل از ارسال کوچک می‌کند، این فقط یک سقف امنیتی سمت سرور است."
             rules={[{ required: true }]}
           >
-            <InputNumber min={1} max={20} style={{ width: '100%' }} />
+            <DigitsInputNumber min={1} max={20} style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item

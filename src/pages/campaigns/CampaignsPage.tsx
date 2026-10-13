@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import dayjs from 'dayjs'
-import {
-  Table, Button, Drawer, Form, Input, InputNumber, DatePicker, Switch,
-  Space, Tag, Progress, Popconfirm, Typography, message, Divider,
-} from 'antd'
+import { Table, Button, Drawer, Form, Input, DatePicker, Switch, Space, Tag, Progress, Popconfirm, Typography, message, Divider } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { PlusOutlined, DeleteOutlined, UnorderedListOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { LaunchCampaign } from '@/types/api'
@@ -181,10 +179,10 @@ export function CampaignsPage() {
           </Space>
           <Space style={{ display: 'flex' }}>
             <Form.Item name="capacity" label={fa.campaigns.capacity} rules={[{ required: true }]}>
-              <InputNumber min={1} style={{ width: 200 }} />
+              <DigitsInputNumber min={1} style={{ width: 200 }} />
             </Form.Item>
             <Form.Item name="maxWaitlistSize" label={fa.campaigns.maxWaitlistSize}>
-              <InputNumber min={1} style={{ width: 200 }} placeholder="بدون سقف" />
+              <DigitsInputNumber min={1} style={{ width: 200 }} placeholder="بدون سقف" />
             </Form.Item>
           </Space>
 
@@ -197,7 +195,7 @@ export function CampaignsPage() {
             <Input.TextArea rows={2} />
           </Form.Item>
           <Form.Item name="waitlistDailyMessageLimit" label={fa.campaigns.waitlistDailyMessageLimit}>
-            <InputNumber min={0} style={{ width: '100%' }} />
+            <DigitsInputNumber min={0} style={{ width: '100%' }} />
           </Form.Item>
 
           <Divider>{fa.campaigns.displaySettings}</Divider>
@@ -207,29 +205,29 @@ export function CampaignsPage() {
           </Form.Item>
           <Space wrap>
             <Form.Item name="displayInitialPctMin" label={fa.campaigns.displayInitialPctMin}>
-              <InputNumber min={1} max={100} style={{ width: 140 }} />
+              <DigitsInputNumber min={1} max={100} style={{ width: 140 }} />
             </Form.Item>
             <Form.Item name="displayInitialPctMax" label={fa.campaigns.displayInitialPctMax}>
-              <InputNumber min={1} max={100} style={{ width: 140 }} />
+              <DigitsInputNumber min={1} max={100} style={{ width: 140 }} />
             </Form.Item>
           </Space>
           <Space wrap>
             <Form.Item name="displayFloorMin" label={fa.campaigns.displayFloorMin}>
-              <InputNumber min={0} style={{ width: 140 }} />
+              <DigitsInputNumber min={0} style={{ width: 140 }} />
             </Form.Item>
             <Form.Item name="displayFloorMax" label={fa.campaigns.displayFloorMax}>
-              <InputNumber min={0} style={{ width: 140 }} />
+              <DigitsInputNumber min={0} style={{ width: 140 }} />
             </Form.Item>
           </Space>
           <Space wrap>
             <Form.Item name="displayAnimationTickMs" label={fa.campaigns.displayAnimationTickMs}>
-              <InputNumber min={50} step={50} style={{ width: 160 }} />
+              <DigitsInputNumber min={50} step={50} style={{ width: 160 }} />
             </Form.Item>
             <Form.Item name="displayDecrementMin" label={fa.campaigns.displayDecrementMin}>
-              <InputNumber min={1} style={{ width: 140 }} />
+              <DigitsInputNumber min={1} style={{ width: 140 }} />
             </Form.Item>
             <Form.Item name="displayDecrementMax" label={fa.campaigns.displayDecrementMax}>
-              <InputNumber min={1} style={{ width: 140 }} />
+              <DigitsInputNumber min={1} style={{ width: 140 }} />
             </Form.Item>
           </Space>
 
@@ -255,7 +253,7 @@ export function CampaignsPage() {
                         rules={[{ required: true }]}
                         noStyle
                       >
-                        <InputNumber min={1} placeholder={fa.campaigns.dayOffset} style={{ width: 140 }} />
+                        <DigitsInputNumber min={1} placeholder={fa.campaigns.dayOffset} style={{ width: 140 }} />
                       </Form.Item>
                       <Form.Item
                         {...field}

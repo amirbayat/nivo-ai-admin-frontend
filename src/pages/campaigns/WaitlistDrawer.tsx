@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { Drawer, Table, Tag, Select, Space, Button, InputNumber, Input, message, Popconfirm } from 'antd'
+import { Drawer, Table, Tag, Select, Space, Button, message, Popconfirm } from 'antd'
+import DigitsInput from '@/components/DigitsInput'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import type { ColumnsType } from 'antd/es/table'
 import type { LaunchCampaign, WaitlistEntry } from '@/types/api'
 import { useWaitlist, useGrantAccess, useGrantAccessToPhone } from '@/queries/campaign.queries'
@@ -97,7 +99,7 @@ export function WaitlistDrawer({ campaign, onClose }: { campaign: LaunchCampaign
           />
         </Space>
         <Space wrap>
-          <InputNumber min={1} value={grantCount} onChange={(v) => setGrantCount(v ?? 1)} />
+          <DigitsInputNumber min={1} value={grantCount} onChange={(v) => setGrantCount(v ?? 1)} />
           <Popconfirm title={fa.campaigns.grantFirstN + '؟'} onConfirm={handleGrantFirstN}>
             <Button loading={grantAccess.isPending}>{fa.campaigns.grantFirstN}</Button>
           </Popconfirm>
@@ -106,7 +108,8 @@ export function WaitlistDrawer({ campaign, onClose }: { campaign: LaunchCampaign
           </Popconfirm>
         </Space>
         <Space wrap>
-          <Input
+          <DigitsInput
+            kind="phone"
             placeholder="09xxxxxxxxx"
             style={{ width: 180 }}
             value={grantPhone}

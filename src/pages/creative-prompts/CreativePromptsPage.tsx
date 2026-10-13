@@ -1,27 +1,7 @@
 import { useState } from 'react'
 import { isAxiosError } from 'axios'
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  TreeSelect,
-  Switch,
-  Space,
-  Tag,
-  Popconfirm,
-  Typography,
-  Upload,
-  Tabs,
-  Badge,
-  Card,
-  Empty,
-  Spin,
-  message,
-} from 'antd'
+import { Table, Button, Modal, Form, Input, Select, TreeSelect, Switch, Space, Tag, Popconfirm, Typography, Upload, Tabs, Badge, Card, Empty, Spin, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { PlusOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { CreativePrompt, CreativePromptSubmission } from '@/types/api'
@@ -439,13 +419,13 @@ export function CreativePromptsPage() {
           )}
           <Space size="large" wrap style={{ width: '100%' }}>
             <Form.Item name="creditCost" label={fa.creativePrompts.creditCost} rules={[{ required: true }]}>
-              <InputNumber style={{ width: 160 }} min={0} />
+              <DigitsInputNumber style={{ width: 160 }} min={0} />
             </Form.Item>
             <Form.Item name="preferredModel" label={fa.creativePrompts.preferredModel}>
               <Input dir="ltr" style={{ width: 200 }} placeholder="اختیاری" />
             </Form.Item>
             <Form.Item name="sortOrder" label={fa.creditConfig.sortOrder}>
-              <InputNumber style={{ width: 120 }} min={0} />
+              <DigitsInputNumber style={{ width: 120 }} min={0} />
             </Form.Item>
           </Space>
           <Form.Item name="tagsText" label={fa.creativePrompts.tags} extra={fa.creativePrompts.tagsHint}>

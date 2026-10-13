@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Button, Form, Input, InputNumber, Modal, Popconfirm, Space, Switch, Table, Typography, message } from 'antd'
+import { Button, Form, Input, Modal, Popconfirm, Space, Switch, Table, Typography, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { PlusOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import {
@@ -100,7 +101,7 @@ export function ArticleCategoriesPage() {
             <Input placeholder="amoozesh" style={{ direction: 'ltr' }} />
           </Form.Item>
           <Form.Item name="sortOrder" label="ترتیب نمایش">
-            <InputNumber min={0} style={{ width: '100%' }} />
+            <DigitsInputNumber min={0} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="isActive" label="فعال" valuePropName="checked">
             <Switch />

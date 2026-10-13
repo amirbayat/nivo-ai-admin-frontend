@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { Card, Form, InputNumber, Select, Space, Button, Typography, message } from 'antd'
+import { Card, Form, Select, Space, Button, Typography, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { SaveOutlined } from '@ant-design/icons'
 import {
   useSalesAgentConfig,
@@ -65,13 +66,13 @@ export function SalesAgentConfigPage() {
         <Form form={form} layout="vertical" onFinish={handleSave}>
           <Space size="large" wrap align="start">
             <Form.Item name="freeDailyQuota" label={fa.salesAgentConfig.freeDailyQuota} rules={[{ required: true }]} extra={fa.salesAgentConfig.freeDailyQuotaHint}>
-              <InputNumber style={{ width: 280 }} min={1} step={1} />
+              <DigitsInputNumber style={{ width: 280 }} min={1} step={1} />
             </Form.Item>
             <Form.Item name="trialDurationDays" label={fa.salesAgentConfig.trialDurationDays} rules={[{ required: true }]}>
-              <InputNumber style={{ width: 220 }} min={1} step={1} />
+              <DigitsInputNumber style={{ width: 220 }} min={1} step={1} />
             </Form.Item>
             <Form.Item name="trialCreditToman" label={fa.salesAgentConfig.trialCreditToman} rules={[{ required: true }]}>
-              <InputNumber style={{ width: 240 }} min={0} step={10000} />
+              <DigitsInputNumber style={{ width: 240 }} min={0} step={10000} />
             </Form.Item>
           </Space>
 
@@ -86,7 +87,7 @@ export function SalesAgentConfigPage() {
               rules={[{ required: true }]}
               extra={fa.salesAgentConfig.buyerCostMarkupHint}
             >
-              <InputNumber style={{ width: 280 }} min={1} step={0.1} />
+              <DigitsInputNumber style={{ width: 280 }} min={1} step={0.1} />
             </Form.Item>
             <Form.Item
               name="sellerCostMarkup"
@@ -94,7 +95,7 @@ export function SalesAgentConfigPage() {
               rules={[{ required: true }]}
               extra={fa.salesAgentConfig.sellerCostMarkupHint}
             >
-              <InputNumber style={{ width: 280 }} min={1} step={0.1} />
+              <DigitsInputNumber style={{ width: 280 }} min={1} step={0.1} />
             </Form.Item>
             <Form.Item
               name="avgCostPerChatToman"
@@ -102,7 +103,7 @@ export function SalesAgentConfigPage() {
               rules={[{ required: true }]}
               extra={fa.salesAgentConfig.avgCostPerChatTomanHint}
             >
-              <InputNumber style={{ width: 280 }} min={1} step={1000} />
+              <DigitsInputNumber style={{ width: 280 }} min={1} step={1000} />
             </Form.Item>
           </Space>
 

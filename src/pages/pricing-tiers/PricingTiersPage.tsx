@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Table, Button, Modal, Form, InputNumber, Select, Space, Tag, Popconfirm, Typography, Card, message } from 'antd'
+import { Table, Button, Modal, Form, Select, Space, Tag, Popconfirm, Typography, Card, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { PlusOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { PricingTier, PricingGenerationType } from '@/types/api'
@@ -176,13 +177,13 @@ export function PricingTiersPage() {
             />
           </Form.Item>
           <Form.Item name="minToman" label={fa.pricingTiers.minToman} rules={[{ required: true }]}>
-            <InputNumber min={0} style={{ width: '100%' }} />
+            <DigitsInputNumber min={0} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="maxToman" label={fa.pricingTiers.maxToman} extra={fa.pricingTiers.maxTomanHint}>
-            <InputNumber min={0} style={{ width: '100%' }} />
+            <DigitsInputNumber min={0} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="markup" label={fa.pricingTiers.markup} rules={[{ required: true }]}>
-            <InputNumber min={0} step={0.05} style={{ width: '100%' }} />
+            <DigitsInputNumber min={0} step={0.05} style={{ width: '100%' }} />
           </Form.Item>
         </Form>
       </Modal>

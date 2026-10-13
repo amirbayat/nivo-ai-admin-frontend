@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { AutoComplete, Button, Card, Form, Input, InputNumber, Spin, Switch, message } from 'antd'
+import { AutoComplete, Button, Card, Form, Input, Spin, Switch, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { useModels } from '@/queries/admin.queries'
 import { useSalesBotConfig, useUpdateSalesBotConfig } from '@/queries/sales-bot.queries'
 
@@ -66,11 +67,11 @@ export function ModelSettingsTab() {
           extra="قبلاً در کد ثابت روی ۴۰۰ بود؛ الان از همین‌جا قابل تنظیم است. عدد بالاتر یعنی پاسخ‌های بالقوه طولانی‌تر (و هزینه‌ی بیشتر)."
           rules={[{ required: true }]}
         >
-          <InputNumber min={50} max={4096} step={50} style={{ width: '100%' }} />
+          <DigitsInputNumber min={50} max={4096} step={50} style={{ width: '100%' }} />
         </Form.Item>
 
         <Form.Item name="maxMessages" label="حداکثر پیام هر مکالمه" rules={[{ required: true }]}>
-          <InputNumber min={1} style={{ width: '100%' }} />
+          <DigitsInputNumber min={1} style={{ width: '100%' }} />
         </Form.Item>
 
         <Form.Item name="discountEnabled" label="پیشنهاد تخفیف فعال باشد" valuePropName="checked">
@@ -82,7 +83,7 @@ export function ModelSettingsTab() {
           label="حداقل تعداد پیام قبل از پیشنهاد تخفیف"
           rules={[{ required: true }]}
         >
-          <InputNumber min={1} style={{ width: '100%' }} />
+          <DigitsInputNumber min={1} style={{ width: '100%' }} />
         </Form.Item>
 
         <Form.Item name="discountPromptText" label="متن پیشنهاد تخفیف" rules={[{ required: true }]}>

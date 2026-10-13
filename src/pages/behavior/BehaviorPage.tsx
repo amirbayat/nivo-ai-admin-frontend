@@ -1,9 +1,7 @@
 import { useMemo, useState } from 'react'
 import dayjs, { type Dayjs } from 'dayjs'
-import {
-  Alert, AutoComplete, Button, Card, DatePicker, Empty, Input, InputNumber, Modal, Popconfirm, Space,
-  Table, Tabs, Tag, Timeline, Typography,
-} from 'antd'
+import { Alert, AutoComplete, Button, Card, DatePicker, Empty, Input, Modal, Popconfirm, Space, Table, Tabs, Tag, Timeline, Typography } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import {
   PlusOutlined, MinusCircleOutlined, SearchOutlined, SaveOutlined, DeleteOutlined, PlayCircleOutlined,
 } from '@ant-design/icons'
@@ -337,7 +335,7 @@ function FunnelTab() {
           </Button>
           <Space wrap>
             <RangePicker value={range} onChange={(v) => v && setRange(v as [Dayjs, Dayjs])} allowClear={false} />
-            <InputNumber
+            <DigitsInputNumber
               addonBefore="حداکثر فاصله (ساعت)"
               min={1}
               max={24 * 30}

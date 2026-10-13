@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { Button, Card, Form, InputNumber, Spin, Switch, Typography, message } from 'antd'
+import { Button, Card, Form, Spin, Switch, Typography, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { useUpdateVideoEditConfig, useVideoEditConfig } from '@/queries/video-edit-config.queries'
 
 const { Title, Text } = Typography
@@ -50,7 +51,7 @@ export function VideoEditConfigPage() {
             extra="فقط برای حالت «تولید» — وقتی ویدیوی مرجعی داده نشده باشد. مدت حالت «ادیت» همان مدت ویدیوی ورودی است."
             rules={[{ required: true }]}
           >
-            <InputNumber min={1} max={30} style={{ width: '100%' }} />
+            <DigitsInputNumber min={1} max={30} style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
@@ -58,7 +59,7 @@ export function VideoEditConfigPage() {
             label="حداکثر جاب هم‌زمان هر کاربر"
             rules={[{ required: true }]}
           >
-            <InputNumber min={1} max={10} style={{ width: '100%' }} />
+            <DigitsInputNumber min={1} max={10} style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
@@ -66,7 +67,7 @@ export function VideoEditConfigPage() {
             label="حداکثر تعداد جاب در روز، هر کاربر"
             extra="خالی بگذار یعنی بدون سقف روزانه."
           >
-            <InputNumber min={1} style={{ width: '100%' }} />
+            <DigitsInputNumber min={1} style={{ width: '100%' }} />
           </Form.Item>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>

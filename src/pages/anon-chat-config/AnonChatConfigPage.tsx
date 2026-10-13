@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
-import {
-  AutoComplete, Button, Card, Col, Divider, Form, Input, InputNumber, Row, Select, Space, Spin, Switch, Typography, message,
-} from 'antd'
+import { AutoComplete, Button, Card, Col, Divider, Form, Input, Row, Select, Space, Spin, Switch, Typography, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import { useAnonChatConfig, useUpdateAnonChatConfig } from '@/queries/anon-chat-config.queries'
 import { useModels } from '@/queries/admin.queries'
@@ -90,7 +89,7 @@ export function AnonChatConfigPage() {
                 extra="تعداد پیامی که کاربر ناشناس بدون هیچ محدودیت روزانه‌ای می‌تواند ارسال کند؛ بعد از این وارد «ناحیه‌ی محدود» می‌شود."
                 rules={[{ required: true }]}
               >
-                <InputNumber min={0} step={1} style={{ width: '100%' }} />
+                <DigitsInputNumber min={0} step={1} style={{ width: '100%' }} />
               </Form.Item>
 
               <Form.Item
@@ -99,15 +98,15 @@ export function AnonChatConfigPage() {
                 extra="بعد از اتمام کوتای رایگان، هر روز این تعداد پیام مجاز است."
                 rules={[{ required: true }]}
               >
-                <InputNumber min={0} step={1} style={{ width: '100%' }} />
+                <DigitsInputNumber min={0} step={1} style={{ width: '100%' }} />
               </Form.Item>
 
               <Form.Item name="maxInputTokens" label="حداکثر توکن ورودی هر پیام" rules={[{ required: true }]}>
-                <InputNumber min={1} step={50} style={{ width: '100%' }} />
+                <DigitsInputNumber min={1} step={50} style={{ width: '100%' }} />
               </Form.Item>
 
               <Form.Item name="maxOutputTokens" label="حداکثر توکن خروجی هر پاسخ" rules={[{ required: true }]}>
-                <InputNumber min={1} step={50} style={{ width: '100%' }} />
+                <DigitsInputNumber min={1} step={50} style={{ width: '100%' }} />
               </Form.Item>
 
               <Divider>پیام‌های نمایشی به کاربر ناشناس</Divider>
@@ -145,7 +144,7 @@ export function AnonChatConfigPage() {
                 extra="بنر تشویق به ثبت‌نام (بالا) تا این تعداد پیام کاربر در مکالمه نمایش داده نمی‌شود — تا کاربر تازه‌وارد قبل از دیدن فشار ثبت‌نام، محصول را تجربه کند. صفر یعنی از همون پیام اول."
                 rules={[{ required: true }]}
               >
-                <InputNumber min={0} max={50} step={1} style={{ width: '100%' }} />
+                <DigitsInputNumber min={0} max={50} step={1} style={{ width: '100%' }} />
               </Form.Item>
 
               <Divider>راهنمای وسط صفحه‌ی خالی چت</Divider>

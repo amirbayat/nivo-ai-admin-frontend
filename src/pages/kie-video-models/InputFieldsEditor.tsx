@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Alert, Button, Dropdown, Input, InputNumber, Select, Space, Switch, Tabs, Tag, Tooltip, Typography } from 'antd'
+import { Alert, Button, Dropdown, Input, Select, Space, Switch, Tabs, Tag, Tooltip, Typography } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons'
 import type { KieVideoModel } from '@/types/api'
 import {
@@ -219,7 +220,7 @@ function PreviewField({
     }
     case 'number': {
       control = (
-        <InputNumber
+        <DigitsInputNumber
           style={{ width: '100%' }}
           min={field.min}
           max={field.max}
@@ -233,7 +234,7 @@ function PreviewField({
     case 'duration': {
       const val = (values[field.key] as number | undefined) ?? field.default
       control = (
-        <InputNumber
+        <DigitsInputNumber
           style={{ width: '100%' }}
           min={field.range?.min}
           max={field.range?.max}

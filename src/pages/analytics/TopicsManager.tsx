@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Modal, Table, Button, Form, Input, InputNumber, Switch, Space, Popconfirm, message, Tag } from 'antd'
+import { Modal, Table, Button, Form, Input, Switch, Space, Popconfirm, message, Tag } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { PlusOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { Topic } from '@/types/api'
@@ -117,7 +118,7 @@ export function TopicsManager({ open, onClose }: { open: boolean; onClose: () =>
             <Input placeholder="#4F46E5" />
           </Form.Item>
           <Form.Item name="sortOrder" label="ترتیب">
-            <InputNumber style={{ width: '100%' }} min={0} />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} />
           </Form.Item>
           <Form.Item name="isActive" label="فعال" valuePropName="checked">
             <Switch />

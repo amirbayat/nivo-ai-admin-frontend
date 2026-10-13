@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Card, Segmented, Select, InputNumber, Button, Typography, Space, message, Spin, Popconfirm, Empty } from 'antd'
+import { Card, Segmented, Select, Button, Typography, Space, message, Spin, Popconfirm, Empty } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { PlusOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons'
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import type { DragEndEvent } from '@dnd-kit/core'
@@ -231,7 +232,7 @@ export function ModelRoutingPage() {
                 >
                   <Space align="center" style={{ marginBottom: 12 }} wrap>
                     <Text>سقف مصرف روزانه تا:</Text>
-                    <InputNumber
+                    <DigitsInputNumber
                       min={1}
                       max={999}
                       value={step.thresholdPct}

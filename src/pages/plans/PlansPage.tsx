@@ -1,21 +1,6 @@
 import { useState } from 'react'
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  Input,
-  InputNumber,
-  Switch,
-  Space,
-  Tag,
-  Popconfirm,
-  Typography,
-  message,
-  Tooltip,
-  Divider,
-  Select,
-} from 'antd'
+import { Table, Button, Modal, Form, Input, Switch, Space, Tag, Popconfirm, Typography, message, Tooltip, Divider, Select } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { Plan } from '@/types/api'
@@ -406,7 +391,7 @@ export function PlansPage() {
             <Input />
           </Form.Item>
           <Form.Item name="priceMonthly" label={fa.plans.price} rules={[{ required: true }]}>
-            <InputNumber style={{ width: '100%' }} min={0} />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} />
           </Form.Item>
           <Form.Item
             name="dailyFreeTokens"
@@ -414,10 +399,10 @@ export function PlansPage() {
             extra="برای پلن‌های نقره‌ای و طلایی صفر بگذارید — توکن از حساب ماهانه کسر می‌شود"
             rules={[{ required: true }]}
           >
-            <InputNumber style={{ width: '100%' }} min={0} />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} />
           </Form.Item>
           <Form.Item name="monthlyTotalTokens" label={fa.plans.monthlyTotal} rules={[{ required: true }]}>
-            <InputNumber style={{ width: '100%' }} min={0} />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} />
           </Form.Item>
           <Form.Item name="allowedModels" label={fa.plans.models} rules={[{ required: true, type: 'array', min: 1 }]}>
             <Select
@@ -456,13 +441,13 @@ export function PlansPage() {
             label="تعداد مدل ویژه روی کارت پلن"
             extra="چند مورد از مدل‌های ویژه، قبل از دکمه‌ی «N مدل دیگر»، روی کارت پلن نشان داده شود"
           >
-            <InputNumber style={{ width: '100%' }} min={1} placeholder="۵" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} placeholder="۵" />
           </Form.Item>
           <Form.Item name="isPopular" label="نشان «محبوب‌ترین»" valuePropName="checked">
             <Switch />
           </Form.Item>
           <Form.Item name="sortOrder" label={fa.plans.sortOrder}>
-            <InputNumber style={{ width: '100%' }} min={0} />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} />
           </Form.Item>
 
           <Divider orientation="right" style={{ fontSize: 13 }}>محدودیت پیام روزانه</Divider>
@@ -472,28 +457,28 @@ export function PlansPage() {
             label="N — سقف پیام معمولی روزانه"
             extra="خالی = نامحدود. بعد از N پیام کاربر وارد ناحیه محدود می‌شود"
           >
-            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۱۰" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۱۰" />
           </Form.Item>
           <Form.Item
             name="throttledMessageCount"
             label="M — تعداد پیام در ناحیه محدود (بعد از N)"
             extra="خالی یا ۰ = بعد از N پیام مستقیم بلاک. با عدد = M پیام دیگر با توکن کمتر مجاز است"
           >
-            <InputNumber style={{ width: '100%' }} min={0} placeholder="مثلاً ۵" />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} placeholder="مثلاً ۵" />
           </Form.Item>
           <Form.Item
             name="throttledInputTokens"
             label="سقف توکن ورودی در ناحیه محدود"
             extra="خالی = از سقف ورودی عادی استفاده می‌شود"
           >
-            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۱۰۰" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۱۰۰" />
           </Form.Item>
           <Form.Item
             name="throttledOutputTokens"
             label="سقف توکن خروجی در ناحیه محدود"
             extra="خالی = بدون محدودیت خروجی در ناحیه محدود"
           >
-            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۲۰۰" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۲۰۰" />
           </Form.Item>
 
           <Divider orientation="right" style={{ fontSize: 13 }}>پنجره‌ی لغزان (محدودیت ضدسوءاستفاده)</Divider>
@@ -503,14 +488,14 @@ export function PlansPage() {
             label="سقف پیام در پنجره"
             extra="خالی = غیرفعال برای این پلن. مکمل سقف روزانه‌ی بالاست، نه جایگزین آن"
           >
-            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۵" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۵" />
           </Form.Item>
           <Form.Item
             name="rollingWindowHours"
             label="طول پنجره (ساعت)"
             extra="پیش‌فرض ۳ ساعت"
           >
-            <InputNumber style={{ width: '100%' }} min={1} placeholder="۳" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} placeholder="۳" />
           </Form.Item>
 
           <Divider orientation="right" style={{ fontSize: 13 }}>سایر محدودیت‌ها</Divider>
@@ -520,7 +505,7 @@ export function PlansPage() {
             label="سقف توکن ورودی در حالت عادی"
             extra="پیش‌فرض: ۳۰۰"
           >
-            <InputNumber style={{ width: '100%' }} min={1} placeholder="۳۰۰" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} placeholder="۳۰۰" />
           </Form.Item>
 
           <Form.Item
@@ -537,14 +522,14 @@ export function PlansPage() {
                         rules={[{ required: true, message: 'الزامی' }]}
                         style={{ marginBottom: 0 }}
                       >
-                        <InputNumber min={1} addonBefore="بعد از" addonAfter="پیام" placeholder="5" style={{ width: 190 }} />
+                        <DigitsInputNumber min={1} addonBefore="بعد از" addonAfter="پیام" placeholder="5" style={{ width: 190 }} />
                       </Form.Item>
                       <Form.Item
                         name={[name, 'maxOutputTokens']}
                         rules={[{ required: true, message: 'الزامی' }]}
                         style={{ marginBottom: 0 }}
                       >
-                        <InputNumber min={1} addonAfter="توکن خروجی" placeholder="500" style={{ width: 190 }} />
+                        <DigitsInputNumber min={1} addonAfter="توکن خروجی" placeholder="500" style={{ width: 190 }} />
                       </Form.Item>
                       <MinusCircleOutlined style={{ color: '#ff4d4f' }} onClick={() => remove(name)} />
                     </Space>
@@ -629,23 +614,23 @@ export function PlansPage() {
             label="آستانه‌ی پیام (کل عمر کاربر)"
             extra="خالی = بدون دوره‌ی آزمایشی. مثلاً ۶۰ — تا این تعداد پیام (نه روزانه، کل عمر کاربر)، محدودیت‌های زیر به‌جای محدودیت همیشگی بالا اعمال می‌شود"
           >
-            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۶۰" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۶۰" />
           </Form.Item>
           <Form.Item
             name="trialDailyMessageLimit"
             label="N آزمایشی — سقف پیام معمولی روزانه"
             extra="خالی = از سقف همیشگی بالا استفاده می‌شود"
           >
-            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۲۰" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۲۰" />
           </Form.Item>
           <Form.Item name="trialThrottledMessageCount" label="M آزمایشی — تعداد پیام در ناحیه محدود">
-            <InputNumber style={{ width: '100%' }} min={0} placeholder="مثلاً ۱۰" />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} placeholder="مثلاً ۱۰" />
           </Form.Item>
           <Form.Item name="trialRollingWindowLimit" label="سقف پیام در پنجره‌ی لغزان (آزمایشی)">
-            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۱۵" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۱۵" />
           </Form.Item>
           <Form.Item name="trialRollingWindowHours" label="طول پنجره‌ی لغزان — ساعت (آزمایشی)">
-            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۳" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۳" />
           </Form.Item>
 
           <Divider orientation="right" style={{ fontSize: 13 }}>Pay-as-you-go (کیف‌پول)</Divider>
@@ -662,19 +647,19 @@ export function PlansPage() {
             name="payAsYouGoMarkup"
             label="ضریب قیمت (مصرف واقعی × این عدد از کیف‌پول کم می‌شود)"
           >
-            <InputNumber style={{ width: '100%' }} min={1} step={0.1} placeholder="۱.۳" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} step={0.1} placeholder="۱.۳" />
           </Form.Item>
           <Form.Item
             name="payAsYouGoMinActivationToman"
             label="حداقل شارژ برای فعال‌سازی اولیه (تومان)"
           >
-            <InputNumber style={{ width: '100%' }} min={0} step={100000} placeholder="۱٬۰۰۰٬۰۰۰" />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} step={100000} placeholder="۱٬۰۰۰٬۰۰۰" />
           </Form.Item>
           <Form.Item
             name="payAsYouGoMinTopupToman"
             label="حداقل شارژهای بعدی (تومان)"
           >
-            <InputNumber style={{ width: '100%' }} min={0} step={50000} placeholder="۵۰۰٬۰۰۰" />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} step={50000} placeholder="۵۰۰٬۰۰۰" />
           </Form.Item>
           <Form.Item
             name="payAsYouGoTopupPresetsText"
@@ -710,20 +695,20 @@ export function PlansPage() {
             label="حداکثر تعداد تولید/ویرایش عکس در روز"
             extra="خالی = بدون سقف — چون هر عکس چند برابر گران‌تر از یک پیام متنی است"
           >
-            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۲۰" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۲۰" />
           </Form.Item>
           <Form.Item
             name="maxImageGenPerWindow"
             label="سقف تعداد در پنجره‌ی لغزان"
             extra="خالی = غیرفعال"
           >
-            <InputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۵" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} placeholder="مثلاً ۵" />
           </Form.Item>
           <Form.Item
             name="imageGenWindowHours"
             label="طول پنجره‌ی لغزان — ساعت"
           >
-            <InputNumber style={{ width: '100%' }} min={1} placeholder="۲۴" />
+            <DigitsInputNumber style={{ width: '100%' }} min={1} placeholder="۲۴" />
           </Form.Item>
 
           <Form.Item

@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Modal, Table, Button, Form, Input, InputNumber, Switch, Space, Popconfirm, message } from 'antd'
+import { Modal, Table, Button, Form, Input, Switch, Space, Popconfirm, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { PlusOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { UserSegment } from '@/types/api'
@@ -110,25 +111,25 @@ export function SegmentsManager({ open, onClose }: { open: boolean; onClose: () 
           </Form.Item>
           <Space style={{ display: 'flex' }}>
             <Form.Item name="minMessagesPerDay" label="حداقل پیام/روز">
-              <InputNumber style={{ width: 160 }} min={0} placeholder="بدون حد" />
+              <DigitsInputNumber style={{ width: 160 }} min={0} placeholder="بدون حد" />
             </Form.Item>
             <Form.Item name="maxMessagesPerDay" label="حداکثر پیام/روز">
-              <InputNumber style={{ width: 160 }} min={0} placeholder="بدون حد" />
+              <DigitsInputNumber style={{ width: 160 }} min={0} placeholder="بدون حد" />
             </Form.Item>
           </Space>
           <Space style={{ display: 'flex' }}>
             <Form.Item name="minTokensPerDay" label="حداقل توکن/روز">
-              <InputNumber style={{ width: 160 }} min={0} placeholder="بدون حد" />
+              <DigitsInputNumber style={{ width: 160 }} min={0} placeholder="بدون حد" />
             </Form.Item>
             <Form.Item name="maxTokensPerDay" label="حداکثر توکن/روز">
-              <InputNumber style={{ width: 160 }} min={0} placeholder="بدون حد" />
+              <DigitsInputNumber style={{ width: 160 }} min={0} placeholder="بدون حد" />
             </Form.Item>
           </Space>
           <Form.Item name="color" label="رنگ (اختیاری)">
             <Input placeholder="#4F46E5" />
           </Form.Item>
           <Form.Item name="sortOrder" label="ترتیب">
-            <InputNumber style={{ width: '100%' }} min={0} />
+            <DigitsInputNumber style={{ width: '100%' }} min={0} />
           </Form.Item>
           <Form.Item name="isActive" label="فعال" valuePropName="checked">
             <Switch />

@@ -1,20 +1,6 @@
 import { useState } from 'react'
-import {
-  Button,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Popconfirm,
-  Select,
-  Space,
-  Switch,
-  Table,
-  Tag,
-  Typography,
-  Upload,
-  message,
-} from 'antd'
+import { Button, Form, Input, Modal, Popconfirm, Select, Space, Switch, Table, Tag, Typography, Upload, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons'
 import type { KieInputSchema, KieVideoCategory, KieVideoModel, VideoModelProvider } from '@/types/api'
 import {
@@ -358,7 +344,7 @@ export function KieVideoModelsPage() {
               <Switch />
             </Form.Item>
             <Form.Item name="maxImages" label="حداکثر تعداد عکس">
-              <InputNumber min={0} />
+              <DigitsInputNumber min={0} />
             </Form.Item>
           </Space>
           <Space size={16}>
@@ -366,10 +352,10 @@ export function KieVideoModelsPage() {
               <Switch />
             </Form.Item>
             <Form.Item name="maxVideoDurationSec" label="حداکثر طول فایل مبدأ (ث)">
-              <InputNumber min={1} />
+              <DigitsInputNumber min={1} />
             </Form.Item>
             <Form.Item name="maxVideoWindowSec" label="حداکثر پهنای پنجره (ث)">
-              <InputNumber min={1} />
+              <DigitsInputNumber min={1} />
             </Form.Item>
           </Space>
           <Space size={16}>
@@ -385,14 +371,14 @@ export function KieVideoModelsPage() {
             label="قیمت تأییدشده به‌ازای ثانیه (USD)"
             extra="فقط بعد از یک تست واقعی پر کن (creditsConsumed × 0.005) — خالی یعنی preflight از نرخ محافظه‌کارانه‌ی پیش‌فرض ($۰.۱۰) استفاده می‌کند."
           >
-            <InputNumber min={0} step={0.001} style={{ width: '100%' }} />
+            <DigitsInputNumber min={0} step={0.001} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="pricingNote" label="یادداشت قیمت (اختیاری)">
             <Input.TextArea rows={2} placeholder="مثلاً: تست واقعی ۱۴۰۵/۰۶/۱۵، ۴ث/۷۲۰p = ۶۳ credit" />
           </Form.Item>
           <Space size={16}>
             <Form.Item name="sortOrder" label="ترتیب نمایش">
-              <InputNumber min={0} />
+              <DigitsInputNumber min={0} />
             </Form.Item>
             <Form.Item name="isActive" label="فعال" valuePropName="checked">
               <Switch />

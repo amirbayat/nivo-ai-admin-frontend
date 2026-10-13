@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Table, Button, Modal, Form, InputNumber, Space, Popconfirm, Typography, Card, message } from 'antd'
+import { Table, Button, Modal, Form, Space, Popconfirm, Typography, Card, message } from 'antd'
+import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { PlusOutlined } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import type { CaptionPricingTier } from '@/types/api'
@@ -145,17 +146,17 @@ export function CaptionPricingPage() {
       >
         <Form form={form} layout="vertical">
           <Form.Item name="sortOrder" label={fa.captionPricing.sortOrder} rules={[{ required: true }]}>
-            <InputNumber min={0} style={{ width: '100%' }} />
+            <DigitsInputNumber min={0} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item
             name="maxDurationSec"
             label={fa.captionPricing.maxDurationSec}
             extra={fa.captionPricing.maxDurationSecHint}
           >
-            <InputNumber min={1} style={{ width: '100%' }} />
+            <DigitsInputNumber min={1} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="creditCost" label={fa.captionPricing.creditCost} rules={[{ required: true }]}>
-            <InputNumber min={0} style={{ width: '100%' }} />
+            <DigitsInputNumber min={0} style={{ width: '100%' }} />
           </Form.Item>
         </Form>
       </Modal>
