@@ -726,6 +726,42 @@ export const fa = {
     traceFallbackAttempt: '🔁 این تلاش دوم بود (fallback با مدل پیش‌فرض)',
     traceSuspiciousPriceClaims: (amounts: number[]) =>
       `🚨 عدد تومانی مشکوک در متن پاسخ (با هیچ مبلغ واقعی مطابقت نداشت): ${amounts.join('، ')}`,
+    // docs/PRD-sales-agent-sales-state-machine.md §۱۶ — تصمیم ماشین‌حالت فروش (فقط‌خواندنی)
+    salesStageLabels: {
+      OPENING: 'شروع گفتگو',
+      DISCOVERY: 'کشف نیاز',
+      RECOMMENDATION: 'پیشنهاد محصول',
+      EVALUATION: 'بررسی/مقایسه‌ی محصول',
+      OBJECTION: 'اعتراض/تردید',
+      CLOSING: 'نزدیک بستن',
+      CHECKOUT: 'سبد/پرداخت',
+      POST_PURCHASE: 'بعد از خرید',
+      NOT_A_FIT: 'خارج از حوزه‌ی فروشگاه',
+      DORMANT: 'مشتری عقب کشیده',
+    } as Record<string, string>,
+    turnGoalLabels: {
+      GREET_AND_OPEN: 'خوش‌آمد و شروع',
+      DISCOVER_NEED: 'کشف نیاز (یک سؤال)',
+      RECOMMEND: 'پیشنهاد دقیق',
+      ANSWER_AND_ADVANCE: 'جواب دقیق و یک قدم جلو',
+      HANDLE_OBJECTION: 'مدیریت اعتراض',
+      TRIAL_CLOSE: 'سنجش آمادگی',
+      ALTERNATIVE_CLOSE: 'بستن با دو گزینه',
+      EXECUTE_PURCHASE: 'اجرای خرید',
+      ASSIST_CHECKOUT: 'کمک به تکمیل خرید',
+      POST_PURCHASE_CARE: 'مراقبت بعد از خرید',
+      HONEST_NOT_A_FIT: 'صداقت: خارج از حوزه',
+      SOFT_EXIT: 'خروج محترمانه',
+    } as Record<string, string>,
+    traceSalesDecision: (stage: string, goal: string, reason: string, prevStage?: string) =>
+      `🧭 مرحله‌ی فروش: ${stage}${prevStage ? ` (نوبت قبل: ${prevStage})` : ''} | هدف نوبت: ${goal} | قانون: ${reason}`,
+    tracePerception: (act: string, sentiment: string, buyingSignal: string, objection?: string) =>
+      `👂 ادراک پیام: ${act} | حس: ${sentiment} | سیگنال خرید: ${buyingSignal}${objection ? ` | اعتراض: ${objection}` : ''}`,
+    tracePerceptionFailed: '⚠️ ادراک پیام شکست خورد؛ perception خنثی استفاده شد',
+    traceValidatorViolations: (codes: string[]) => `🚨 تخلف‌های validator پاسخ: ${codes.join('، ')}`,
+    traceCorrectiveRetry: '🔁 پاسخ یک‌بار با دستور اصلاحی بازنویسی شد',
+    traceCandidateProductIds: (ids: string[]) => `🎯 کاندیدهای پیش‌جست‌وجوی سرور: ${ids.join('، ')}`,
+    traceQuickReplies: (replies: string[]) => `🔘 پاسخ‌های سریع: ${replies.join(' | ')}`,
     // docs/PRD-product-strategy-and-roadmap.md بخش ۵.۱۰ بند ۳
     instrumentationTitle: 'پیگیری خودکار و تبلیغات — آیا واقعاً اثر دارند؟',
     followUpSent: 'فالوآپ رضایت فرستاده‌شده',

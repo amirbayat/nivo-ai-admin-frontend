@@ -923,6 +923,24 @@ export interface AiTraceInfo {
   progressHappened?: boolean
   isFallbackAttempt?: boolean
   suspiciousPriceClaims?: number[]
+  // docs/PRD-sales-agent-sales-state-machine.md §۱۶ — فقط trace مسیر ماشین‌حالت فروش
+  // (handler: 'callSalesTurn' / 'runSalesShortCircuit')
+  salesStage?: string
+  prevSalesStage?: string
+  turnGoal?: string
+  decisionReason?: string
+  perception?: {
+    primaryAct: string
+    secondaryActs?: string[]
+    sentiment: string
+    buyingSignal: string
+    objection: { type: string; quote: string } | null
+  }
+  perceptionFailed?: boolean
+  validatorViolations?: { code: string; [key: string]: unknown }[]
+  correctiveRetry?: boolean
+  candidateProductIds?: string[]
+  quickReplies?: string[]
 }
 
 // docs/PRD-buyer-purchase-intent-taxonomy.md بخش ۴.۲ — لایه‌ی «نیاز خریدار»، مکمل و جدا از

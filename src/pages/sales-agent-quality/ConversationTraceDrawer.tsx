@@ -59,6 +59,41 @@ function TraceTimelineItem({ item }: { item: ConversationTraceItem }) {
       {agentReply?.voiceCostToman !== undefined && (
         <Text type="secondary">{fa.salesAgentQuality.traceVoiceCost(agentReply.voiceCostToman)}</Text>
       )}
+      {trace?.turnGoal && trace.salesStage && (
+        <Text>
+          {fa.salesAgentQuality.traceSalesDecision(
+            fa.salesAgentQuality.salesStageLabels[trace.salesStage] ?? trace.salesStage,
+            fa.salesAgentQuality.turnGoalLabels[trace.turnGoal] ?? trace.turnGoal,
+            trace.decisionReason ?? '—',
+            trace.prevSalesStage && trace.prevSalesStage !== trace.salesStage
+              ? (fa.salesAgentQuality.salesStageLabels[trace.prevSalesStage] ?? trace.prevSalesStage)
+              : undefined,
+          )}
+        </Text>
+      )}
+      {trace?.perception && (
+        <Text type="secondary">
+          {fa.salesAgentQuality.tracePerception(
+            trace.perception.primaryAct,
+            trace.perception.sentiment,
+            trace.perception.buyingSignal,
+            trace.perception.objection ? `${trace.perception.objection.type} («${trace.perception.objection.quote}»)` : undefined,
+          )}
+        </Text>
+      )}
+      {trace?.perceptionFailed && <Text type="warning">{fa.salesAgentQuality.tracePerceptionFailed}</Text>}
+      {trace?.validatorViolations && trace.validatorViolations.length > 0 && (
+        <Text type="danger">
+          {fa.salesAgentQuality.traceValidatorViolations(trace.validatorViolations.map(v => v.code))}
+        </Text>
+      )}
+      {trace?.correctiveRetry && <Text type="warning">{fa.salesAgentQuality.traceCorrectiveRetry}</Text>}
+      {trace?.candidateProductIds && trace.candidateProductIds.length > 0 && (
+        <Text type="secondary">{fa.salesAgentQuality.traceCandidateProductIds(trace.candidateProductIds)}</Text>
+      )}
+      {trace?.quickReplies && trace.quickReplies.length > 0 && (
+        <Text type="secondary">{fa.salesAgentQuality.traceQuickReplies(trace.quickReplies)}</Text>
+      )}
       {trace?.toolsCalled && trace.toolsCalled.length > 0 && (
         <Text type="secondary">{fa.salesAgentQuality.traceToolsCalled(trace.toolsCalled.map(t => t.name))}</Text>
       )}
