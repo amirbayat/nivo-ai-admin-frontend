@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:digits": "sh scripts/check-digit-inputs.sh"
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
