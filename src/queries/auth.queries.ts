@@ -54,7 +54,13 @@ export function useMe() {
 export function useLogout() {
   const logout = useAuthStore((s) => s.logout)
   return useMutation({
-    mutationFn: () => api.post('/auth/logout').then((r) => r.data),
+    // 0.13f — بدون body سرور 400 می‌داد و refresh token هرگز باطل نمی‌شد
+    mutationFn: () =>
+      api
+        .post('/auth/logout', {
+          refreshToken: localStorage.getItem(REFRESH_KEY) ?? '',
+        })
+        .then((r) => r.data),
     onSettled: () => {
       logout()
     },
