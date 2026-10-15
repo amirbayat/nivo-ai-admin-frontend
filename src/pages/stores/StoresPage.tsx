@@ -32,7 +32,7 @@ export function StoresPage() {
   const [search, setSearch] = useState('')
   const [searchInput, setSearchInput] = useState('')
   const [range, setRange] = useState<[Dayjs, Dayjs] | undefined>(undefined)
-  const [detail, setDetail] = useState<{ storeId: string; storeName: string } | null>(null)
+  const [detail, setDetail] = useState<{ storeId: string; storeName: string; status: 'ACTIVE' | 'SUSPENDED' } | null>(null)
 
   const { data, isLoading } = useStoreCreditOverview({
     page,
@@ -178,7 +178,7 @@ export function StoresPage() {
       width: 220,
       render: (_, r) => (
         <Space wrap>
-          <Button size="small" onClick={() => setDetail({ storeId: r.storeId, storeName: r.name })}>
+          <Button size="small" onClick={() => setDetail({ storeId: r.storeId, storeName: r.name, status: r.status })}>
             {fa.stores.viewUsage}
           </Button>
           <Button
@@ -283,6 +283,7 @@ export function StoresPage() {
       <StoreCreditUsageDrawer
         storeId={detail?.storeId ?? null}
         storeName={detail?.storeName ?? ''}
+        status={detail?.status}
         onClose={() => setDetail(null)}
       />
     </div>

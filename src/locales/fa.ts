@@ -389,6 +389,11 @@ export const fa = {
   // docs/PRD-sales-agent-checkout-pricing-and-roadmap.md بخش ۶.۵ — جدا از creditConfig بالا
   // (مال ویجت نیوو/nivoai.ir)؛ سهمیه‌ی رایگان روزانه + دوره‌ی آزمایشی مارکت‌پلیس sales-agent
   salesAgentConfig: {
+    aiSwitchTitle: 'سوییچ هوش مصنوعی (اضطراری)',
+    aiSwitchHint: 'خاموش = همه‌ی گفتگوها بدون هیچ call مدل به فروشنده سپرده می‌شوند («فروشنده به‌زودی شخصاً جواب می‌ده»).',
+    aiSwitchOffConfirm: 'هوش مصنوعی برای همه‌ی فروشگاه‌ها خاموش می‌شود. مطمئنی؟',
+    aiSwitchOnConfirm: 'هوش مصنوعی دوباره برای همه‌ی فروشگاه‌ها روشن می‌شود. مطمئنی؟',
+    aiSwitchOk: 'تایید',
     title: 'تنظیمات مارکت‌پلیس فروشندگان',
     freeDailyQuota: 'سهمیه‌ی رایگان روزانه (تعداد خریدار جدید)',
     freeDailyQuotaHint: 'فیدبک ۱۴۰۵/۰۷/۱۷: این عدد دیگر روی billing اثری ندارد (سهمیه‌ی رایگان روزانه حذف شد، هر مکالمه از پیام اول از اعتبار کم می‌شود) — فیلد قدیمی، فعلاً بی‌اثر.',
@@ -917,6 +922,13 @@ export const fa = {
       filterKind: 'فیلتر نوع مصرف',
       tabUsage: 'مصرف',
       tabAudit: 'تاریخچه‌ی ادمین',
+      suspendButton: 'تعلیق فروشگاه',
+      activateButton: 'رفع تعلیق',
+      suspendTitle: 'تعلیق فروشگاه',
+      activateTitle: 'رفع تعلیق فروشگاه',
+      suspendHint: 'چت و بات‌ها پیام «موقتاً فعال نیست» می‌دهند، هیچ call مدل و سفارش جدیدی ثبت نمی‌شود. دلیل برای فروشنده نمایش داده می‌شود.',
+      statusReason: 'دلیل (۵ تا ۲۰۰ حرف)',
+      statusDone: 'وضعیت فروشگاه به‌روز شد',
       adjustButton: 'تنظیم اعتبار',
       adjustTitle: 'تنظیم دستی اعتبار',
       adjustAmount: 'مبلغ (تومان؛ منفی = کسر)',

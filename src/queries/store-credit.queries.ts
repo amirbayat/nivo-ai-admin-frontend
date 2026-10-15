@@ -87,3 +87,13 @@ export function useStoreAuditLog(storeId: string | null) {
         .then((r) => r.data),
   })
 }
+
+// R1.2 — تعلیق/رفع تعلیق با دلیل اجباری (ممیزی می‌شود)
+export function useSetStoreStatus() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ storeId, status, reason }: { storeId: string; status: 'ACTIVE' | 'SUSPENDED'; reason: string }) =>
+      api.patch(`/admin/stores/${storeId}/status`, { status, reason }).then((r) => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin', 'stores'] }),
+  })
+}

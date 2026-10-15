@@ -491,6 +491,8 @@ export interface SalesAgentGlobalConfig {
   avgCostPerChatToman: number
   // null = pool تصادفی (پیش‌فرض)؛ غیر-null یکی از کلیدهای /admin/sales-agent/model-variants را فورس می‌کند
   forcedModelVariant: string | null
+  // R1.2 — kill switch هوش مصنوعی
+  aiEnabled: boolean
   updatedAt: string
 }
 

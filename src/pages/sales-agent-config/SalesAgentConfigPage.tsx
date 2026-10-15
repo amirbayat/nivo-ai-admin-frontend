@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Card, Form, Select, Space, Button, Typography, message } from 'antd'
+import { Card, Form, Modal, Select, Space, Switch, Button, Typography, message } from 'antd'
 import DigitsInputNumber from '@/components/DigitsInputNumber'
 import { SaveOutlined } from '@ant-design/icons'
 import {
@@ -61,6 +61,25 @@ export function SalesAgentConfigPage() {
     <div>
       {contextHolder}
       <Title level={4} style={{ margin: '0 0 16px' }}>{fa.salesAgentConfig.title}</Title>
+
+      <Card loading={isLoading} style={{ marginBottom: 16 }} title={fa.salesAgentConfig.aiSwitchTitle}>
+        <Space align="center">
+          <Switch
+            checked={config?.aiEnabled ?? true}
+            loading={updateConfig.isPending}
+            onChange={(next) =>
+              Modal.confirm({
+                title: next ? fa.salesAgentConfig.aiSwitchOnConfirm : fa.salesAgentConfig.aiSwitchOffConfirm,
+                okText: fa.salesAgentConfig.aiSwitchOk,
+                cancelText: fa.common.cancel,
+                okButtonProps: { danger: !next },
+                onOk: () => updateConfig.mutateAsync({ aiEnabled: next }),
+              })
+            }
+          />
+          <Text type="secondary">{fa.salesAgentConfig.aiSwitchHint}</Text>
+        </Space>
+      </Card>
 
       <Card loading={isLoading}>
         <Form form={form} layout="vertical" onFinish={handleSave}>

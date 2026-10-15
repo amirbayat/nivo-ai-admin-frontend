@@ -38,6 +38,7 @@ export function useUpdateSalesAgentConfig() {
           | 'sellerCostMarkup'
           | 'avgCostPerChatToman'
           | 'forcedModelVariant'
+          | 'aiEnabled'
         >
       >,
     ) => api.patch<SalesAgentGlobalConfig>('/admin/sales-agent/global-config', data).then(r => r.data),

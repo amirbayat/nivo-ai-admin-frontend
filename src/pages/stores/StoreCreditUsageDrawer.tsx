@@ -3,7 +3,7 @@ import type { Dayjs } from 'dayjs'
 import { Button, DatePicker, Drawer, Input, Modal, Select, Space, Table, Tabs, Tag, message } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import DigitsInputNumber from '@/components/DigitsInputNumber'
-import { useAdjustStoreCredit, useStoreAuditLog, useStoreCreditUsage } from '@/queries/store-credit.queries'
+import { useAdjustStoreCredit, useSetStoreStatus, useStoreAuditLog, useStoreCreditUsage } from '@/queries/store-credit.queries'
 import type { AdminAuditLogItem, CreditUsageEventItem } from '@/types/api'
 import { fa } from '@/locales/fa'
 
@@ -18,9 +18,10 @@ const KIND_OPTIONS = Object.entries(fa.stores.kindLabels)
 export function StoreCreditUsageDrawer(props: {
   storeId: string | null
   storeName: string
+  status?: 'ACTIVE' | 'SUSPENDED'
   onClose: () => void
 }) {
-  const { storeId, storeName, onClose } = props
+  const { storeId, storeName, status, onClose } = props
   const [page, setPage] = useState(1)
   const [kind, setKind] = useState<string | undefined>(undefined)
   const [range, setRange] = useState<[Dayjs, Dayjs] | undefined>(undefined)
@@ -29,6 +30,11 @@ export function StoreCreditUsageDrawer(props: {
   const [amount, setAmount] = useState<number | null>(null)
   const [reason, setReason] = useState('')
   const adjust = useAdjustStoreCredit()
+  const setStatus = useSetStoreStatus()
+  const [statusOpen, setStatusOpen] = useState(false)
+  const [statusReason, setStatusReason] = useState('')
+  const suspended = status === 'SUSPENDED'
+  const statusReasonOk = statusReason.trim().length >= 5 && statusReason.trim().length <= 200
   const audit = useStoreAuditLog(storeId)
   const t = fa.stores.usageDrawer
   const reasonOk = reason.trim().length >= 5 && reason.trim().length <= 200
@@ -53,6 +59,23 @@ export function StoreCreditUsageDrawer(props: {
         }
       },
     })
+  }
+
+  const submitStatus = async () => {
+    if (!storeId || !statusReasonOk) return
+    try {
+      await setStatus.mutateAsync({
+        storeId,
+        status: suspended ? 'ACTIVE' : 'SUSPENDED',
+        reason: statusReason.trim(),
+      })
+      void message.success(fa.stores.usageDrawer.statusDone)
+      setStatusOpen(false)
+      setStatusReason('')
+      onClose()
+    } catch {
+      void message.error(fa.common.error)
+    }
   }
 
   const auditColumns: ColumnsType<AdminAuditLogItem> = [
@@ -129,9 +152,12 @@ export function StoreCreditUsageDrawer(props: {
       width={720}
       title={`${fa.stores.usageDrawer.titlePrefix} ${storeName}`}
     >
-      <Button style={{ marginBottom: 16 }} onClick={() => setAdjustOpen(true)}>
-        {t.adjustButton}
-      </Button>
+      <Space style={{ marginBottom: 16 }}>
+        <Button onClick={() => setAdjustOpen(true)}>{t.adjustButton}</Button>
+        <Button danger={!suspended} onClick={() => setStatusOpen(true)}>
+          {suspended ? t.activateButton : t.suspendButton}
+        </Button>
+      </Space>
       <Tabs
         items={[
           {
@@ -195,6 +221,26 @@ export function StoreCreditUsageDrawer(props: {
           },
         ]}
       />
+      <Modal
+        open={statusOpen}
+        title={suspended ? t.activateTitle : t.suspendTitle}
+        onCancel={() => setStatusOpen(false)}
+        onOk={() => void submitStatus()}
+        okText={t.adjustOk}
+        cancelText={fa.common.cancel}
+        okButtonProps={{ disabled: !statusReasonOk, loading: setStatus.isPending, danger: !suspended }}
+      >
+        <Space direction="vertical" style={{ width: '100%' }}>
+          {!suspended && <span>{t.suspendHint}</span>}
+          <Input.TextArea
+            rows={2}
+            maxLength={200}
+            placeholder={t.statusReason}
+            value={statusReason}
+            onChange={(e) => setStatusReason(e.target.value)}
+          />
+        </Space>
+      </Modal>
       <Modal
         open={adjustOpen}
         title={t.adjustTitle}
