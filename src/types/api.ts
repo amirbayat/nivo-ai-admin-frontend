@@ -1670,3 +1670,15 @@ export interface ProductEnrichmentDraft {
   sourceNote: string | null
   createdAt: string
 }
+
+export interface AdminAuditLogItem {
+  id: string
+  adminId: string
+  action: string
+  targetType: string
+  targetId: string
+  before: Record<string, unknown> | null
+  after: Record<string, unknown> | null
+  reason: string
+  createdAt: string
+}

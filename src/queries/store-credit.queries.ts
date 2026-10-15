@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 import type {
+  AdminAuditLogItem,
   PaginatedCreditUsageEvents,
   PaginatedStoreCreditOverview,
   StoreCreditSummary,
@@ -57,6 +58,32 @@ export function useStoreCreditUsage(params: {
         .get<PaginatedCreditUsageEvents>(`/admin/stores/${storeId}/credit-usage`, {
           params: { page, kind, from, to },
         })
+        .then((r) => r.data),
+  })
+}
+
+// R1.1 — تنظیم دستی اعتبار (مبلغ منفی = کسر) با دلیل اجباری؛ در لاگ ممیزی ثبت می‌شود
+export function useAdjustStoreCredit() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ storeId, amountToman, reason }: { storeId: string; amountToman: number; reason: string }) =>
+      api
+        .post<{ beforeToman: number; afterToman: number }>(`/admin/stores/${storeId}/credit-adjustments`, {
+          amountToman,
+          reason,
+        })
+        .then((r) => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin', 'stores'] }),
+  })
+}
+
+export function useStoreAuditLog(storeId: string | null) {
+  return useQuery({
+    queryKey: ['admin', 'stores', storeId ?? '', 'audit-log'] as const,
+    enabled: !!storeId,
+    queryFn: () =>
+      api
+        .get<AdminAuditLogItem[]>(`/admin/stores/${storeId}/audit-log`)
         .then((r) => r.data),
   })
 }
