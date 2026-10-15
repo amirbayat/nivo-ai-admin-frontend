@@ -11,4 +11,7 @@ const VITE_PUBLIC_SITE_URL =
 // بخش «رفتار کاربران» غیرفعال می‌ماند (نه کل پنل ادمین)
 const VITE_EVENTS_API_URL = import.meta.env.VITE_EVENTS_API_URL as string | undefined
 
-export const env = { VITE_API_URL, VITE_PUBLIC_SITE_URL, VITE_EVENTS_API_URL }
+// R1.3 — اختیاری؛ بدون DSN مانیتورینگ خطا بی‌اثر است
+const VITE_SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN as string | undefined
+
+export const env = { VITE_API_URL, VITE_PUBLIC_SITE_URL, VITE_EVENTS_API_URL, VITE_SENTRY_DSN }
