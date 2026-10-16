@@ -1360,6 +1360,25 @@ export interface LeadProfile {
   guideContentMd: string | null
   guideSentAt: string | null
   createdAt: string
+  // docs/PRD-nivo-lead-shop-seller-signup.md §5.5/§5.8 — لیدهای قدیمی همه null
+  signupStatus?: LeadSignupStatus | null
+  signedUpAt?: string | null
+  utmSource?: string | null
+  utmMedium?: string | null
+  utmCampaign?: string | null
+  utmContent?: string | null
+  storeName?: string | null
+  leadFunnelStage?: string | null
+}
+
+export type LeadSignupStatus = 'PHONE_SUBMITTED' | 'VERIFIED' | 'STORE_CREATED'
+
+export interface LeadFunnelSummary {
+  days: number
+  conversations: number
+  phoneSubmitted: number
+  verified: number
+  storeCreated: number
 }
 
 export interface LeadProfileList {

@@ -137,7 +137,9 @@ export const keys = {
     config: () => ['admin', 'sales-bot', 'config'] as const,
     overview: (from: string, to: string) => ['admin', 'sales-bot', 'analytics', 'overview', from, to] as const,
     timeseries: (from: string, to: string) => ['admin', 'sales-bot', 'analytics', 'timeseries', from, to] as const,
-    leads: (page: number, status?: string) => ['admin', 'sales-bot', 'leads', page, status ?? 'all'] as const,
+    leads: (page: number, status?: string, source?: string, signupStatus?: string) =>
+      ['admin', 'sales-bot', 'leads', page, status ?? 'all', source ?? 'all', signupStatus ?? 'all'] as const,
+    leadSummary: () => ['admin', 'sales-bot', 'leads', 'summary'] as const,
     kb: (kind?: string) => ['admin', 'sales-bot', 'kb', kind ?? 'all'] as const,
     sessions: (page: number) => ['admin', 'sales-bot', 'sessions', page] as const,
   },

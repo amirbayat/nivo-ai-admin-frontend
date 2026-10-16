@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { Button, Input, Modal, Select, Space, Table, Tag, Typography, message } from 'antd'
+import { Button, Card, Col, Input, Modal, Row, Select, Space, Statistic, Table, Tag, Typography, message } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import {
-  useSalesBotLeads, useSendLeadSms, useUpdateLeadFollowUp,
+  useLeadFunnelSummary, useSalesBotLeads, useSendLeadSms, useUpdateLeadFollowUp,
 } from '@/queries/sales-bot.queries'
-import type { LeadFollowUpStatus, LeadProfile } from '@/types/api'
+import type { LeadFollowUpStatus, LeadProfile, LeadSignupStatus } from '@/types/api'
 
 const { Text } = Typography
 
@@ -15,6 +15,14 @@ const STATUS_OPTIONS: { value: LeadFollowUpStatus; label: string; color: string 
   { value: 'DECLINED', label: 'رد شده', color: 'red' },
 ]
 
+const SIGNUP_TAGS: Record<LeadSignupStatus, { label: string; color: string }> = {
+  PHONE_SUBMITTED: { label: 'تأیید نشده', color: 'orange' },
+  VERIFIED: { label: 'ثبت‌نام شد', color: 'blue' },
+  STORE_CREATED: { label: 'فروشگاه ساخت', color: 'green' },
+}
+
+const fa = (n: number) => n.toLocaleString('fa-IR')
+
 export function LeadsTab() {
   const [page, setPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined)
@@ -22,7 +30,11 @@ export function LeadsTab() {
   const [smsLead, setSmsLead] = useState<LeadProfile | null>(null)
   const [smsText, setSmsText] = useState('')
 
-  const { data, isLoading } = useSalesBotLeads(page, statusFilter)
+  const [sourceFilter, setSourceFilter] = useState<string | undefined>(undefined)
+  const [signupFilter, setSignupFilter] = useState<string | undefined>(undefined)
+
+  const { data, isLoading } = useSalesBotLeads(page, statusFilter, sourceFilter, signupFilter)
+  const { data: summary } = useLeadFunnelSummary()
   const updateStatus = useUpdateLeadFollowUp()
   const sendSms = useSendLeadSms()
 
@@ -39,9 +51,45 @@ export function LeadsTab() {
   }
 
   const columns: ColumnsType<LeadProfile> = [
-    { title: 'شماره', dataIndex: 'phone', key: 'phone', render: (v: string | null) => v ?? '—' },
-    { title: 'شغل', dataIndex: 'jobTitle', key: 'jobTitle', render: (v: string | null) => v ?? '—' },
-    { title: 'منبع', dataIndex: 'source', key: 'source' },
+    {
+      title: 'شماره',
+      dataIndex: 'phone',
+      key: 'phone',
+      render: (v: string | null) =>
+        v ? (
+          <Text copyable={{ text: v }} style={{ direction: 'ltr' }}>
+            {v}
+          </Text>
+        ) : (
+          '—'
+        ),
+    },
+    { title: 'نام', dataIndex: 'name', key: 'name', render: (v: string | null) => v ?? '—' },
+    {
+      title: 'نیاز',
+      key: 'interest',
+      render: (_, lead) => (Array.isArray(lead.interests) && lead.interests[0] ? String(lead.interests[0]) : (lead.jobTitle ?? '—')),
+    },
+    {
+      title: 'وضعیت ثبت‌نام',
+      key: 'signupStatus',
+      render: (_, lead) =>
+        lead.signupStatus ? <Tag color={SIGNUP_TAGS[lead.signupStatus].color}>{SIGNUP_TAGS[lead.signupStatus].label}</Tag> : '—',
+    },
+    {
+      title: 'منبع',
+      key: 'source',
+      render: (_, lead) => (
+        <span>
+          {lead.storeName ?? lead.source}
+          {lead.utmSource && (
+            <Text type="secondary" style={{ display: 'block', fontSize: 11 }}>
+              {[lead.utmSource, lead.utmMedium, lead.utmCampaign].filter(Boolean).join(' / ')}
+            </Text>
+          )}
+        </span>
+      ),
+    },
     {
       title: 'وضعیت پیگیری',
       key: 'followUpStatus',
@@ -72,7 +120,16 @@ export function LeadsTab() {
 
   return (
     <div>
-      <div style={{ marginBottom: 16 }}>
+      {summary && (
+        <Row gutter={[12, 12]} style={{ marginBottom: 16 }}>
+          <Col xs={12} md={6}><Card size="small"><Statistic title={`گفتگوها (${fa(summary.days)} روز اخیر)`} value={fa(summary.conversations)} /></Card></Col>
+          <Col xs={12} md={6}><Card size="small"><Statistic title="شماره ثبت‌شده" value={fa(summary.phoneSubmitted)} /></Card></Col>
+          <Col xs={12} md={6}><Card size="small"><Statistic title="تأیید شده" value={fa(summary.verified)} /></Card></Col>
+          <Col xs={12} md={6}><Card size="small"><Statistic title="فروشگاه ساخته شده" value={fa(summary.storeCreated)} /></Card></Col>
+        </Row>
+      )}
+
+      <Space wrap style={{ marginBottom: 16 }}>
         <Select
           allowClear
           placeholder="فیلتر بر اساس وضعیت"
@@ -81,7 +138,26 @@ export function LeadsTab() {
           onChange={(v) => { setStatusFilter(v); setPage(1) }}
           options={STATUS_OPTIONS.map((s) => ({ value: s.value, label: s.label }))}
         />
-      </div>
+        <Select
+          allowClear
+          placeholder="منبع"
+          style={{ width: 220 }}
+          value={sourceFilter}
+          onChange={(v) => { setSourceFilter(v); setPage(1) }}
+          options={[
+            { value: 'sales_agent_lead_capture', label: 'فقط لیدهای فروشگاه نیوو' },
+            { value: 'pricing_page', label: 'صفحه‌ی قیمت (قدیمی)' },
+          ]}
+        />
+        <Select
+          allowClear
+          placeholder="وضعیت ثبت‌نام"
+          style={{ width: 200 }}
+          value={signupFilter}
+          onChange={(v) => { setSignupFilter(v); setPage(1) }}
+          options={(Object.keys(SIGNUP_TAGS) as LeadSignupStatus[]).map((k) => ({ value: k, label: SIGNUP_TAGS[k].label }))}
+        />
+      </Space>
 
       <Table<LeadProfile>
         rowKey="id"

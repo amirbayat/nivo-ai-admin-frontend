@@ -3,6 +3,7 @@ import { api } from '@/lib/api'
 import type {
   BulkImportSalesKbResult,
   LeadFollowUpStatus,
+  LeadFunnelSummary,
   LeadProfileList,
   RecomputeEmbeddingsResult,
   SalesBotAnalyticsOverview,
@@ -52,13 +53,21 @@ export function useSalesBotAnalyticsTimeseries(from: string, to: string) {
   })
 }
 
-export function useSalesBotLeads(page: number, status?: string) {
+export function useSalesBotLeads(page: number, status?: string, source?: string, signupStatus?: string) {
   return useQuery({
-    queryKey: keys.salesBot.leads(page, status),
+    queryKey: keys.salesBot.leads(page, status, source, signupStatus),
     queryFn: () =>
       api
-        .get<LeadProfileList>('/admin/sales-bot/leads', { params: { page, limit: 20, status } })
+        .get<LeadProfileList>('/admin/sales-bot/leads', { params: { page, limit: 20, status, source, signupStatus } })
         .then((r) => r.data),
+  })
+}
+
+// docs/PRD-nivo-lead-shop-seller-signup.md §5.8 — خلاصه‌ی فانل ۷ روز اخیر
+export function useLeadFunnelSummary() {
+  return useQuery({
+    queryKey: keys.salesBot.leadSummary(),
+    queryFn: () => api.get<LeadFunnelSummary>('/admin/sales-bot/leads/summary', { params: { days: 7 } }).then((r) => r.data),
   })
 }
 
