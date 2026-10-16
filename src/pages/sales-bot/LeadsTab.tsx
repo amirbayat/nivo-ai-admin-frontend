@@ -23,6 +23,15 @@ const SIGNUP_TAGS: Record<LeadSignupStatus, { label: string; color: string }> = 
 
 const fa = (n: number) => n.toLocaleString('fa-IR')
 
+const DEMO_FUNNEL_STEPS = [
+  { key: 'demo_buyer_chat_opened', label: 'چت خریدار باز شد' },
+  { key: 'demo_first_message', label: 'اولین پیام' },
+  { key: 'demo_order_placed', label: 'سفارش ثبت شد' },
+  { key: 'demo_panel_opened_from_order', label: 'پنل از سفارش باز شد' },
+  { key: 'demo_order_confirmed', label: 'سفارش تایید شد' },
+  { key: 'demo_converted', label: 'تبدیل به فروشگاه' },
+]
+
 export function LeadsTab() {
   const [page, setPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined)
@@ -127,6 +136,18 @@ export function LeadsTab() {
           <Col xs={12} md={6}><Card size="small"><Statistic title="تأیید شده" value={fa(summary.verified)} /></Card></Col>
           <Col xs={12} md={6}><Card size="small"><Statistic title="فروشگاه ساخته شده" value={fa(summary.storeCreated)} /></Card></Col>
         </Row>
+      )}
+
+      {summary?.demoFunnel && (
+        <Card size="small" title={`قیف دمو — ${fa(summary.days)} روز اخیر`} style={{ marginBottom: 16 }}>
+          <Row gutter={[12, 12]}>
+            {DEMO_FUNNEL_STEPS.map((step) => (
+              <Col xs={12} md={4} key={step.key}>
+                <Statistic title={step.label} value={fa(summary.demoFunnel?.[step.key] ?? 0)} />
+              </Col>
+            ))}
+          </Row>
+        </Card>
       )}
 
       <Space wrap style={{ marginBottom: 16 }}>

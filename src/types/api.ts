@@ -1379,6 +1379,8 @@ export interface LeadFunnelSummary {
   phoneSubmitted: number
   verified: number
   storeCreated: number
+  // DEMO-6 — شمار رویدادهای قیف دمو در همان بازه
+  demoFunnel?: Record<string, number>
 }
 
 export interface LeadProfileList {
