@@ -680,6 +680,17 @@ export const fa = {
     // فیدبک کاربر ۱۴۰۵/۰۷/۱۸ — هزینه‌ی وویس/ASR جدا از هزینه‌ی متن (traceCost بالا) نشان داده شود
     traceAsrCost: (chargedToman: number) => `🎙️ هزینه‌ی تبدیل صدا به متن: ${chargedToman.toLocaleString('fa-IR')} تومان`,
     traceVoiceCost: (chargedToman: number) => `🔊 هزینه‌ی تولید صدا: ${chargedToman.toLocaleString('fa-IR')} تومان`,
+    traceEngine: { stable: 'موتور: پایدار', lean: 'موتور: بهینه' } as Record<string, string>,
+    aceLayerLabels: {
+      promptCache: 'کش prompt',
+      loopDiet: 'سقف step',
+      subcallDiet: 'مدل سبک زیرفراخوانی',
+      memo: 'کش جواب',
+      embedCache: 'کش embedding',
+      ttsCache: 'کش وویس',
+    } as Record<string, string>,
+    traceAceReason: (layer: string, callSite: string | undefined, reason: string) =>
+      `⚡ ${layer}${callSite ? ` (${callSite})` : ''}: ${reason}`,
     traceKbSource: (label: string) => `📚 منبع جواب: ${label}`,
     traceKbSourceLabels: {
       STORE_KB: 'دانش‌نامه‌ی فروشگاه',

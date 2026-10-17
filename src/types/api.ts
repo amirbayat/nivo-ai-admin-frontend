@@ -899,7 +899,16 @@ export type PersuasionTechnique =
   | 'RECIPROCITY'
   | 'SCARCITY'
 
+export interface AceNoteInfo {
+  layer: string
+  reason: string
+  callSite?: string
+}
+
 export interface AiTraceInfo {
+  // موتور این نوبت + لایه‌های بهینه‌سازی که واقعاً به‌کار رفتند، با علت (نبود = قبل از این قابلیت)
+  engine?: 'stable' | 'lean'
+  ace?: AceNoteInfo[]
   intent: string
   handler: string
   factsOrPrompt: string
@@ -962,6 +971,8 @@ export interface ConversationTraceItem {
   // فیدبک کاربر ۱۴۰۵/۰۷/۱۸ — هزینه‌ی ASR این پیام صوتی مشخص (اگر از وویس بوده)
   asrCostToman?: number
   agentReply?: {
+    engine?: 'stable' | 'lean'
+    ace?: AceNoteInfo[]
     text: string
     flag?: 'UNCLEAR' | 'NO_KB_MATCH'
     // فیدبک کاربر ۱۴۰۵/۰۷/۱۲ — برخلاف trace.voice (فقط روی پاسخ‌های AI-محور)، این همیشه هست

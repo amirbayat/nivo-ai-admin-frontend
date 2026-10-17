@@ -1,4 +1,4 @@
-import { Collapse, Drawer, Empty, Space, Timeline, Typography } from 'antd'
+import { Collapse, Drawer, Empty, Space, Tag, Timeline, Typography } from 'antd'
 import { useConversationTrace } from '@/queries/sales-agent-quality.queries'
 import type { AiTraceVoiceInfo, ConversationTraceItem } from '@/types/api'
 import { fa } from '@/locales/fa'
@@ -43,9 +43,28 @@ function TraceTimelineItem({ item }: { item: ConversationTraceItem }) {
   // فیدبک کاربر ۱۴۰۵/۰۷/۱۲ — پاسخ‌های قانون‌محور ثابت (فاکتور/سبد/handoff/...) هیچ‌وقت trace
   // ندارند؛ voice آن‌ها فقط روی خودِ agentReply نشسته
   const voice = voiceLine(trace?.voice ?? agentReply?.voice)
+  const engine = agentReply?.engine ?? trace?.engine
+  // voice processor بعداً یادداشت ttsCache را به event/trace اضافه می‌کند؛ هر دو را ادغام می‌کنیم
+  const aceNotes = [...(agentReply?.ace ?? [])]
+  for (const n of trace?.ace ?? []) {
+    if (!aceNotes.some((x) => x.layer === n.layer && x.reason === n.reason && x.callSite === n.callSite)) aceNotes.push(n)
+  }
 
   return (
     <Space direction="vertical" size={2} style={{ display: 'flex' }}>
+      {engine && (
+        <Space size={4} wrap>
+          <Tag color={engine === 'lean' ? 'green' : 'default'}>{fa.salesAgentQuality.traceEngine[engine]}</Tag>
+          {aceNotes.map((n, i) => (
+            <Tag key={i} color="blue">{fa.salesAgentQuality.aceLayerLabels[n.layer] ?? n.layer}</Tag>
+          ))}
+        </Space>
+      )}
+      {aceNotes.map((n, i) => (
+        <Text key={i} type="secondary" style={{ fontSize: 12 }}>
+          {fa.salesAgentQuality.traceAceReason(fa.salesAgentQuality.aceLayerLabels[n.layer] ?? n.layer, n.callSite, n.reason)}
+        </Text>
+      ))}
       {trace && <Text>{fa.salesAgentQuality.traceIntent(trace.intent, trace.handler)}</Text>}
       {kbLabel && <Text>{fa.salesAgentQuality.traceKbSource(kbLabel)}</Text>}
       {trace && (
