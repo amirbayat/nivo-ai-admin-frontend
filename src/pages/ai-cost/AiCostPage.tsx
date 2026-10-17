@@ -116,6 +116,7 @@ const LAYERS: Array<{ key: string; label: string; hint: string; both?: boolean }
   { key: 'dedupe', label: 'پیام تکراری', hint: 'همان پیام در ۳۰ ثانیه → همان جواب قبلی' },
   { key: 'offTopicBudget', label: 'بودجه‌ی off-topic', hint: 'بعد از ۳ پیام بی‌ربط پشت‌سرهم، قالب ثابت' },
   { key: 'fastAnswers', label: 'جواب قطعی', hint: 'قیمت/موجودی/ارسال از DB بدون LLM' },
+  { key: 'productBrief', label: 'برگه‌ی محصول', hint: 'توضیح محصول به‌جای بریده‌شدن، به‌صورت برگه + فهرست بخش‌ها؛ فقط مصرف (ساخت برگه همیشه است). shadow هنوز مصرف نمی‌شود' },
   { key: 'semanticCache', label: 'کش معنایی', hint: 'سؤال‌های واقعاً شبیه، متن از کش' },
 ]
 

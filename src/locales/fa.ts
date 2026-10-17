@@ -688,6 +688,7 @@ export const fa = {
       memo: 'کش جواب',
       embedCache: 'کش embedding',
       ttsCache: 'کش وویس',
+      productBrief: 'برگه‌ی محصول',
     } as Record<string, string>,
     traceAceReason: (layer: string, callSite: string | undefined, reason: string) =>
       `⚡ ${layer}${callSite ? ` (${callSite})` : ''}: ${reason}`,
