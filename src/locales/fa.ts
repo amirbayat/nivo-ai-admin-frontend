@@ -30,6 +30,7 @@ export const fa = {
     salesBot: 'ربات فروش',
     salesAgentConfig: 'تنظیمات مارکت‌پلیس فروشندگان',
     salesAgentQuality: 'کیفیت ایجنت فروش',
+    aiCost: 'موتور بات',
     buyerIntentDiscovery: 'نیازهای خریدار',
     salesAgentQa: 'تست QA مدل‌ها',
     salesConversations: 'لاگ مکالمات',

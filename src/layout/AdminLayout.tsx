@@ -73,6 +73,7 @@ const menuItems = [
   { key: '/admin/anon-analytics', icon: <FunnelPlotOutlined />, label: fa.nav.anonAnalytics },
   { key: '/admin/sales-bot', icon: <ShopOutlined />, label: fa.nav.salesBot },
   { key: '/admin/sales-agent-config', icon: <WalletOutlined />, label: fa.nav.salesAgentConfig },
+  { key: '/admin/ai-cost', icon: <ExperimentOutlined />, label: fa.nav.aiCost },
   { key: '/admin/sales-agent-quality', icon: <LineChartOutlined />, label: fa.nav.salesAgentQuality },
   { key: '/admin/buyer-intent-discovery', icon: <AimOutlined />, label: fa.nav.buyerIntentDiscovery },
   { key: '/admin/sales-conversations', icon: <UnorderedListOutlined />, label: fa.nav.salesConversations },
