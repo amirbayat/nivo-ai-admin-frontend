@@ -10,6 +10,12 @@ import {
   useEmergencyRevert,
   useUndoEmergencyRevert,
   useUpdateAceSettings,
+  useShadowJudgeRun,
+  useShadowQueue,
+  useShadowReport,
+  useShadowReview,
+  type ShadowLayerReport,
+  type ShadowStratum,
   type AceAuditEntry,
   type BotChangelogEntry,
   type CostReport,
@@ -98,6 +104,84 @@ function CompareTab() {
         { title: 'پایدار', render: (_, r) => r.f(data.stable) },
         { title: 'بهینه', render: (_, r) => r.f(data.lean) },
       ]} />
+    </Space>
+  )
+}
+
+const LAYER_TITLE: Record<string, string> = { fastAnswers: 'جواب قطعی', productBrief: 'برگه‌ی محصول', semanticCache: 'کش معنایی' }
+const VERDICT_LABEL = { equal: 'برابر', worse: 'بدتر', wrong: 'غلط' } as const
+
+function StrataTable({ rows }: { rows: ShadowStratum[] }) {
+  return (
+    <Table size="small" rowKey="key" pagination={false} dataSource={rows} columns={[
+      { title: 'گروه', dataIndex: 'key' },
+      { title: 'نمونه', dataIndex: 'n' },
+      { title: 'برابر', dataIndex: 'equal' },
+      { title: 'بدتر', dataIndex: 'worse' },
+      { title: 'غلط', dataIndex: 'wrong' },
+      { title: 'در انتظار', dataIndex: 'pending' },
+      { title: 'دروازه', render: (_, r) => <Tag color={r.passes ? 'green' : 'default'}>{r.passes ? 'پاس' : r.reason}</Tag> },
+    ]} />
+  )
+}
+
+function ShadowLayerCard({ r }: { r: ShadowLayerReport }) {
+  const title = `${LAYER_TITLE[r.layer] ?? r.layer}`
+  return (
+    <Card size="small" title={title} extra={<Tag color={r.gate.passes ? 'green' : 'orange'}>{r.gate.passes ? 'دروازه باز' : `بسته: ${r.gate.reason}`}</Tag>}>
+      <Space direction="vertical" style={{ width: '100%' }}>
+        <Space wrap>
+          <Text>نمونه: {r.total.n}</Text>
+          <Text>برابر: {r.total.equal}</Text>
+          <Text>بدتر: {r.total.worse}</Text>
+          <Text type={r.total.wrong ? 'danger' : undefined}>غلط: {r.total.wrong}</Text>
+          <Text type="secondary">در انتظار داوری: {r.total.pending}</Text>
+          <Text type="secondary">بازبینی انسانی نیت‌های حساس: {r.humanSensitive.reviewed}/۵۰</Text>
+          <Text type="secondary">اختلاف judge و انسان: {r.judgeHumanDisagree}</Text>
+        </Space>
+        {r.total.n > 0 && (
+          <Tabs size="small" items={[
+            { key: 'i', label: 'به تفکیک نیت', children: <StrataTable rows={r.byIntent} /> },
+            { key: 't', label: 'به تفکیک ویژگی', children: <StrataTable rows={r.byTag} /> },
+            { key: 'c', label: 'به تفکیک دسته', children: <StrataTable rows={r.byCategory} /> },
+          ]} />
+        )}
+      </Space>
+    </Card>
+  )
+}
+
+function ShadowTab() {
+  const report = useShadowReport()
+  const queue = useShadowQueue()
+  const review = useShadowReview()
+  const run = useShadowJudgeRun()
+  const [msg, ctx] = message.useMessage()
+  return (
+    <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+      {ctx}
+      <Alert type="info" showIcon message="در حالت shadow، لایه جواب کاندید می‌سازد ولی جواب واقعی از مدل می‌رود. هر نمونه را judge (مدل سبک) و شما داوری می‌کنید. دروازه‌ها فقط پیشنهادند؛ روشن‌کردن با تصمیم شماست." />
+      <Space>
+        <Text>کل نمونه‌ها: {report.data?.total ?? 0} — در انتظار judge: {report.data?.pendingJudge ?? 0}</Text>
+        <Button loading={run.isPending} onClick={() => run.mutate(undefined, { onSuccess: (r) => void msg.success(`${r.judged} نمونه داوری شد${r.skippedByCap ? ' (به سقف روزانه رسید)' : ''}`) })}>اجرای judge</Button>
+      </Space>
+      {(report.data?.layers ?? []).filter((l) => l.total.n > 0).map((l, i) => <ShadowLayerCard key={`${l.layer}${i}`} r={l} />)}
+      {report.data && report.data.layers.every((l) => l.total.n === 0) && <Text type="secondary">هنوز نمونه‌ای نیست. fastAnswers را روی shadow بگذارید و فروشگاهی را روی «بهینه» ببرید.</Text>}
+      <Card size="small" title="صف بازبینی انسانی (غلط/بدتر اول)">
+        <Table size="small" rowKey="id" loading={queue.isLoading} dataSource={queue.data ?? []} pagination={{ pageSize: 10 }} columns={[
+          { title: 'پیام مشتری', dataIndex: 'customerMessage', width: 160 },
+          { title: 'جواب واقعی (A)', dataIndex: 'realText' },
+          { title: 'کاندید (B)', dataIndex: 'candidateText' },
+          { title: 'judge', render: (_, r) => (r.judge ? <Tag color={r.judge.verdict === 'equal' ? 'green' : r.judge.verdict === 'worse' ? 'orange' : 'red'} title={r.judge.reason}>{VERDICT_LABEL[r.judge.verdict]}</Tag> : '—') },
+          { title: 'حکم شما', render: (_, r) => (
+            <Space>
+              {(['equal', 'worse', 'wrong'] as const).map((v) => (
+                <Button key={v} size="small" danger={v === 'wrong'} onClick={() => review.mutate({ id: r.id, verdict: v })}>{VERDICT_LABEL[v]}</Button>
+              ))}
+            </Space>
+          ) },
+        ]} />
+      </Card>
     </Space>
   )
 }
@@ -297,6 +381,7 @@ export function AiCostPage() {
           { key: 'engine', label: 'موتور', children: <EngineTab /> },
           { key: 'compare', label: 'مقایسه', children: <CompareTab /> },
           { key: 'cost', label: 'هزینه', children: <CostTab /> },
+          { key: 'shadow', label: 'shadow', children: <ShadowTab /> },
           { key: 'changelog', label: 'دفتر تغییرات', children: <ChangelogTab /> },
         ]}
       />

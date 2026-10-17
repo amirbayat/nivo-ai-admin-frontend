@@ -95,3 +95,52 @@ export function useCostReport(days: number) {
 export function useCompareReport(days: number) {
   return useQuery({ queryKey: [...KEY, 'compare', days], queryFn: () => api.get<CompareReport>('/admin/ai-cost/compare', { params: { days } }).then((r) => r.data) })
 }
+
+// ACE-12 — shadow/judge
+export type ShadowVerdict = 'equal' | 'worse' | 'wrong'
+export interface ShadowStratum { key: string; n: number; equal: number; worse: number; wrong: number; pending: number; passes: boolean; reason: string }
+export interface ShadowLayerReport {
+  layer: string
+  total: { n: number; equal: number; worse: number; wrong: number; pending: number }
+  gate: { passes: boolean; reason: string }
+  byIntent: ShadowStratum[]
+  byTag: ShadowStratum[]
+  byCategory: ShadowStratum[]
+  humanSensitive: { reviewed: number; wrong: number; passes: boolean }
+  judgeHumanDisagree: number
+  wrongSamples: Array<{ id: string; customerMessage: string; realText: string; candidateText: string; reason: string }>
+}
+export interface ShadowReport { total: number; pendingJudge: number; layers: ShadowLayerReport[] }
+export interface ShadowSampleRow {
+  id: string
+  ts: number
+  layer: string
+  band?: string
+  intent: string
+  customerMessage: string
+  realText: string
+  candidateText: string
+  tags: string[]
+  judge?: { verdict: ShadowVerdict; reason: string }
+}
+
+export function useShadowReport() {
+  return useQuery({ queryKey: [...KEY, 'shadow-report'], queryFn: () => api.get<ShadowReport>('/admin/ai-cost/shadow/report').then((r) => r.data) })
+}
+export function useShadowQueue() {
+  return useQuery({ queryKey: [...KEY, 'shadow-queue'], queryFn: () => api.get<ShadowSampleRow[]>('/admin/ai-cost/shadow/queue').then((r) => r.data) })
+}
+export function useShadowReview() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (b: { id: string; verdict: ShadowVerdict; note?: string }) => api.post('/admin/ai-cost/shadow/review', b).then((r) => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: KEY }),
+  })
+}
+export function useShadowJudgeRun() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: () => api.post<{ judged: number; skippedByCap: boolean }>('/admin/ai-cost/shadow/judge-run').then((r) => r.data),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: KEY }),
+  })
+}
