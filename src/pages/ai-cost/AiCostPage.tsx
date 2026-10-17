@@ -1,20 +1,106 @@
 import { useState } from 'react'
-import { Alert, Button, Card, Descriptions, Modal, Popconfirm, Radio, Select, Space, Table, Tabs, Tag, Typography, message } from 'antd'
+import { Alert, Button, Card, Col, Descriptions, Row, Segmented, Statistic, Modal, Popconfirm, Radio, Select, Space, Table, Tabs, Tag, Typography, message } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import {
   useAceSettings,
   useAceStoreSearch,
   useBotChangelog,
+  useCompareReport,
+  useCostReport,
   useEmergencyRevert,
   useUndoEmergencyRevert,
   useUpdateAceSettings,
   type AceAuditEntry,
   type BotChangelogEntry,
+  type CostReport,
   type EngineMode,
+  type EngineSide,
   type LayerMode,
 } from '@/queries/ai-cost.queries'
 
 const { Title, Text } = Typography
+
+const money = (v: number) => `$${v.toFixed(v < 1 ? 4 : 2)}`
+const pct = (v: number | null) => (v === null ? '—' : `${(v * 100).toFixed(1)}٪`)
+
+function DaysSwitch({ value, onChange }: { value: number; onChange: (d: number) => void }) {
+  return <Segmented value={value} onChange={(v) => onChange(Number(v))} options={[{ value: 1, label: '۱ روز' }, { value: 7, label: '۷ روز' }, { value: 30, label: '۳۰ روز' }]} />
+}
+
+function NotReady({ error }: { error?: string }) {
+  return <Alert type="warning" showIcon message="گزارش هنوز آماده نیست (جدول ledger؟)" description={error} />
+}
+
+function CostTab() {
+  const [days, setDays] = useState(7)
+  const { data, isLoading } = useCostReport(days)
+  if (isLoading || !data) return <Card loading />
+  if (!data.ready) return <NotReady error={data.error} />
+  const c = data.cards
+  const siteCols: ColumnsType<CostReport['bySite'][number]> = [
+    { title: 'callSite', dataIndex: 'callSite' },
+    { title: 'مدل', dataIndex: 'model' },
+    { title: 'تعداد', dataIndex: 'calls' },
+    { title: 'هزینه', dataIndex: 'costUsd', render: money, sorter: (a, b) => a.costUsd - b.costUsd },
+    { title: 'میانگین ورودی', dataIndex: 'avgIn' },
+    { title: 'میانگین خروجی', dataIndex: 'avgOut' },
+    { title: 'p95 latency', dataIndex: 'p95LatencyMs', render: (v: number) => `${v}ms` },
+    { title: 'ردیف با هزینه‌ی صفر', dataIndex: 'zeroCostRows' },
+  ]
+  return (
+    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <DaysSwitch value={days} onChange={setDays} />
+      {c.estimatedRowsPct > 0.05 && <Alert type="warning" showIcon message={`${pct(c.estimatedRowsPct)} ردیف‌ها هزینه‌ی تخمینی دارند (OpenRouter هزینه نداده)؛ اول این درست شود.`} />}
+      {c.untaggedCostPct > 0.05 && <Alert type="warning" showIcon message={`${pct(c.untaggedCostPct)} هزینه برچسب callSite ندارد (untagged).`} />}
+      <Row gutter={[16, 16]}>
+        <Col xs={12} md={6}><Statistic title="هزینه‌ی واقعی" value={money(c.realCostUsd)} /></Col>
+        <Col xs={12} md={6}><Statistic title="میانه‌ی هزینه‌ی هر گفتگو" value={money(c.medianConversationCostUsd)} /></Col>
+        <Col xs={12} md={6}><Statistic title="p90 هزینه‌ی هر گفتگو" value={money(c.p90ConversationCostUsd)} /></Col>
+        <Col xs={12} md={6}><Statistic title="نرخ cache-read (main_loop)" value={pct(c.cacheReadRate)} /></Col>
+        <Col xs={12} md={6}><Statistic title="گفتگو / نوبت" value={`${c.conversations} / ${c.turns}`} /></Col>
+        <Col xs={12} md={6}><Statistic title="هزینه‌ی تخمینی (ردیف‌های بدون cost)" value={money(c.estimatedCostUsd)} /></Col>
+        <Col xs={12} md={6}><Statistic title="صرفه‌جویی تخمینی (avoided)" value={money(c.avoidedEstimatedUsd)} suffix={<Tag>تخمینی</Tag>} /></Col>
+      </Row>
+      <Card title="callSite × مدل"><Table rowKey={(r) => r.callSite + r.model} size="small" columns={siteCols} dataSource={data.bySite} pagination={false} /></Card>
+      <Card title="روزانه"><Table rowKey="day" size="small" pagination={false} dataSource={data.daily} columns={[{ title: 'روز', dataIndex: 'day' }, { title: 'هزینه', dataIndex: 'costUsd', render: money }, { title: 'تعداد call', dataIndex: 'calls' }]} /></Card>
+      <Card title="servedBy"><Table rowKey="servedBy" size="small" pagination={false} dataSource={data.servedBy} columns={[{ title: 'منبع جواب', dataIndex: 'servedBy' }, { title: 'تعداد', dataIndex: 'calls' }, { title: 'هزینه', dataIndex: 'costUsd', render: money }, { title: 'avoided (تخمینی)', dataIndex: 'avoidedUsd', render: money }]} /></Card>
+      <Card title="۲۰ گفتگوی پرهزینه"><Table rowKey="conversationId" size="small" pagination={false} dataSource={data.topConversations} columns={[{ title: 'گفتگو', dataIndex: 'conversationId' }, { title: 'هزینه', dataIndex: 'costUsd', render: money }, { title: 'نوبت', dataIndex: 'turns' }, { title: 'call', dataIndex: 'calls' }]} /></Card>
+      <Card title="۲۰ فروشگاه پرهزینه"><Table rowKey="storeId" size="small" pagination={false} dataSource={data.topStores} columns={[{ title: 'فروشگاه', dataIndex: 'name' }, { title: 'هزینه', dataIndex: 'costUsd', render: money }, { title: 'گفتگو', dataIndex: 'conversations' }]} /></Card>
+    </Space>
+  )
+}
+
+function CompareTab() {
+  const [days, setDays] = useState(7)
+  const { data, isLoading } = useCompareReport(days)
+  if (isLoading || !data) return <Card loading />
+  if (!data.ready) return <NotReady error={data.error} />
+  const rows: Array<{ k: string; label: string; f: (s: EngineSide) => string }> = [
+    { k: 'n', label: 'تعداد گفتگو', f: (s) => String(s.conversations) },
+    { k: 'med', label: 'میانه‌ی هزینه‌ی گفتگو', f: (s) => money(s.medianCostUsd) },
+    { k: 'p90', label: 'p90 هزینه‌ی گفتگو', f: (s) => money(s.p90CostUsd) },
+    { k: 'tin', label: 'توکن ورودی میانه', f: (s) => String(s.medianInputTokens) },
+    { k: 'cr', label: 'نرخ cache-read', f: (s) => pct(s.cacheReadRate) },
+    { k: 'ord', label: 'نرخ سفارش', f: (s) => pct(s.orderRate) },
+    { k: 'ho', label: 'نرخ ارجاع به فروشنده', f: (s) => pct(s.handoffRate) },
+    { k: 'turns', label: 'میانه‌ی تعداد نوبت', f: (s) => String(s.medianTurns) },
+    { k: 'l50', label: 'latency p50 (main_loop)', f: (s) => `${s.latencyP50Ms}ms` },
+    { k: 'l95', label: 'latency p95 (main_loop)', f: (s) => `${s.latencyP95Ms}ms` },
+  ]
+  return (
+    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <DaysSwitch value={days} onChange={setDays} />
+      {(!data.stable.enoughData || !data.lean.enoughData) && (
+        <Alert type="info" showIcon message="کمتر از ۱۰۰ گفتگو در یکی از دو طرف؛ هنوز قابل قضاوت نیست." />
+      )}
+      <Table rowKey="k" pagination={false} dataSource={rows} columns={[
+        { title: '', dataIndex: 'label' },
+        { title: 'پایدار', render: (_, r) => r.f(data.stable) },
+        { title: 'بهینه', render: (_, r) => r.f(data.lean) },
+      ]} />
+    </Space>
+  )
+}
 
 const ENGINE_LABEL: Record<EngineMode, string> = { stable: 'پایدار', lean: 'بهینه' }
 
@@ -208,6 +294,8 @@ export function AiCostPage() {
       <Tabs
         items={[
           { key: 'engine', label: 'موتور', children: <EngineTab /> },
+          { key: 'compare', label: 'مقایسه', children: <CompareTab /> },
+          { key: 'cost', label: 'هزینه', children: <CostTab /> },
           { key: 'changelog', label: 'دفتر تغییرات', children: <ChangelogTab /> },
         ]}
       />

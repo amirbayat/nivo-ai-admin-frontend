@@ -66,3 +66,32 @@ function useAceMutation<T>(fn: (v: T) => Promise<unknown>) {
 export const useUpdateAceSettings = () => useAceMutation((p: AceSettingsPatch) => api.patch('/admin/ai-cost/settings', p))
 export const useEmergencyRevert = () => useAceMutation((_: void) => api.post('/admin/ai-cost/emergency-revert'))
 export const useUndoEmergencyRevert = () => useAceMutation((_: void) => api.post('/admin/ai-cost/undo-emergency-revert'))
+
+export interface CostReport {
+  ready: boolean
+  error?: string
+  days: number
+  cards: {
+    rows: number; conversations: number; turns: number
+    realCostUsd: number; estimatedCostUsd: number; estimatedRowsPct: number; untaggedCostPct: number
+    cacheReadRate: number; medianConversationCostUsd: number; p90ConversationCostUsd: number; avoidedEstimatedUsd: number
+  }
+  bySite: Array<{ callSite: string; model: string; calls: number; costUsd: number; avgIn: number; avgOut: number; p95LatencyMs: number; zeroCostRows: number }>
+  daily: Array<{ day: string; costUsd: number; calls: number }>
+  servedBy: Array<{ servedBy: string; calls: number; costUsd: number; avoidedUsd: number }>
+  topConversations: Array<{ conversationId: string; storeId: string | null; costUsd: number; turns: number; calls: number }>
+  topStores: Array<{ storeId: string; name: string; costUsd: number; conversations: number }>
+}
+
+export interface EngineSide {
+  conversations: number; medianCostUsd: number; p90CostUsd: number; medianInputTokens: number; cacheReadRate: number
+  medianTurns: number; latencyP50Ms: number; latencyP95Ms: number; orderRate: number | null; handoffRate: number | null; enoughData: boolean
+}
+export interface CompareReport { ready: boolean; error?: string; days: number; stable: EngineSide; lean: EngineSide }
+
+export function useCostReport(days: number) {
+  return useQuery({ queryKey: [...KEY, 'cost', days], queryFn: () => api.get<CostReport>('/admin/ai-cost/cost-report', { params: { days } }).then((r) => r.data) })
+}
+export function useCompareReport(days: number) {
+  return useQuery({ queryKey: [...KEY, 'compare', days], queryFn: () => api.get<CompareReport>('/admin/ai-cost/compare', { params: { days } }).then((r) => r.data) })
+}
